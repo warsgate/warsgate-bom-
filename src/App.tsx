@@ -226,6 +226,32 @@ export function App() {
     }
   };
 
+  // ─── Project Actions ──────────────────────────────────────
+  const handleEditProject = (project: ProjectItem) => {
+    setEditingProject(project);
+    setIsProjectModalOpen(true);
+  };
+
+  const handleDeleteProject = async (id: string) => {
+    if (window.confirm('คุณแน่ใจหรือไม่ว่าต้องการลบโปรเจกต์นี้? ข้อมูลทั้งหมดในโปรเจกต์จะถูกลบถาวร!')) {
+      try {
+        await projectsApi.delete(id);
+        setProjects(prev => prev.filter(p => p.id !== id));
+        if (activeProjectId === id) {
+          const remaining = projects.filter(p => p.id !== id);
+          if (remaining.length > 0) {
+            setActiveProjectId(remaining[0].id);
+          } else {
+            setActiveProjectId('');
+          }
+        }
+      } catch (error) {
+        console.error('Error deleting project:', error);
+        alert('เกิดข้อผิดพลาดในการลบโปรเจกต์');
+      }
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50 dark:bg-slate-950">
@@ -259,6 +285,8 @@ export function App() {
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
         userRole={userRole}
         setUserRole={setUserRole}
+        onEditProject={handleEditProject}
+        onDeleteProject={handleDeleteProject}
       />
 
       <div className="flex-1 flex flex-col h-screen overflow-y-auto">

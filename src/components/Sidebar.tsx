@@ -17,7 +17,9 @@ import {
   Lock,
   ShieldCheck,
   UserCheck,
-  Calendar
+  Calendar,
+  Edit2,
+  Trash2
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 
@@ -40,6 +42,8 @@ interface SidebarProps {
   onCloseMobile?: () => void;
   userRole: 'OWNER' | 'ENGINEER';
   setUserRole: (role: 'OWNER' | 'ENGINEER') => void;
+  onEditProject: (project: ProjectItem) => void;
+  onDeleteProject: (id: string) => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -61,6 +65,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onCloseMobile,
   userRole,
   setUserRole,
+  onEditProject,
+  onDeleteProject,
 }) => {
   const activeProject = projects.find(p => p.id === activeProjectId) || projects[0];
 
@@ -212,8 +218,26 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </select>
 
         {activeProject && (
-          <div className="text-[10px] text-slate-600 dark:text-slate-400 font-bold truncate">
-            ลูกค้า: <span className="text-slate-900 dark:text-slate-200 font-extrabold">{activeProject.customer}</span>
+          <div className="flex items-center justify-between mt-1">
+            <div className="text-[10px] text-slate-600 dark:text-slate-400 font-bold truncate">
+              ลูกค้า: <span className="text-slate-900 dark:text-slate-200 font-extrabold">{activeProject.customer}</span>
+            </div>
+            <div className="flex items-center space-x-1.5 flex-shrink-0 ml-2">
+              <button
+                onClick={() => onEditProject(activeProject)}
+                className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700 shadow-sm transition-colors"
+                title="แก้ไขข้อมูลโปรเจกต์"
+              >
+                <Edit2 className="w-3 h-3" />
+              </button>
+              <button
+                onClick={() => onDeleteProject(activeProject.id)}
+                className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700 shadow-sm transition-colors"
+                title="ลบโปรเจกต์"
+              >
+                <Trash2 className="w-3 h-3" />
+              </button>
+            </div>
           </div>
         )}
       </div>

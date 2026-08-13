@@ -18,7 +18,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [code, setCode] = useState('');
   const [name, setName] = useState('');
   const [customer, setCustomer] = useState('');
-  const [dwgNo, setDwgNo] = useState('');
+  const [customerId, setCustomerId] = useState('000');
   const [targetBudget, setTargetBudget] = useState(100000);
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<'Active' | 'Completed' | 'On Hold' | 'Archived'>('Active');
@@ -28,7 +28,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setCode(initialProject.code || '');
       setName(initialProject.name || '');
       setCustomer(initialProject.customer || '');
-      setDwgNo(initialProject.dwgNo || '');
+      setCustomerId(initialProject.customerId || '000');
       setTargetBudget(initialProject.targetBudget || 100000);
       setDescription(initialProject.description || '');
       setStatus(initialProject.status || 'Active');
@@ -36,7 +36,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setCode(`PRJ-${Math.floor(Math.random() * 899 + 100)}`);
       setName('');
       setCustomer('');
-      setDwgNo('');
+      setCustomerId('');
       setTargetBudget(150000);
       setDescription('');
       setStatus('Active');
@@ -52,7 +52,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       code,
       name,
       customer,
-      dwgNo,
+      customerId,
+      dwgNo: '', // dwgNo is auto-generated in Module, project doesn't really need it now
       targetBudget: Number(targetBudget),
       description,
       status,
@@ -135,13 +136,14 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                DWG Master No.
+                รหัสลูกค้า (Customer ID 3 หลัก)
               </label>
               <input
                 type="text"
-                value={dwgNo}
-                onChange={(e) => setDwgNo(e.target.value)}
-                placeholder="e.g. 073007-000-000-A"
+                maxLength={3}
+                value={customerId}
+                onChange={(e) => setCustomerId(e.target.value.replace(/[^0-9]/g, ''))}
+                placeholder="e.g. 527"
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>

@@ -27,7 +27,22 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST create project
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const project = await prisma.project.create({ data: req.body });
+    const { customerId, ...rest } = req.body;
+    
+    // Calculate runningNumber (max current runningNumber + 1)
+    const maxProject = await prisma.project.findFirst({
+      orderBy: { runningNumber: 'desc' },
+      select: { runningNumber: true }
+    });
+    const nextRunningNumber = maxProject ? maxProject.runningNumber + 1 : 1;
+
+    const project = await prisma.project.create({ 
+      data: {
+        ...rest,
+        customerId: customerId || '000',
+        runningNumber: nextRunningNumber
+      } 
+    });
     res.status(201).json(project);
   } catch (err) {
     res.status(500).json({ error: 'Failed to create project' });

@@ -31,7 +31,36 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST create module
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const module = await prisma.module.create({ data: req.body });
+    const { projectId, dwgNo, ...rest } = req.body;
+    
+    // 1. Get Project info for runningNumber and customerId
+    const project = await prisma.project.findUnique({
+      where: { id: projectId },
+      select: { runningNumber: true, customerId: true }
+    });
+
+    if (!project) return res.status(404).json({ error: 'Project not found' });
+
+    // 2. Count existing modules in this project for the Main Module running number
+    const moduleCount = await prisma.module.count({
+      where: { projectId: projectId }
+    });
+    
+    const projectRunningNo = String(project.runningNumber).padStart(3, '0');
+    const customerIdStr = (project.customerId || '000').padStart(3, '0').slice(0, 3);
+    const mainModuleNo = String(moduleCount).padStart(3, '0');
+    
+    // Formula: [ProjectRunning3Digits][Customer3Digits]-[MainModule3Digits]-[SubModule3Digits]-[Revision]
+    // e.g. 001527-000-000-A
+    const generatedDwgNo = `${projectRunningNo}${customerIdStr}-${mainModuleNo}-000-A`;
+
+    const module = await prisma.module.create({ 
+      data: {
+        ...rest,
+        projectId,
+        dwgNo: generatedDwgNo
+      } 
+    });
     res.status(201).json(module);
   } catch (err) {
     res.status(500).json({ error: 'Failed to create module' });

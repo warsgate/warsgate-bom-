@@ -13,8 +13,10 @@ datasource db {
 model Project {
   id                  String        @id @default(cuid())
   code                String        @unique
+  runningNumber       Int           @default(1)
   name                String
   customer            String
+  customerId          String        @default("000")
   dwgNo               String?
   targetBudget        Float         @default(0)
   description         String?

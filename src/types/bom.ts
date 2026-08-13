@@ -17,9 +17,11 @@ export type MachineWorkflowStage =
 export interface ProjectItem {
   id: string;
   code: string;
+  runningNumber?: number;
   name: string;
   customer: string;
-  dwgNo?: string;
+  customerId?: string;
+  dwgNo: string;
   targetBudget?: number;
   description?: string;
   status: 'Active' | 'Completed' | 'On Hold' | 'Archived';

@@ -110,14 +110,14 @@ export const ModuleModal: React.FC<ModuleModalProps> = ({
 
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                DWG No. Reference
+                DWG Master No.
               </label>
               <input
                 type="text"
-                value={dwgNo}
-                onChange={(e) => setDwgNo(e.target.value)}
-                placeholder="e.g. 073007-000-000-A"
-                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-red-500"
+                disabled
+                value={initialModule ? dwgNo : 'สร้างอัตโนมัติเมื่อบันทึก'}
+                placeholder="e.g. 001527-000-000-A"
+                className="w-full bg-slate-100 dark:bg-slate-800 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-500 dark:text-slate-400 font-mono cursor-not-allowed"
               />
             </div>
           </div>

@@ -11,7 +11,8 @@ import {
   Table as TableIcon,
   Grid,
   Layers,
-  FileText
+  FileText,
+  Trash2
 } from 'lucide-react';
 import { BomPartItem, ModuleItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -23,6 +24,7 @@ interface AllModulesViewProps {
   onOpenAddModule: () => void;
   onOpenEditModule: (module: ModuleItem) => void;
   onOpenAddPartToModule: (moduleId: string) => void;
+  onDeleteModule: (moduleId: string) => void;
 }
 
 export const AllModulesView: React.FC<AllModulesViewProps> = ({
@@ -32,6 +34,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
   onOpenAddModule,
   onOpenEditModule,
   onOpenAddPartToModule,
+  onDeleteModule,
 }) => {
   const [filterScope, setFilterScope] = useState<'ALL' | 'MC_ONLY' | 'EE_ONLY' | 'BOTH'>('ALL');
   const [searchQuery, setSearchQuery] = useState('');
@@ -345,6 +348,13 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                               <Edit3 className="w-3.5 h-3.5" />
                             </button>
                             <button
+                              onClick={() => onDeleteModule(mod.id)}
+                              className="p-1 text-slate-500 hover:text-red-600 dark:hover:text-red-400 bg-slate-100 dark:bg-slate-800 rounded"
+                              title="ลบ Module"
+                            >
+                              <Trash2 className="w-3.5 h-3.5" />
+                            </button>
+                            <button
                               onClick={() => onSelectModuleForDetail(mod.id)}
                               className="p-1 text-blue-600 hover:text-blue-800 bg-blue-50 dark:bg-blue-950 rounded border border-blue-200 dark:border-blue-800"
                               title="ดูรายละเอียด MC & EE"
@@ -435,6 +445,13 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                           title="แก้ไข Module"
                         >
                           <Edit3 className="w-3.5 h-3.5" />
+                        </button>
+                        <button
+                          onClick={() => onDeleteModule(mod.id)}
+                          className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 bg-slate-100 dark:bg-slate-800 rounded-lg"
+                          title="ลบ Module"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </div>

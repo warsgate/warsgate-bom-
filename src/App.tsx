@@ -332,6 +332,7 @@ export function App() {
               onOpenAddModule={() => { setEditingModule(null); setIsModuleModalOpen(true); }}
               onOpenEditModule={(m) => { setEditingModule(m); setIsModuleModalOpen(true); }}
               onOpenAddPartToModule={(modId) => { setEditingPart(null); setDefaultPartModuleId(modId); setIsPartModalOpen(true); }}
+              onDeleteModule={handleDeleteModule}
             />
           )}
 

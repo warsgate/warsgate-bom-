@@ -1,0 +1,17 @@
+# Node
+node_modules/
+dist/
+
+# Environment
+.env
+backend/.env
+
+# macOS
+.DS_Store
+
+# Logs
+*.log
+npm-debug.log*
+
+# Prisma
+backend/prisma/migrations/

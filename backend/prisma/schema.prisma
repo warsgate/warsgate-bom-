@@ -1,0 +1,104 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id                  String        @id @default(cuid())
+  code                String        @unique
+  name                String
+  customer            String
+  dwgNo               String?
+  targetBudget        Float         @default(0)
+  description         String?
+  status              String        @default("Active")
+  currentStage        String?
+  startDate           String?
+  targetDeliveryDate  String?
+  createdAt           DateTime      @default(now())
+  updatedAt           DateTime      @updatedAt
+
+  modules     Module[]
+  parts       Part[]
+  masterTasks MasterTask[]
+}
+
+model Module {
+  id                   String   @id @default(cuid())
+  projectId            String
+  code                 String
+  name                 String
+  dwgNo                String?
+  description          String?
+  targetBudget         Float    @default(0)
+  responsibleEngineer  String?
+  moduleType           String   @default("BOTH")
+  status               String   @default("Active")
+  currentStage         String?
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  project Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parts   Part[]
+}
+
+model Part {
+  id                String   @id @default(cuid())
+  projectId         String
+  moduleId          String
+  itemNo            Int
+  dwgNo             String   @default("")
+  partName          String
+  typeSpec          String   @default("")
+  category          String   @default("MC")
+  partType          String   @default("Standard Part")
+  qty               Float    @default(1)
+  unit              String   @default("EA")
+  maker             String   @default("")
+  supplier          String   @default("")
+  targetUnitPrice   Float    @default(0)
+  targetTotalAmount Float    @default(0)
+  unitPrice         Float    @default(0)
+  totalAmount       Float    @default(0)
+  poNumber          String   @default("")
+  storeLocation     String   @default("")
+  orderDate         String?
+  receiveDate       String?
+  status            String   @default("Planned")
+  workflowStage     String   @default("2. BOM Part List")
+  ctrlSpare         String   @default("")
+  remarks           String   @default("")
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  module  Module  @relation(fields: [moduleId], references: [id])
+}
+
+model MasterTask {
+  id             String   @id @default(cuid())
+  projectId      String
+  wbs            String
+  stageName      String
+  title          String
+  responsible    String   @default("")
+  planStartDate  String   @default("")
+  planEndDate    String   @default("")
+  actualStartDate String  @default("")
+  actualEndDate  String   @default("")
+  actualDates    String   @default("[]")  // JSON array stored as string
+  progressPct    Int      @default(0)
+  status         String   @default("Pending")
+  color          String   @default("bg-blue-600")
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+}

@@ -366,7 +366,7 @@ export const PartModal: React.FC<PartModalProps> = ({
             </div>
           </div>
 
-          {/* Supplier, Maker, PO Number & Store Location */}
+          {/* Supplier, Maker */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Supplier (ผู้จำหน่าย/ร้านค้า)</label>
@@ -386,6 +386,31 @@ export const PartModal: React.FC<PartModalProps> = ({
                 value={maker}
                 onChange={(e) => setMaker(e.target.value)}
                 placeholder="e.g. Omron, Mitsubishi, Dell"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+          </div>
+
+          {/* PO Number, Store Location */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">PO Number (เลขที่ใบสั่งซื้อ / อ้างอิง)</label>
+              <input
+                type="text"
+                value={poNumber}
+                onChange={(e) => setPoNumber(e.target.value)}
+                placeholder="e.g. PO-2026-001 หรือ SHP-123"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Store Location (สถานที่เก็บ)</label>
+              <input
+                type="text"
+                value={storeLocation}
+                onChange={(e) => setStoreLocation(e.target.value)}
+                placeholder="e.g. ตู้ A ชั้น 2"
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>

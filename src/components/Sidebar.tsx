@@ -152,7 +152,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const sidebarContent = (
-    <div className="w-[280px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border-r border-slate-200/60 dark:border-slate-800/60 flex flex-col h-full shadow-2xl shadow-slate-200/20 dark:shadow-black/40 transition-colors">
+    <div className="w-[280px] bg-gradient-to-b from-white/95 to-slate-50/90 dark:from-slate-900/95 dark:to-slate-950/90 backdrop-blur-2xl border-r border-slate-200/60 dark:border-slate-800/60 flex flex-col h-full shadow-[4px_0_24px_rgba(0,0,0,0.06)] dark:shadow-[4px_0_24px_rgba(0,0,0,0.4)] transition-all z-20 relative">
       
       {/* 1. Brand Logo Header */}
       <div className="p-5 border-b border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between">
@@ -180,8 +180,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
           onClick={toggleRole}
           className={`p-2.5 rounded-2xl border cursor-pointer transition-all duration-300 flex items-center justify-between text-xs font-black shadow-sm hover:shadow-md ${
             userRole === 'OWNER'
-              ? 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/20 border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 hover:border-amber-400'
-              : 'bg-gradient-to-br from-slate-50 to-white dark:from-slate-800/50 dark:to-slate-900 border-slate-200 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 hover:border-slate-300'
+              ? 'bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-950/40 dark:to-orange-950/40 border-t border-amber-100 dark:border-t-amber-800 border-b border-amber-300 dark:border-b-amber-900 text-amber-900 dark:text-amber-300 hover:border-amber-400 shadow-[0_2px_10px_rgba(251,191,36,0.2)]'
+              : 'bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-800 dark:to-slate-900 border-t border-white dark:border-t-slate-700 border-b border-slate-300 dark:border-b-black text-slate-700 dark:text-slate-300 hover:border-slate-400 shadow-[0_2px_8px_rgba(0,0,0,0.05)]'
           }`}
           title="คลิกเพื่อสลับสิทธิ์ผู้ใช้งาน (Owner vs Engineer)"
         >
@@ -282,8 +282,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
               onClick={() => handleSelectTab(item.id)}
               className={`group w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-black transition-all duration-300 ${
                 isActive
-                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-rose-600/25 scale-[1.02]'
-                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-rose-600 dark:hover:text-rose-400 hover:translate-x-1'
+                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-[0_4px_12px_rgba(225,29,72,0.4)] scale-[1.03] border-t border-rose-400/50 border-b border-rose-800/80 z-10'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-white dark:hover:bg-slate-800/90 hover:text-rose-600 dark:hover:text-rose-400 hover:translate-x-1 hover:shadow-sm border border-transparent'
               }`}
             >
               <div className="flex items-center space-x-3 truncate">

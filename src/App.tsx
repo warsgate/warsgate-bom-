@@ -443,6 +443,37 @@ export function App() {
     );
   }
 
+  const handleSaveDailyNote = async (taskId: string, dateIso: string, note: string) => {
+    const task = projectMasterTasks.find(t => t.id === taskId);
+    if (!task) return;
+
+    const tasksToUpdate = [task];
+    if (!task.parentId) {
+      const subTasks = projectMasterTasks.filter(t => t.parentId === task.id);
+      tasksToUpdate.push(...subTasks);
+    }
+
+    const updatedTasksPayload = tasksToUpdate.map(t => {
+      const currentNotes = t.dailyNotes ? { ...t.dailyNotes } : {};
+      if (note.trim()) {
+        currentNotes[dateIso] = note.trim();
+      } else {
+        delete currentNotes[dateIso];
+      }
+      return { ...t, dailyNotes: currentNotes };
+    });
+
+    try {
+      const updatedBatch = await masterTasksApi.updateBatch(updatedTasksPayload);
+      setAllMasterTasks(prev => {
+        const map = new Map(updatedBatch.map((t: any) => [t.id, t]));
+        return prev.map(t => map.has(t.id) ? map.get(t.id) : t);
+      });
+    } catch (err) {
+      console.error('Failed to save daily note', err);
+    }
+  };
+
   return (
     <div className="flex h-screen print:h-auto overflow-hidden print:overflow-visible bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
       <Sidebar
@@ -509,6 +540,7 @@ export function App() {
               onOpenActualCompletionPopup={(t, d) => { setActualTask(t); setClickedDateIso(d); setIsActualModalOpen(true); }}
               onToggleCellActualDate={handleToggleCellActualDate}
               onUpdateCellRange={handleUpdateCellRange}
+              onSaveDailyNote={handleSaveDailyNote}
             />
           )}
 

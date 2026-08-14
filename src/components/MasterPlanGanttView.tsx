@@ -13,6 +13,7 @@ import {
 } from 'lucide-react';
 import { BomPartItem, MasterPlanTaskItem, ModuleItem, ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
+import { DailyNoteModal } from './DailyNoteModal';
 
 interface MasterPlanGanttViewProps {
   project?: ProjectItem;
@@ -27,6 +28,7 @@ interface MasterPlanGanttViewProps {
   onOpenActualCompletionPopup?: (task: MasterPlanTaskItem, clickedDateIso: string) => void;
   onToggleCellActualDate?: (task: MasterPlanTaskItem, dateIso: string) => void;
   onUpdateCellRange?: (task: MasterPlanTaskItem, isoDates: string[], isAdding: boolean) => void;
+  onSaveDailyNote?: (taskId: string, dateIso: string, note: string) => void;
 }
 
 // Helper to get global start and end dates
@@ -131,6 +133,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   onOpenActualCompletionPopup,
   onToggleCellActualDate,
   onUpdateCellRange,
+  onSaveDailyNote,
 }) => {
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>('ALL');
   const [timelineMode, setTimelineMode] = useState<'days' | 'weeks'>('days'); // 'days' | 'weeks'
@@ -140,6 +143,9 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   const [dragStartIso, setDragStartIso] = useState<string | null>(null);
   const [dragHoverIso, setDragHoverIso] = useState<string | null>(null);
   const [isErasing, setIsErasing] = useState<boolean>(false);
+
+  // Daily Note Modal State
+  const [activeNoteModal, setActiveNoteModal] = useState<{task: MasterPlanTaskItem, dateIso: string} | null>(null);
 
   // Calculate dynamic date range based on actual project tasks
   const dateRange = useMemo(() => getProjectDateRange(masterTasks), [masterTasks]);
@@ -329,6 +335,11 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
     }
   };
 
+  const handleCellContextMenu = (e: React.MouseEvent, task: MasterPlanTaskItem, colIso: string) => {
+    e.preventDefault();
+    setActiveNoteModal({ task, dateIso: colIso });
+  };
+
   return (
     <div className="space-y-4 select-none">
       
@@ -420,15 +431,15 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
         {/* Legend */}
         <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-center space-y-1.5">
-          <span className="text-[10px] text-slate-500 font-bold uppercase block">สัญลักษณ์ (Double-Click เปิด/ปิด Actual อิสระ):</span>
+          <span className="text-[10px] text-slate-500 font-bold uppercase block">สัญลักษณ์การใช้งาน:</span>
           <div className="flex items-center space-x-3 text-[11px] font-bold">
-            <div className="flex items-center space-x-1">
-              <span className="w-3 h-2 rounded bg-blue-600"></span>
-              <span className="text-blue-900 dark:text-blue-300">Plan (Fixed 🔒)</span>
-            </div>
-            <div className="flex items-center space-x-1">
+            <div className="flex items-center space-x-1" title="Double-Click เพื่อสลับสถานะ">
               <span className="w-3 h-2 rounded bg-emerald-500"></span>
-              <span className="text-emerald-900 dark:text-emerald-300">Actual (อิสระ 🟢)</span>
+              <span className="text-emerald-900 dark:text-emerald-300">Actual (Double-Click)</span>
+            </div>
+            <div className="flex items-center space-x-1" title="คลิกขวา เพื่อจดบันทึก">
+              <span>📝</span>
+              <span className="text-slate-600 dark:text-slate-400">Daily Note (Right-Click)</span>
             </div>
           </div>
         </div>
@@ -672,6 +683,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                             <td 
                               key={idx} 
                               onDoubleClick={() => handleCellDoubleClick(task, col.dateIso)}
+                              onContextMenu={(e) => handleCellContextMenu(e, task, col.dateIso)}
                               className={`p-0.5 border-r border-slate-200 dark:border-slate-800 text-center relative h-12 w-9 min-w-[36px] cursor-pointer transition-colors ${
                                 inDrag
                                   ? (isErasing ? 'bg-rose-200 dark:bg-rose-900/50' : 'bg-emerald-300 dark:bg-emerald-700')
@@ -679,7 +691,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                     ? 'bg-emerald-100/60 dark:bg-emerald-950/40' 
                                     : col.isWeekend ? 'bg-amber-50/30 dark:bg-amber-950/20' : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
                               }`}
-                              title={`Double-Click เพื่อสลับวันเสร็จจริง (Actual): ${col.dateIso}`}
+                              title={task.dailyNotes && task.dailyNotes[col.dateIso] ? `Note: ${task.dailyNotes[col.dateIso]}` : `คลิกขวาเพื่อบันทึก Note\nDouble-Click เพื่อสลับ Actual: ${col.dateIso}`}
                             >
                               <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
                                 <div className="h-2.5 w-full">
@@ -689,10 +701,15 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                 </div>
                                 <div className="h-2.5 w-full">
                                   {inActual && (
-                                    <div className={`h-full rounded-xs shadow-xs ${inDrag && isErasing ? 'bg-rose-400' : 'bg-emerald-500'}`} title="Actual (เสร็จแล้ว 🟢)"></div>
+                                    <div className={`h-full rounded-xs shadow-xs flex items-center justify-center ${inDrag && isErasing ? 'bg-rose-400' : 'bg-emerald-500'}`} title="Actual (เสร็จแล้ว 🟢)">
+                                      {task.dailyNotes && task.dailyNotes[col.dateIso] && <span className="text-[7px]">📝</span>}
+                                    </div>
                                   )}
                                   {!inActual && inDrag && !isErasing && (
                                     <div className="h-full bg-emerald-400/80 rounded-xs"></div>
+                                  )}
+                                  {!inActual && task.dailyNotes && task.dailyNotes[col.dateIso] && (
+                                    <div className="absolute top-1 right-0.5 text-[8px] opacity-70">📝</div>
                                   )}
                                 </div>
                               </div>
@@ -753,17 +770,28 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                 </td>
                 <td colSpan={timelineMode === 'days' ? 62 : 14} className="p-3 text-center">
                   <span className="text-emerald-400 font-mono text-[11px] font-bold">
-                    ✓ Cell Drag & Drop / Double-Click Actual Toggle Enabled
+                    ✓ Cell Double-Click Actual Toggle & Right-Click Notes Enabled
                   </span>
                 </td>
               </tr>
             </tfoot>
-
           </table>
         </div>
-
       </div>
 
+      {activeNoteModal && (
+        <DailyNoteModal 
+          task={activeNoteModal.task} 
+          dateIso={activeNoteModal.dateIso} 
+          onClose={() => setActiveNoteModal(null)} 
+          onSave={(taskId, dateIso, note) => {
+            if (onSaveDailyNote) {
+              onSaveDailyNote(taskId, dateIso, note);
+            }
+            setActiveNoteModal(null);
+          }} 
+        />
+      )}
     </div>
   );
 };

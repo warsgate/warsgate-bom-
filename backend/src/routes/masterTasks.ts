@@ -15,6 +15,7 @@ router.get('/', async (req: Request, res: Response) => {
     const parsed = tasks.map(t => ({
       ...t,
       actualDates: JSON.parse(t.actualDates || '[]'),
+      dailyNotes: JSON.parse(t.dailyNotes || '{}'),
     }));
     res.json(parsed);
   } catch (err) {
@@ -27,7 +28,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   try {
     const task = await prisma.masterTask.findUnique({ where: { id: req.params.id } });
     if (!task) return res.status(404).json({ error: 'Task not found' });
-    res.json({ ...task, actualDates: JSON.parse(task.actualDates || '[]') });
+    res.json({ ...task, actualDates: JSON.parse(task.actualDates || '[]'), dailyNotes: JSON.parse(task.dailyNotes || '{}') });
   } catch (err) {
     res.status(500).json({ error: 'Failed to fetch task' });
   }
@@ -36,11 +37,11 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST create task
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { actualDates, ...rest } = req.body;
+    const { actualDates, dailyNotes, ...rest } = req.body;
     const task = await prisma.masterTask.create({
-      data: { ...rest, actualDates: JSON.stringify(actualDates || []) },
+      data: { ...rest, actualDates: JSON.stringify(actualDates || []), dailyNotes: JSON.stringify(dailyNotes || {}) },
     });
-    res.status(201).json({ ...task, actualDates: JSON.parse(task.actualDates) });
+    res.status(201).json({ ...task, actualDates: JSON.parse(task.actualDates), dailyNotes: JSON.parse(task.dailyNotes) });
   } catch (err) {
     res.status(500).json({ error: 'Failed to create task' });
   }
@@ -56,15 +57,15 @@ router.put('/batch', async (req: Request, res: Response) => {
 
     const updatedTasks = await prisma.$transaction(
       tasksToUpdate.map(t => {
-        const { id, createdAt, updatedAt, project, actualDates, ...rest } = t;
+        const { id, createdAt, updatedAt, project, actualDates, dailyNotes, ...rest } = t;
         return prisma.masterTask.update({
           where: { id: t.id },
-          data: { ...rest, actualDates: JSON.stringify(actualDates || []) },
+          data: { ...rest, actualDates: JSON.stringify(actualDates || []), dailyNotes: JSON.stringify(dailyNotes || {}) },
         });
       })
     );
 
-    res.json(updatedTasks.map(t => ({ ...t, actualDates: JSON.parse(t.actualDates) })));
+    res.json(updatedTasks.map(t => ({ ...t, actualDates: JSON.parse(t.actualDates), dailyNotes: JSON.parse(t.dailyNotes) })));
   } catch (err) {
     res.status(500).json({ error: 'Failed to update tasks in batch' });
   }
@@ -73,12 +74,12 @@ router.put('/batch', async (req: Request, res: Response) => {
 // PUT update task
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id, createdAt, updatedAt, project, actualDates, ...rest } = req.body;
+    const { id, createdAt, updatedAt, project, actualDates, dailyNotes, ...rest } = req.body;
     const task = await prisma.masterTask.update({
       where: { id: req.params.id },
-      data: { ...rest, actualDates: JSON.stringify(actualDates || []) },
+      data: { ...rest, actualDates: JSON.stringify(actualDates || []), dailyNotes: JSON.stringify(dailyNotes || {}) },
     });
-    res.json({ ...task, actualDates: JSON.parse(task.actualDates) });
+    res.json({ ...task, actualDates: JSON.parse(task.actualDates), dailyNotes: JSON.parse(task.dailyNotes) });
   } catch (err) {
     res.status(500).json({ error: 'Failed to update task' });
   }

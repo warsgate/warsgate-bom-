@@ -99,6 +99,7 @@ model MasterTask {
   actualStartDate String  @default("")
   actualEndDate  String   @default("")
   actualDates    String   @default("[]")  // JSON array stored as string
+  dailyNotes     String   @default("{}")  // JSON object mapping date string to note string
   progressPct    Int      @default(0)
   status         String   @default("Pending")
   color          String   @default("bg-blue-600")

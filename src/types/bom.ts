@@ -119,6 +119,7 @@ export interface MasterPlanTaskItem {
   actualStartDate?: string; // YYYY-MM-DD
   actualEndDate?: string;   // YYYY-MM-DD
   actualDates?: string[];   // Array of discrete completion dates: ['2026-02-14', '2026-02-16']
+  dailyNotes?: Record<string, string>; // Map of Date Iso to Note
   progressPct: number;   // 0-100
   status: 'Completed' | 'In Progress' | 'Pending';
   color?: string;

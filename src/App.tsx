@@ -17,11 +17,12 @@ import { MasterTaskModal } from './components/MasterTaskModal';
 import { ActualCompletionModal } from './components/ActualCompletionModal';
 import { ExportImportModal } from './components/ExportImportModal';
 import { MasterPartLibrary } from './components/MasterPartLibrary';
+import { QuotationsView } from './components/QuotationsView';
 import { BomPartItem, MasterPlanTaskItem, ModuleItem, ProjectItem, PartStatus } from './types/bom';
 import { calculateProjectCostSummary } from './utils/costCalculator';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library'>('master-plan');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations'>('master-plan');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -376,6 +377,10 @@ export function App() {
               onUpdatePartStatus={handleUpdatePartStatus}
               onEditPart={(p) => { setEditingPart(p); setIsPartModalOpen(true); }}
             />
+          )}
+
+          {activeTab === 'quotations' && (
+            <QuotationsView projectId={activeProjectId} />
           )}
 
           {activeTab === 'report' && (

@@ -32,6 +32,19 @@ export interface ProjectItem {
   updatedAt: string;
 }
 
+export interface QuotationItem {
+  id: string;
+  projectId: string;
+  quotationNo: string;
+  supplier: string;
+  date?: string;
+  fileUrl?: string;
+  totalAmount: number;
+  remarks?: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
 export interface ModuleItem {
   id: string;
   projectId?: string;
@@ -82,6 +95,7 @@ export interface BomPartItem {
   unitPrice: number;
   totalAmount: number;
   poNumber?: string;
+  quotationId?: string;
   storeLocation?: string;
   orderDate?: string;
   receiveDate?: string;

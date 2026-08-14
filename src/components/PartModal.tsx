@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { X, Wrench, Zap, Save, GitCommit, Search, Database } from 'lucide-react';
-import { BomPartItem, CategoryType, MachineWorkflowStage, MasterPartItem, ModuleItem, PartCategoryType, PartStatus } from '../types/bom';
+import { BomPartItem, CategoryType, MachineWorkflowStage, MasterPartItem, ModuleItem, PartCategoryType, PartStatus, QuotationItem } from '../types/bom';
 import { PartLibraryModal } from './PartLibraryModal';
+import { quotationsApi } from '../api/client';
 
 interface PartModalProps {
   isOpen: boolean;
@@ -47,11 +48,24 @@ export const PartModal: React.FC<PartModalProps> = ({
   const [unitPrice, setUnitPrice] = useState(0);
   const [poNumber, setPoNumber] = useState('');
   const [storeLocation, setStoreLocation] = useState('');
+  const [quotationId, setQuotationId] = useState('');
   const [status, setStatus] = useState<PartStatus>('Planned');
   const [workflowStage, setWorkflowStage] = useState<MachineWorkflowStage>('2. BOM Part List');
   const [remarks, setRemarks] = useState('');
   
   const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+  const [quotations, setQuotations] = useState<QuotationItem[]>([]);
+
+  useEffect(() => {
+    if (isOpen && modules.length > 0) {
+      const projId = modules[0].projectId;
+      if (projId) {
+        quotationsApi.getAll(projId)
+          .then(res => setQuotations(res))
+          .catch(err => console.error(err));
+      }
+    }
+  }, [isOpen, modules]);
 
   const handleSelectMasterPart = (master: MasterPartItem) => {
     setPartName(master.partName);
@@ -80,6 +94,7 @@ export const PartModal: React.FC<PartModalProps> = ({
       setTargetUnitPrice(initialPart.targetUnitPrice || initialPart.unitPrice || 0);
       setUnitPrice(initialPart.unitPrice || 0);
       setPoNumber(initialPart.poNumber || '');
+      setQuotationId(initialPart.quotationId || '');
       setStoreLocation(initialPart.storeLocation || '');
       setStatus(initialPart.status || 'Planned');
       setWorkflowStage(initialPart.workflowStage || '2. BOM Part List');
@@ -99,6 +114,7 @@ export const PartModal: React.FC<PartModalProps> = ({
       setTargetUnitPrice(0);
       setUnitPrice(0);
       setPoNumber('');
+      setQuotationId('');
       setStoreLocation('');
       setStatus('Planned');
       setWorkflowStage('2. BOM Part List');
@@ -131,6 +147,7 @@ export const PartModal: React.FC<PartModalProps> = ({
       unitPrice: Number(unitPrice),
       totalAmount,
       poNumber,
+      quotationId: quotationId || undefined,
       storeLocation,
       status,
       workflowStage,
@@ -428,6 +445,25 @@ export const PartModal: React.FC<PartModalProps> = ({
               />
             </div>
 
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">อ้างอิงใบเสนอราคา (Quotation)</label>
+              <select
+                value={quotationId}
+                onChange={(e) => setQuotationId(e.target.value)}
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              >
+                <option value="">-- ไม่ระบุ --</option>
+                {quotations.map(q => (
+                  <option key={q.id} value={q.id}>
+                    {q.quotationNo} ({q.supplier})
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* Store Location */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Store Location (สถานที่เก็บ)</label>
               <input

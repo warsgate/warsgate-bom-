@@ -20,13 +20,14 @@ import {
   Calendar,
   Edit2,
   Trash2,
-  Library
+  Library,
+  FileText
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 
 interface SidebarProps {
-  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library';
-  setActiveTab: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library') => void;
+  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations';
+  setActiveTab: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations') => void;
   projects: ProjectItem[];
   activeProjectId: string;
   setActiveProjectId: (id: string) => void;
@@ -125,6 +126,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'master-library',
       label: 'คลังอะไหล่ (Master Data)',
       icon: Library,
+      badge: null,
+      isProtected: false,
+    },
+    {
+      id: 'quotations',
+      label: 'ใบเสนอราคา (Quotations)',
+      icon: FileText,
       badge: null,
       isProtected: false,
     },

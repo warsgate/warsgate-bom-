@@ -287,38 +287,110 @@ export function App() {
   };
 
   const handleToggleCellActualDate = async (task: MasterPlanTaskItem, dateIso: string) => {
-    const current = task.actualDates || [];
-    const updatedDates = current.includes(dateIso) ? current.filter(d => d !== dateIso) : [...current, dateIso].sort();
-    const updated = await masterTasksApi.update(task.id, {
-      actualDates: updatedDates,
-      actualStartDate: updatedDates[0] || '',
-      actualEndDate: updatedDates[updatedDates.length - 1] || '',
-      status: updatedDates.length > 0 ? 'In Progress' : 'Pending',
+    const isAdding = !(task.actualDates || []).includes(dateIso);
+    const tasksToUpdate = [task];
+
+    if (!task.parentId) {
+      const subTasks = projectMasterTasks.filter(t => t.parentId === task.id);
+      tasksToUpdate.push(...subTasks);
+    }
+
+    const updatedTasksPayload = tasksToUpdate.map(t => {
+      const current = t.actualDates || [];
+      const updatedDates = isAdding 
+        ? (current.includes(dateIso) ? current : [...current, dateIso].sort())
+        : current.filter(d => d !== dateIso);
+      
+      return {
+        ...t,
+        actualDates: updatedDates,
+        actualStartDate: updatedDates[0] || '',
+        actualEndDate: updatedDates[updatedDates.length - 1] || '',
+        status: updatedDates.length > 0 ? 'In Progress' : 'Pending',
+      };
     });
-    setAllMasterTasks(prev => prev.map(t => t.id === updated.id ? updated : t));
+
+    try {
+      const updatedBatch = await masterTasksApi.updateBatch(updatedTasksPayload);
+      setAllMasterTasks(prev => {
+        const map = new Map(updatedBatch.map((t: any) => [t.id, t]));
+        return prev.map(t => map.has(t.id) ? map.get(t.id) : t);
+      });
+    } catch (err) {
+      console.error('Failed to toggle actual date', err);
+    }
   };
 
   const handleUpdateCellRange = async (task: MasterPlanTaskItem, isoDates: string[], isAdding: boolean) => {
-    const current = new Set(task.actualDates || []);
-    isoDates.forEach(d => isAdding ? current.add(d) : current.delete(d));
-    const updatedDates = Array.from(current).sort();
-    const updated = await masterTasksApi.update(task.id, {
-      actualDates: updatedDates,
-      actualStartDate: updatedDates[0] || '',
-      actualEndDate: updatedDates[updatedDates.length - 1] || '',
-      status: updatedDates.length > 0 ? 'In Progress' : 'Pending',
+    const tasksToUpdate = [task];
+    if (!task.parentId) {
+      const subTasks = projectMasterTasks.filter(t => t.parentId === task.id);
+      tasksToUpdate.push(...subTasks);
+    }
+
+    const updatedTasksPayload = tasksToUpdate.map(t => {
+      const current = new Set(t.actualDates || []);
+      isoDates.forEach(d => isAdding ? current.add(d) : current.delete(d));
+      const updatedDates = Array.from(current).sort();
+      return {
+        ...t,
+        actualDates: updatedDates,
+        actualStartDate: updatedDates[0] || '',
+        actualEndDate: updatedDates[updatedDates.length - 1] || '',
+        status: updatedDates.length > 0 ? 'In Progress' : 'Pending',
+      };
     });
-    setAllMasterTasks(prev => prev.map(t => t.id === updated.id ? updated : t));
+
+    try {
+      const updatedBatch = await masterTasksApi.updateBatch(updatedTasksPayload);
+      setAllMasterTasks(prev => {
+        const map = new Map(updatedBatch.map((t: any) => [t.id, t]));
+        return prev.map(t => map.has(t.id) ? map.get(t.id) : t);
+      });
+    } catch (err) {}
   };
 
   const handleSaveActualCompletion = async (id: string, data: any) => {
-    const updated = await masterTasksApi.update(id, data);
-    setAllMasterTasks(prev => prev.map(t => t.id === updated.id ? updated : t));
+    const task = projectMasterTasks.find(t => t.id === id);
+    if (!task) return;
+
+    const tasksToUpdate = [{ ...task, ...data }];
+    if (!task.parentId) {
+      const subTasks = projectMasterTasks.filter(t => t.parentId === task.id);
+      subTasks.forEach(sub => {
+        // data contains actual dates and progress
+        tasksToUpdate.push({ ...sub, ...data });
+      });
+    }
+
+    try {
+      const updatedBatch = await masterTasksApi.updateBatch(tasksToUpdate);
+      setAllMasterTasks(prev => {
+        const map = new Map(updatedBatch.map((t: any) => [t.id, t]));
+        return prev.map(t => map.has(t.id) ? map.get(t.id) : t);
+      });
+    } catch (err) {}
   };
 
   const handleClearActualCompletion = async (id: string) => {
-    const updated = await masterTasksApi.update(id, { actualStartDate: '', actualEndDate: '', actualDates: [], progressPct: 0, status: 'Pending' });
-    setAllMasterTasks(prev => prev.map(t => t.id === updated.id ? updated : t));
+    const task = projectMasterTasks.find(t => t.id === id);
+    if (!task) return;
+
+    const clearData = { actualStartDate: '', actualEndDate: '', actualDates: [], progressPct: 0, status: 'Pending' };
+    const tasksToUpdate = [{ ...task, ...clearData }];
+    
+    if (!task.parentId) {
+      const subTasks = projectMasterTasks.filter(t => t.parentId === task.id);
+      subTasks.forEach(sub => tasksToUpdate.push({ ...sub, ...clearData }));
+    }
+
+    try {
+      const updatedBatch = await masterTasksApi.updateBatch(tasksToUpdate);
+      setAllMasterTasks(prev => {
+        const map = new Map(updatedBatch.map((t: any) => [t.id, t]));
+        return prev.map(t => map.has(t.id) ? map.get(t.id) : t);
+      });
+    } catch (err) {}
   };
 
   const handleDeleteMasterTask = async (id: string) => {

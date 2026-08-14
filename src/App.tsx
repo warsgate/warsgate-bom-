@@ -56,9 +56,9 @@ export function App() {
   }, [isDarkMode]);
 
   // ─── Load All Data from API ────────────────────────────────
-  const loadAll = useCallback(async () => {
+  const loadAll = useCallback(async (showLoading = true) => {
     try {
-      setIsLoading(true);
+      if (showLoading) setIsLoading(true);
       const [proj, mods, pts, tasks] = await Promise.all([
         projectsApi.getAll(),
         modulesApi.getAll(),
@@ -75,11 +75,20 @@ export function App() {
     } catch (err) {
       console.error('Failed to load data from API:', err);
     } finally {
-      setIsLoading(false);
+      if (showLoading) setIsLoading(false);
     }
-  }, []);
+  }, [activeProjectId]);
 
-  useEffect(() => { loadAll(); }, [loadAll]);
+  useEffect(() => { 
+    loadAll(true); 
+    
+    // Auto-refresh background polling every 5 seconds
+    const intervalId = setInterval(() => {
+      loadAll(false);
+    }, 5000);
+
+    return () => clearInterval(intervalId);
+  }, [loadAll]);
 
   const activeProject = projects.find(p => p.id === activeProjectId) || projects[0];
 

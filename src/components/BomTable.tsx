@@ -193,7 +193,7 @@ export const BomTable: React.FC<BomTableProps> = ({
                     <ArrowUpDown className="w-3 h-3 text-slate-400 print:hidden" />
                   </div>
                 </th>
-                <th className="p-2.5">SUPPLIER</th>
+                <th className="p-2.5 print:hidden">SUPPLIER</th>
                 <th className="p-2.5 text-center print:hidden">STATUS</th>
                 <th className="p-2.5 text-center print:hidden">ACTION</th>
               </tr>
@@ -250,7 +250,7 @@ export const BomTable: React.FC<BomTableProps> = ({
                       <td className="p-2.5 text-right font-mono font-black text-slate-900 dark:text-white print:hidden">
                         {formatCurrency(amount)}
                       </td>
-                      <td className="p-2.5 text-slate-800 dark:text-slate-200 font-bold text-[11px]">
+                      <td className="p-2.5 text-slate-800 dark:text-slate-200 font-bold text-[11px] print:hidden">
                         {part.supplier || part.maker || '-'}
                       </td>
                       <td className="p-2.5 text-center print:hidden">

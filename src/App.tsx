@@ -21,7 +21,7 @@ import { BomPartItem, MasterPlanTaskItem, ModuleItem, ProjectItem, PartStatus } 
 import { calculateProjectCostSummary } from './utils/costCalculator';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report'>('master-plan');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library'>('master-plan');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);

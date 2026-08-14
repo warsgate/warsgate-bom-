@@ -319,7 +319,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         </div>
 
         {/* Data Table */}
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-black border-b border-slate-200 dark:border-slate-800">

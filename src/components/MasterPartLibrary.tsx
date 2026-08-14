@@ -170,7 +170,7 @@ export const MasterPartLibrary: React.FC = () => {
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
+        <div className="overflow-x-auto max-h-[calc(100vh-220px)] overflow-y-auto">
           <table className="w-full text-left text-xs whitespace-nowrap">
             <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800">
               <tr>

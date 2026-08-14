@@ -165,7 +165,7 @@ export const BomTable: React.FC<BomTableProps> = ({
 
       {/* Main Scrollable Data Table Container */}
       <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
-        <div className="max-h-[580px] overflow-y-auto">
+        <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-black">
               <tr>

@@ -263,7 +263,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
         </div>
 
         {/* Data Table */}
-        <div className="max-h-[520px] overflow-y-auto">
+        <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-black border-b border-slate-200 dark:border-slate-800">
               <tr>

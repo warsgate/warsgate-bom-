@@ -52,6 +52,7 @@ export const masterTasksApi = {
   getOne: (id: string) => request<any>(`/master-tasks/${id}`),
   create: (data: any) => request<any>('/master-tasks', { method: 'POST', body: JSON.stringify(data) }),
   update: (id: string, data: any) => request<any>(`/master-tasks/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  updateBatch: (tasks: any[]) => request<any[]>('/master-tasks/batch', { method: 'PUT', body: JSON.stringify({ tasks }) }),
   delete: (id: string) => request<any>(`/master-tasks/${id}`, { method: 'DELETE' }),
 };
 

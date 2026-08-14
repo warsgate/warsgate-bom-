@@ -175,14 +175,110 @@ export function App() {
   };
 
   // ─── Master Task CRUD ─────────────────────────────────────
+  const [pendingShiftedTasks, setPendingShiftedTasks] = useState<MasterPlanTaskItem[]>([]);
+
   const handleSaveMasterTask = async (data: Partial<MasterPlanTaskItem>) => {
+    let savedTask: MasterPlanTaskItem;
     if (data.id) {
-      const updated = await masterTasksApi.update(data.id, data);
-      setAllMasterTasks(prev => prev.map(t => t.id === updated.id ? updated : t));
+      savedTask = await masterTasksApi.update(data.id, data);
+      setAllMasterTasks(prev => prev.map(t => t.id === savedTask.id ? savedTask : t));
     } else {
-      const created = await masterTasksApi.create({ ...data, projectId: activeProjectId, status: data.status || 'Pending' });
-      setAllMasterTasks(prev => [...prev, created]);
+      savedTask = await masterTasksApi.create({ ...data, projectId: activeProjectId, status: data.status || 'Pending' });
+      setAllMasterTasks(prev => [...prev, savedTask]);
     }
+
+    // Apply any pending shifted tasks (auto WBS shifting)
+    if (pendingShiftedTasks.length > 0) {
+      try {
+        const updatedBatch = await masterTasksApi.updateBatch(pendingShiftedTasks);
+        setAllMasterTasks(prev => {
+          const map = new Map(updatedBatch.map((t: any) => [t.id, t]));
+          return prev.map(t => map.has(t.id) ? map.get(t.id) : t);
+        });
+      } catch (err) {
+        console.error("Failed to apply WBS shift batch update", err);
+      }
+      setPendingShiftedTasks([]);
+    }
+  };
+
+  const handleInsertTask = (baseTask: MasterPlanTaskItem, mode: 'below' | 'sub') => {
+    let newWbs = '';
+    let newParentId: string | undefined = undefined;
+    const shiftedTasks: MasterPlanTaskItem[] = [];
+
+    // Basic numerical wbs check
+    const isNum = (str: string) => !isNaN(Number(str));
+
+    if (mode === 'sub') {
+      // Add Sub Task under a Main Task
+      newParentId = baseTask.id;
+      const subTasks = projectMasterTasks.filter(t => t.parentId === baseTask.id);
+      if (subTasks.length > 0) {
+        const lastSub = subTasks[subTasks.length - 1];
+        const parts = lastSub.wbs.split('.');
+        if (parts.length >= 2 && isNum(parts[1])) {
+          newWbs = `${parts[0]}.${Number(parts[1]) + 1}`;
+        } else {
+          newWbs = `${baseTask.wbs}.1`;
+        }
+      } else {
+        newWbs = `${baseTask.wbs}.1`;
+      }
+    } else if (mode === 'below') {
+      // Insert Below
+      newParentId = baseTask.parentId;
+      const parts = baseTask.wbs.split('.');
+      
+      if (!baseTask.parentId) {
+        // Main Task
+        if (parts.length > 0 && isNum(parts[0])) {
+          const baseNum = Number(parts[0]);
+          newWbs = `${baseNum + 1}.0`;
+          
+          // Shift all Main Tasks >= baseNum + 1
+          projectMasterTasks.forEach(t => {
+            const tParts = t.wbs.split('.');
+            if (tParts.length > 0 && isNum(tParts[0])) {
+              const tNum = Number(tParts[0]);
+              if (tNum >= baseNum + 1) {
+                const shiftedWbs = `${tNum + 1}${tParts.slice(1).length > 0 ? '.' + tParts.slice(1).join('.') : ''}`;
+                shiftedTasks.push({ ...t, wbs: shiftedWbs });
+              }
+            }
+          });
+        }
+      } else {
+        // Sub Task
+        if (parts.length >= 2 && isNum(parts[1])) {
+          const baseSubNum = Number(parts[1]);
+          newWbs = `${parts[0]}.${baseSubNum + 1}`;
+          
+          // Shift all Sub Tasks in the SAME parent >= baseSubNum + 1
+          projectMasterTasks.filter(t => t.parentId === baseTask.parentId).forEach(t => {
+            const tParts = t.wbs.split('.');
+            if (tParts.length >= 2 && isNum(tParts[1])) {
+              const tSubNum = Number(tParts[1]);
+              if (tSubNum >= baseSubNum + 1) {
+                const shiftedWbs = `${tParts[0]}.${tSubNum + 1}`;
+                shiftedTasks.push({ ...t, wbs: shiftedWbs });
+              }
+            }
+          });
+        }
+      }
+    }
+
+    setPendingShiftedTasks(shiftedTasks);
+    setEditingMasterTask({
+      wbs: newWbs || '',
+      parentId: newParentId,
+      stageName: baseTask.stageName, // copy stage
+      title: '',
+      planStartDate: baseTask.planStartDate,
+      planEndDate: baseTask.planEndDate,
+    } as any);
+    setIsMasterTaskModalOpen(true);
   };
 
   const handleUpdateTaskDates = async (id: string, dates: any) => {
@@ -325,9 +421,18 @@ export function App() {
               modules={projectModules}
               parts={projectParts}
               masterTasks={projectMasterTasks}
-              onOpenAddTask={() => { setEditingMasterTask(null); setIsMasterTaskModalOpen(true); }}
-              onOpenEditTask={(t) => { setEditingMasterTask(t); setIsMasterTaskModalOpen(true); }}
+              onOpenAddTask={() => {
+                setEditingMasterTask(null);
+                setPendingShiftedTasks([]);
+                setIsMasterTaskModalOpen(true);
+              }}
+              onOpenEditTask={(t) => {
+                setEditingMasterTask(t);
+                setPendingShiftedTasks([]);
+                setIsMasterTaskModalOpen(true);
+              }}
               onDeleteTask={handleDeleteMasterTask}
+              onInsertTask={handleInsertTask}
               onUpdateTaskDates={handleUpdateTaskDates}
               onOpenActualCompletionPopup={(t, d) => { setActualTask(t); setClickedDateIso(d); setIsActualModalOpen(true); }}
               onToggleCellActualDate={handleToggleCellActualDate}

@@ -22,6 +22,7 @@ interface MasterPlanGanttViewProps {
   onOpenAddTask: () => void;
   onOpenEditTask: (task: MasterPlanTaskItem) => void;
   onDeleteTask: (taskId: string) => void;
+  onInsertTask?: (baseTask: MasterPlanTaskItem, mode: 'below' | 'sub') => void;
   onUpdateTaskDates?: (taskId: string, dates: { planStartDate?: string; planEndDate?: string; actualStartDate?: string; actualEndDate?: string; actualDates?: string[]; status?: 'Pending' | 'In Progress' | 'Completed' }) => void;
   onOpenActualCompletionPopup?: (task: MasterPlanTaskItem, clickedDateIso: string) => void;
   onToggleCellActualDate?: (task: MasterPlanTaskItem, dateIso: string) => void;
@@ -125,6 +126,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   onOpenAddTask,
   onOpenEditTask,
   onDeleteTask,
+  onInsertTask,
   onUpdateTaskDates,
   onOpenActualCompletionPopup,
   onToggleCellActualDate,
@@ -621,7 +623,27 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
                       {/* Action (Edit / Delete) */}
                       <td className="p-2 border-r border-slate-200 dark:border-slate-800 text-center print:hidden">
-                        <div className="flex items-center justify-center space-x-1">
+                        <div className="flex flex-wrap items-center justify-center gap-1">
+                          {onInsertTask && (
+                            <>
+                              <button
+                                onClick={() => onInsertTask(task, 'below')}
+                                className="px-1.5 py-1 text-[9px] font-bold text-slate-500 hover:text-emerald-600 bg-slate-100 dark:bg-slate-800 rounded flex items-center"
+                                title="แทรกงานด้านล่าง"
+                              >
+                                <Plus className="w-2.5 h-2.5 mr-0.5" /> ล่าง
+                              </button>
+                              {!isSub && (
+                                <button
+                                  onClick={() => onInsertTask(task, 'sub')}
+                                  className="px-1.5 py-1 text-[9px] font-bold text-slate-500 hover:text-blue-600 bg-slate-100 dark:bg-slate-800 rounded flex items-center"
+                                  title="เพิ่มงานย่อย"
+                                >
+                                  <Plus className="w-2.5 h-2.5 mr-0.5" /> ย่อย
+                                </button>
+                              )}
+                            </>
+                          )}
                           <button
                             onClick={() => onOpenEditTask(task)}
                             className="p-1 text-slate-500 hover:text-blue-600 bg-slate-100 dark:bg-slate-800 rounded"

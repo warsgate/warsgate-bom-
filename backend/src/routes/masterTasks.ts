@@ -46,6 +46,30 @@ router.post('/', async (req: Request, res: Response) => {
   }
 });
 
+// PUT update task batch
+router.put('/batch', async (req: Request, res: Response) => {
+  try {
+    const tasksToUpdate: any[] = req.body.tasks;
+    if (!tasksToUpdate || !Array.isArray(tasksToUpdate)) {
+      return res.status(400).json({ error: 'Invalid payload' });
+    }
+
+    const updatedTasks = await prisma.$transaction(
+      tasksToUpdate.map(t => {
+        const { id, createdAt, updatedAt, project, actualDates, ...rest } = t;
+        return prisma.masterTask.update({
+          where: { id: t.id },
+          data: { ...rest, actualDates: JSON.stringify(actualDates || []) },
+        });
+      })
+    );
+
+    res.json(updatedTasks.map(t => ({ ...t, actualDates: JSON.parse(t.actualDates) })));
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to update tasks in batch' });
+  }
+});
+
 // PUT update task
 router.put('/:id', async (req: Request, res: Response) => {
   try {

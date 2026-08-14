@@ -43,30 +43,27 @@ app.use((_req, res) => {
 import { PrismaClient } from '@prisma/client';
 import fs from 'fs';
 import path from 'path';
+import pdfParts from './pdf_parts.json';
 
 const prisma = new PrismaClient();
 
 // ─── Auto-import PDF Parts ─────────────────────────────────────
 async function importPdfParts() {
   try {
-    const filePath = path.join(__dirname, 'pdf_parts.json');
-    if (fs.existsSync(filePath)) {
-      const data = fs.readFileSync(filePath, 'utf-8');
-      const items = JSON.parse(data);
-      let inserted = 0;
-      for (const item of items) {
-        // Basic check if part exists
-        const exists = await prisma.masterPart.findFirst({
-          where: { partName: item.partName, typeSpec: item.typeSpec }
-        });
-        if (!exists) {
-          await prisma.masterPart.create({ data: item });
-          inserted++;
-        }
+    const items = pdfParts;
+    let inserted = 0;
+    for (const item of items) {
+      // Basic check if part exists
+      const exists = await prisma.masterPart.findFirst({
+        where: { partName: item.partName, typeSpec: item.typeSpec }
+      });
+      if (!exists) {
+        await prisma.masterPart.create({ data: item });
+        inserted++;
       }
-      if (inserted > 0) {
-        console.log(`✅ Auto-imported ${inserted} master parts from PDF`);
-      }
+    }
+    if (inserted > 0) {
+      console.log(`✅ Auto-imported ${inserted} master parts from PDF`);
     }
   } catch (err) {
     console.error('Failed to auto-import PDF parts', err);

@@ -133,7 +133,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   onUpdateCellRange,
 }) => {
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>('ALL');
-  const [timelineMode, setTimelineMode] = useState<'days' | 'weeks'>('weeks'); // 'days' | 'weeks'
+  const [timelineMode, setTimelineMode] = useState<'days' | 'weeks'>('days'); // 'days' | 'weeks'
 
   // Drag State for painting/erasing Actual dates
   const [dragTask, setDragTask] = useState<MasterPlanTaskItem | null>(null);

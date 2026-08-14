@@ -1,0 +1,1865 @@
+[
+  {
+    "partName": "PLC CPU UNIT",
+    "typeSpec": "Q03UDVCPU",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 25000
+  },
+  {
+    "partName": "PLC BASE",
+    "typeSpec": "Q312B",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 6952
+  },
+  {
+    "partName": "PLC POWER SUPPLY UNIT",
+    "typeSpec": "Q61P",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 3011.03
+  },
+  {
+    "partName": "PLC INPUT EXPENSION UNIT 32 POINTS",
+    "typeSpec": "QX41",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 4200
+  },
+  {
+    "partName": "PLC OUTPUT EXPENSION UNIT 32 POINTS",
+    "typeSpec": "QY41P",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 4220
+  },
+  {
+    "partName": "I/O CABLE",
+    "typeSpec": "FA-CBL10FMV",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 1170
+  },
+  {
+    "partName": "I/O TERMINAL BLOCK",
+    "typeSpec": "FA-TB32XY",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 1525
+  },
+  {
+    "partName": "DC SINK INPUT MODULE, 64 POINTS",
+    "typeSpec": "QX42",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 8520
+  },
+  {
+    "partName": "OUTPUT TRANSISTOR SINK 64 POINTS",
+    "typeSpec": "QY42P",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 8520
+  },
+  {
+    "partName": "TERMINAL REMOTE OUTPUT",
+    "typeSpec": "NZ2GF2B1N1-16T",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 7000
+  },
+  {
+    "partName": "TERMINAL REMOTE INPUT",
+    "typeSpec": "NZ2GF2B1N1-16D",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 7001
+  },
+  {
+    "partName": "MAIN ELCB LV516303 63A CVS100B MCCB",
+    "typeSpec": "3P",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 4419
+  },
+  {
+    "partName": "COVER MAIN ELCB",
+    "typeSpec": "LOCAL",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 180
+  },
+  {
+    "partName": "CIRCUIT BREAKER Acti9 iC60N IC60N 6KA A9F74206 2P, 6",
+    "typeSpec": "A",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 576
+  },
+  {
+    "partName": "CIRCUIT PROTECTION A9F74216 2P, 16",
+    "typeSpec": "A",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 1100
+  },
+  {
+    "partName": "CIRCUIT PROTECTION A9F74210 3P, 6",
+    "typeSpec": "A",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 800
+  },
+  {
+    "partName": "POWER SUPPLY 24VDC 480W",
+    "typeSpec": "S8VK-5A",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "OMRON",
+    "unitPrice": 5000
+  },
+  {
+    "partName": "NOISE FILTER",
+    "typeSpec": "MAF-1210-33",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LAMDA",
+    "unitPrice": 570
+  },
+  {
+    "partName": "RELAY PACK G6B-47BND",
+    "typeSpec": "DC24V",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 800
+  },
+  {
+    "partName": "RELAY MY2ZN-D2 ,",
+    "typeSpec": "DC24V",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "OMRON",
+    "unitPrice": 378
+  },
+  {
+    "partName": "SOCKET RELAY",
+    "typeSpec": "PYF08A-E",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "OMRON",
+    "unitPrice": 45
+  },
+  {
+    "partName": "RELAY MY4ZN-D2 ,",
+    "typeSpec": "DC24V",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "OMRON",
+    "unitPrice": 394
+  },
+  {
+    "partName": "SOCKET RELAY",
+    "typeSpec": "PYF14A-E",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "OMRON",
+    "unitPrice": 55
+  },
+  {
+    "partName": "SINGLE TERMINAL",
+    "typeSpec": "VTX-4/2",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "TOGI",
+    "unitPrice": 33
+  },
+  {
+    "partName": "END PLATE (R) SINGLE TERMINAL",
+    "typeSpec": "VTX-4/2E",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "TOGI",
+    "unitPrice": 17
+  },
+  {
+    "partName": "END PLATE (L) SINGLE TERMINAL",
+    "typeSpec": "VTX-4/2E",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "TOGI",
+    "unitPrice": 17
+  },
+  {
+    "partName": "SHORT BAR",
+    "typeSpec": "BBX4-5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "TOGI",
+    "unitPrice": 30
+  },
+  {
+    "partName": "SEVICE PLUG",
+    "typeSpec": "S-50",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SOKAWA",
+    "unitPrice": 200
+  },
+  {
+    "partName": "TOWER LAMP",
+    "typeSpec": "XVGB3SM",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 2500
+  },
+  {
+    "partName": "CLOSING BOX",
+    "typeSpec": "KSE-220",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MISUMI",
+    "unitPrice": 1115
+  },
+  {
+    "partName": "POWER PLUG 16A MALE (WALL MOUNT) POWERPLUG",
+    "typeSpec": "32A",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "DAKO",
+    "unitPrice": 250
+  },
+  {
+    "partName": "POWER PLUG 16A FEMALE (PLUG) POWERPLUG",
+    "typeSpec": "32A",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "DAKO",
+    "unitPrice": 250
+  },
+  {
+    "partName": "FILTER FAN",
+    "typeSpec": "PMV25C.01220",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "PRIMUS",
+    "unitPrice": 1200
+  },
+  {
+    "partName": "LAMP POWER (R) 220 VAC XB7EV04MP -",
+    "typeSpec": "W",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 100
+  },
+  {
+    "partName": "LAMP POWER (S) 220 VAC XB7EV04MP -",
+    "typeSpec": "W",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 100
+  },
+  {
+    "partName": "LAMP POWER (T) 220 VAC XB7EV04MP -",
+    "typeSpec": "W",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 100
+  },
+  {
+    "partName": "TRANFERMER IN 240 VAC TO 24 VDC IN 240 VAC TO 24",
+    "typeSpec": "VDC",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "ESTEL",
+    "unitPrice": 2000
+  },
+  {
+    "partName": "MAIN CONTROL BOX (MDB)",
+    "typeSpec": "LOCAL",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 22500
+  },
+  {
+    "partName": "INVERTER FC302 3P 380VAC 1.5KW",
+    "typeSpec": "AC10",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "PARKER",
+    "unitPrice": 22000
+  },
+  {
+    "partName": "MAGNETIC CONTACTOR",
+    "typeSpec": "LP1K1210BD",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 1200
+  },
+  {
+    "partName": "MAIN CONTROL BOX (MDB)",
+    "typeSpec": "DM-090",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 25000
+  },
+  {
+    "partName": "BACKER MOTOR CIRCUIT BREAKER NF30-CS 15A",
+    "typeSpec": "MCCB",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 350
+  },
+  {
+    "partName": "FILTER FAN ZL-803 (ขนาด 150x150",
+    "typeSpec": "mm.)",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "PRIMUS",
+    "unitPrice": 2500
+  },
+  {
+    "partName": "POWERMETER",
+    "typeSpec": "PM2230",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 6500
+  },
+  {
+    "partName": "AC DRIVER SERVO",
+    "typeSpec": "MR-J4-20GF-RJ",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MITSUBISHI",
+    "unitPrice": 25000
+  },
+  {
+    "partName": "Dynamic Brake Resistor, 65 Ohms, 100 Watts IRV 100 65R FL500",
+    "typeSpec": "J",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "1",
+    "maker": "EA",
+    "unitPrice": 0
+  },
+  {
+    "partName": "TOUCH SCREEN NB10W-TW01B",
+    "typeSpec": "10.1\"",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "OMRON",
+    "unitPrice": 27000
+  },
+  {
+    "partName": "KS. OPERATION OFF-ON (GREEN)",
+    "typeSpec": "XB2BD25C",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 83
+  },
+  {
+    "partName": "PBL. MASTER ON (GREEN)",
+    "typeSpec": "XA2EA31-W",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 350
+  },
+  {
+    "partName": "PB. RESET (BLUE)",
+    "typeSpec": "XA2EA31-R",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 350
+  },
+  {
+    "partName": "PB. START (GREEN)",
+    "typeSpec": "XA2EA31-G",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 350
+  },
+  {
+    "partName": "PB. STOP (YELLOW)",
+    "typeSpec": "XA2EA31-Y",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 350
+  },
+  {
+    "partName": "PB. EMERGENCY STOP (2 NC)",
+    "typeSpec": "XA2ES542",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 250
+  },
+  {
+    "partName": "NAMP PLATE EMERGENCY DIA. 22 mm.",
+    "typeSpec": "LOCAL",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 45
+  },
+  {
+    "partName": "CABLE GLAND (BLACK)",
+    "typeSpec": "PG21",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 25
+  },
+  {
+    "partName": "LAMP POWER (R) 220 VAC XB7EV04MP -",
+    "typeSpec": "W",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "SCHNEIDER",
+    "unitPrice": 100
+  },
+  {
+    "partName": "TOWER LIGHT TL40-300/",
+    "typeSpec": "TL40-3B0",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "PRIMUS",
+    "unitPrice": 2527
+  },
+  {
+    "partName": "DB9 FEMALE DB9",
+    "typeSpec": "FEMALE",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 15
+  },
+  {
+    "partName": "DB9 MALE DB9",
+    "typeSpec": "MALE",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 15
+  },
+  {
+    "partName": "DB9 COVER DB9",
+    "typeSpec": "COVER",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 15
+  },
+  {
+    "partName": "NAMP PLATE",
+    "typeSpec": "LOCAL",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 50
+  },
+  {
+    "partName": "BOX PANEL",
+    "typeSpec": "LOCAL",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 6500
+  },
+  {
+    "partName": "JUNCTION BOX (10P) TIBOX",
+    "typeSpec": "TJ-20P-S",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "TIBOX",
+    "unitPrice": 4500
+  },
+  {
+    "partName": "CABLE GLAND (BLACK)",
+    "typeSpec": "PG21",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 25
+  },
+  {
+    "partName": "FLAG CABLE 20",
+    "typeSpec": "mm",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "LOCAL",
+    "unitPrice": 10
+  },
+  {
+    "partName": "CONNECTOR FLAG 20",
+    "typeSpec": "mm",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 50
+  },
+  {
+    "partName": "FLAG CABLE กันน้ำ 20",
+    "typeSpec": "mm",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 18
+  },
+  {
+    "partName": "SLIP (สีใส)",
+    "typeSpec": "TMV-B0.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "NICHIFU",
+    "unitPrice": 4.3
+  },
+  {
+    "partName": "SLIP TERMINAL",
+    "typeSpec": "MTRCE-1",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MISUMI",
+    "unitPrice": 1.9
+  },
+  {
+    "partName": "หางปลาเปลือยกลม เบอร์ 2.5 - 5 R",
+    "typeSpec": "2.5-5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1
+  },
+  {
+    "partName": "หางปลาเปลือยแฉกเบอร์ 1.5-3S Y",
+    "typeSpec": "1.5-3S",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1
+  },
+  {
+    "partName": "DIN RAIL DIN 35",
+    "typeSpec": "mm",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 45
+  },
+  {
+    "partName": "WIRING DUCT 60 X 60",
+    "typeSpec": "WD-6060-4",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "BANDEX",
+    "unitPrice": 268
+  },
+  {
+    "partName": "WIRING DUCT 33 X 65",
+    "typeSpec": "WD-3365-4",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "BANDEC",
+    "unitPrice": 216
+  },
+  {
+    "partName": "CABLE TIES 4 \" (WHITE)",
+    "typeSpec": "CT100-2C2",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 24
+  },
+  {
+    "partName": "CABLE TIES 8 \" (WHITE)",
+    "typeSpec": "CT200-3C",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 99
+  },
+  {
+    "partName": "SLIP (สีใส)",
+    "typeSpec": "TMV-B0.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "NICHIFU",
+    "unitPrice": 4.3
+  },
+  {
+    "partName": "SLIP TERMINAL",
+    "typeSpec": "MTRCE-1",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MISUMI",
+    "unitPrice": 1.9
+  },
+  {
+    "partName": "CLAMP LOCK",
+    "typeSpec": "TM-2",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1.7
+  },
+  {
+    "partName": "แคลมป์รัดสายไฟที่มีแผ่นยูรีเทน",
+    "typeSpec": "KMP-150",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MISUMI",
+    "unitPrice": 1000
+  },
+  {
+    "partName": "CABLE GRAND",
+    "typeSpec": "PG32",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MISUMI",
+    "unitPrice": 30
+  },
+  {
+    "partName": "หางปลาเปลือยกลม เบอร์ R6-6 Y",
+    "typeSpec": "6-6",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1.91
+  },
+  {
+    "partName": "หางปลากลม 35 SQ.MM R",
+    "typeSpec": "35-10",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "TPLUG",
+    "unitPrice": 11
+  },
+  {
+    "partName": "หางปลากลม 4 SQ.MM",
+    "typeSpec": "R4-4",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "TPLUG",
+    "unitPrice": 3
+  },
+  {
+    "partName": "หางปลากลม 2.5 SQ.MM",
+    "typeSpec": "R2.5-2.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "TPLUG",
+    "unitPrice": 2.5
+  },
+  {
+    "partName": "หางปลากลม 0.5 SQ.MM",
+    "typeSpec": "R0.5-0.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "TPLUG",
+    "unitPrice": 2
+  },
+  {
+    "partName": "CONNECT",
+    "typeSpec": "LAN",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "BAG",
+    "maker": "LOCAL",
+    "unitPrice": 500
+  },
+  {
+    "partName": "สายแลน CAT5E UTP",
+    "typeSpec": "CAT5E",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "ROLL",
+    "maker": "LINK",
+    "unitPrice": 5000
+  },
+  {
+    "partName": "POWER CORE 6 SQ.MM VCT-G_4C x",
+    "typeSpec": "6/6Sqmm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "YAZAKI",
+    "unitPrice": 230
+  },
+  {
+    "partName": "POWER CORE 4 SQ.MM VCT-G_4C x",
+    "typeSpec": "4/4Sqmm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "YAZAKI",
+    "unitPrice": 185
+  },
+  {
+    "partName": "POWER CORE 2.5 SQ.MM VCT-G_4C x",
+    "typeSpec": "2.5/2.5Sqmm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "YAZAKI",
+    "unitPrice": 180
+  },
+  {
+    "partName": "POWER CABLE (BLACK) H07V-K 2.5 SQ.mm.",
+    "typeSpec": "(BLACK)",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 28
+  },
+  {
+    "partName": "POWER CABLE (RED) H07V-K4 SQ.mm.",
+    "typeSpec": "(RED)",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 35
+  },
+  {
+    "partName": "GROUND CABLE (G/Y) H07V-K 2.5 SQ.mm.",
+    "typeSpec": "(G/Y)",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 28
+  },
+  {
+    "partName": "POWER MOTOR CORE VCT-G_4C x",
+    "typeSpec": "4/4Sqmm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "YAZAKI",
+    "unitPrice": 185
+  },
+  {
+    "partName": "I/O CORE (21 CORE) LIYY 21 X 0.25",
+    "typeSpec": "SQ.mm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 80
+  },
+  {
+    "partName": "WIRE CABLE 1 X 0.5 WH H05V-K1X0.5",
+    "typeSpec": "SQ.mm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 8
+  },
+  {
+    "partName": "WIRE CABLE 1 X 0.5 BK H05V-K1X0.5",
+    "typeSpec": "SQ.mm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 8
+  },
+  {
+    "partName": "WIRE CABLE 1 X 0.5 LBU H05V-K1X0.5",
+    "typeSpec": "SQ.mm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 8
+  },
+  {
+    "partName": "WIRE CABLE 1 X 0.5 OG H05V-K1X0.5",
+    "typeSpec": "SQ.mm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 8
+  },
+  {
+    "partName": "SIGNAL CORE (4 CORE) LIYY 4 X 0.25",
+    "typeSpec": "SQ.mm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 30
+  },
+  {
+    "partName": "SIGNAL CORE (4 CORE) LIYY 4 X 0.5",
+    "typeSpec": "SQ.mm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 30
+  },
+  {
+    "partName": "SIGNAL CORE (10 CORE) LIYY 10 X 0.25",
+    "typeSpec": "SQ.mm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 50
+  },
+  {
+    "partName": "SCREW TRUSS M4*8 (เหล็กชุบ SINK) TRUSS",
+    "typeSpec": "4X8",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 0.9
+  },
+  {
+    "partName": "DIN RAIL DIN 35",
+    "typeSpec": "mm",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 45
+  },
+  {
+    "partName": "WIRING DUCT 60 X 60",
+    "typeSpec": "WD-6060-4",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "BANDEX",
+    "unitPrice": 115
+  },
+  {
+    "partName": "WIRING DUCT 33 X 65",
+    "typeSpec": "WD-3365-4",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "BANDEC",
+    "unitPrice": 190
+  },
+  {
+    "partName": "CABLE TIES 4 \" (WHITE)",
+    "typeSpec": "CT100-2C2",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 9
+  },
+  {
+    "partName": "CABLE TIES 8 \" (WHITE)",
+    "typeSpec": "CT200-3C",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 26
+  },
+  {
+    "partName": "SLIP (สีใส)",
+    "typeSpec": "TMV-B0.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "NICHIFU",
+    "unitPrice": 4.3
+  },
+  {
+    "partName": "SLIP TERMINAL",
+    "typeSpec": "MTRCE-1",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MISUMI",
+    "unitPrice": 1.9
+  },
+  {
+    "partName": "หางปลาเปลือยกลม เบอร์ 2.5 - 5 R",
+    "typeSpec": "2.5-5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1
+  },
+  {
+    "partName": "หางปลาเปลือยแฉกเบอร์ 1.5-3S Y",
+    "typeSpec": "1.5-3S",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1
+  },
+  {
+    "partName": "CLAMP LOCK",
+    "typeSpec": "TM-2",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1.7
+  },
+  {
+    "partName": "CONNECTOR 12 PIN FEMALE PANEL MOUNT",
+    "typeSpec": "NJC-20-12-RF",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MISUMI",
+    "unitPrice": 216.44
+  },
+  {
+    "partName": "CONNECTOR 12 PIN MALE PLUG",
+    "typeSpec": "NJC-20-12-PM",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MISUMI",
+    "unitPrice": 381.44
+  },
+  {
+    "partName": "I/O CORE (12 CORE) LIYY 12 X 0.25",
+    "typeSpec": "SQ.mm.",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "m.",
+    "maker": "LAPP",
+    "unitPrice": 65
+  },
+  {
+    "partName": "BOX CONNECTOR",
+    "typeSpec": "DRAWING",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "SHEET",
+    "maker": "MAXWELL",
+    "unitPrice": 2000
+  },
+  {
+    "partName": "BUTTON HEAD CAP SCREW M4X12 B.H.C.S",
+    "typeSpec": "M4X12",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 3
+  },
+  {
+    "partName": "BUTTON HEAD CAP SCREW M6X6 B.H.C.S",
+    "typeSpec": "M6X6",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 3
+  },
+  {
+    "partName": "CABLE GLAND (BLACK)",
+    "typeSpec": "PG13.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 20
+  },
+  {
+    "partName": "LIFTER",
+    "typeSpec": "JK-430",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "MISUMI",
+    "unitPrice": 8
+  },
+  {
+    "partName": "CLAMP LOCK",
+    "typeSpec": "CABLE",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 20
+  },
+  {
+    "partName": "ท่ออ่อนกันน้ำ FLEX สีเทา",
+    "typeSpec": "1/2\"",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "ROLL",
+    "maker": "LOCAL",
+    "unitPrice": 3000
+  },
+  {
+    "partName": "CONNECT FLEX",
+    "typeSpec": "1/2\"",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 20
+  },
+  {
+    "partName": "PT10-TWIN 1-IN 2-OUT สายไฟ 10 MM PT",
+    "typeSpec": "10-TW",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 6.5
+  },
+  {
+    "partName": "Pttb2.5 Double Level Terminal สีเทา PTTB 2.5",
+    "typeSpec": "สีเทา",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 20
+  },
+  {
+    "partName": "Pttb2.5 Double Level Terminal สีฟ้า PTTB 2.5",
+    "typeSpec": "สีฟ้า",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 20
+  },
+  {
+    "partName": "Pttb2.5 Double Level Terminal สีส้ม PTTB 2.5",
+    "typeSpec": "สีส้ม",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 20
+  },
+  {
+    "partName": "Pttb2.5 Double Level Terminal Ground PTTB",
+    "typeSpec": "2.5-PE",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 52
+  },
+  {
+    "partName": "Pttb2.5 Double Level Terminal จัมเปอร์ในตัว สีเทา PTTB 2.5-PV",
+    "typeSpec": "สีเทา",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 29
+  },
+  {
+    "partName": "Pttb2.5 Double Level Terminal จัมเปอร์ในตัว สีฟ้า PTTB 2.5-PV",
+    "typeSpec": "สีฟ้า",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 29
+  },
+  {
+    "partName": "Pttb2.5 Double Level Terminal จัมเปอร์ในตัว สีส้ม PTTB 2.5-PV",
+    "typeSpec": "สีส้ม",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 29
+  },
+  {
+    "partName": "ฝาปิดท้าย D-PTTB",
+    "typeSpec": "2.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 11
+  },
+  {
+    "partName": "จั๊มเปอร์",
+    "typeSpec": "FBS10-5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 19
+  },
+  {
+    "partName": "มาร์กเกอร์เปล่า",
+    "typeSpec": "ZBFM5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 48
+  },
+  {
+    "partName": "Pt2.5 Push-in Din Rail Siggle สีเทา PT 2.5",
+    "typeSpec": "สีเทา",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 7
+  },
+  {
+    "partName": "Pt2.5 Push-in Din Rail Siggle สีฟ้า PT 2.5",
+    "typeSpec": "สีฟ้า",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 7
+  },
+  {
+    "partName": "Pt2.5 Push-in Din Rail Siggle สีส้ม PT 2.5",
+    "typeSpec": "สีส้ม",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 7
+  },
+  {
+    "partName": "Pt2.5 Push-in Din Rail Siggle สีเหลือง PT 2.5",
+    "typeSpec": "สีเหลือง",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 7
+  },
+  {
+    "partName": "Pt2.5 Push-in Din Rail Siggle สีเขียว PT 2.5",
+    "typeSpec": "สีเขียว",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 7
+  },
+  {
+    "partName": "Pt2.5 Push-in Din Rail Siggle Beige PT 2.5",
+    "typeSpec": "Beige",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 7
+  },
+  {
+    "partName": "Pt2.5 Push-in Din Rail Siggle Ground G-PT",
+    "typeSpec": "2.5-PE",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 20
+  },
+  {
+    "partName": "ฝาปิดท้าย D-ST1.5/",
+    "typeSpec": "2.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 6
+  },
+  {
+    "partName": "มาร์กเกอร์เปล่า",
+    "typeSpec": "ZB5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 186
+  },
+  {
+    "partName": "รีเลย์ Din Rail Terminal Block (Push-in) + Relay BPT",
+    "typeSpec": "1.5-RELAY-24V",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 129
+  },
+  {
+    "partName": "รีเลย์ Din Rail Terminal Block (สปริง) + Relay TRP",
+    "typeSpec": "1.5-RELAY-24V",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 129
+  },
+  {
+    "partName": "รีเลย์ Din Rail Terminal Block (สปริง) + Relay TRS",
+    "typeSpec": "1.5-RELAY-24V",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 129
+  },
+  {
+    "partName": "จั๊มเปอร์ BTT",
+    "typeSpec": "1.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 19
+  },
+  {
+    "partName": "Din Rail Distribution Block Terminal Multi Output",
+    "typeSpec": "PTFIX6/18X2.5",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 157
+  },
+  {
+    "partName": "ขาล็อคราง Multi Output PTFIX2.5-NS35A",
+    "typeSpec": "(10psc)",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 44
+  },
+  {
+    "partName": "ขาล็อคราง Multi Output PTFIX2.5-NS15A",
+    "typeSpec": "(10psc)",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 44
+  },
+  {
+    "partName": "ขาล็อคราง Multi Output PTFIX2.5-NS35",
+    "typeSpec": "(10psc)",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 103
+  },
+  {
+    "partName": "สกรูฟิวส์ Terminal Block Din Rail Uk5-hesi LED-24V",
+    "typeSpec": "สีเทา",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 34
+  },
+  {
+    "partName": "สกรูฟิวส์ Terminal Block Din Rail Uk5-hesi LED-220V",
+    "typeSpec": "สีเทา",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 34
+  },
+  {
+    "partName": "ไฟฟ้า Crimping คีมชุดเครื่องมือ",
+    "typeSpec": "WKC8",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 425
+  },
+  {
+    "partName": "Heavy Duty Connector WHE WHE HDC-HE",
+    "typeSpec": "6",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "WKDO",
+    "unitPrice": 1200
+  },
+  {
+    "partName": "ท่อเหล็กรุ่นบาง",
+    "typeSpec": "ท่อเหล็กรุ่นบาง",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "LOCAL",
+    "unitPrice": 49
+  },
+  {
+    "partName": "ท่อเหล็กรุ่นหนา",
+    "typeSpec": "ท่อเหล็กรุ่นหนา",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "LOCAL",
+    "unitPrice": 50
+  },
+  {
+    "partName": "ท่อเหล็กโค้งรุ่นบาง",
+    "typeSpec": "ท่อเหล็กโค้งรุ่นบาง",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 13
+  },
+  {
+    "partName": "ท่อเหล็กโค้งรุ่นหนา",
+    "typeSpec": "ท่อเหล็กโค้งรุ่นหนา",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 25
+  },
+  {
+    "partName": "แคล้มจับท่อขาเดี่ยว",
+    "typeSpec": "แคล้มจับท่อขาเดี่ยว",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 13
+  },
+  {
+    "partName": "แคล้มจับท่อขาคู่",
+    "typeSpec": "แคล้มจับท่อขาคู่",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 30
+  },
+  {
+    "partName": "คอนแน็คเตอร์ท่อบาง",
+    "typeSpec": "คอนแน็คเตอร์ท่อบาง",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 35
+  },
+  {
+    "partName": "ข้อต่อบาง",
+    "typeSpec": "คอนแน็คเตอร์ท่อหนา",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 35
+  },
+  {
+    "partName": "คอนแน็คเตอร์ท่ออ่อน",
+    "typeSpec": "คอนแน็คเตอร์ท่ออ่อน",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 35
+  },
+  {
+    "partName": "ข้อต่อหนา",
+    "typeSpec": "ข้อต่อหนา",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 15
+  },
+  {
+    "partName": "คอนแน็คเตอร์ท่ออ่อนรุ่นพิเศษ",
+    "typeSpec": "คอนแน็คเตอร์ท่ออ่อนรุ่นพิเศษ",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 65
+  },
+  {
+    "partName": "เอ็น เอ็น เตอร์ท่อบาง เอ็น เอ็น",
+    "typeSpec": "เตอร์ท่อบาง",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 39
+  },
+  {
+    "partName": "อีริคสันคุปปิ้ง",
+    "typeSpec": "อีริคสันคุปปิ้ง",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 24
+  },
+  {
+    "partName": "บุชชิ่ง",
+    "typeSpec": "บุชชิ่ง",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 14
+  },
+  {
+    "partName": "ล็อคนัท",
+    "typeSpec": "ล็อคนัท",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 17
+  },
+  {
+    "partName": "เกรียวลด",
+    "typeSpec": "เกรียวลด",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 25
+  },
+  {
+    "partName": "ท่อหนาช่วงสั้น",
+    "typeSpec": "ท่อหนาช่วงสั้น",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 22
+  },
+  {
+    "partName": "แหวนลด",
+    "typeSpec": "แหวนลด",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 22
+  },
+  {
+    "partName": "คอนแน็คเตอร์ท่อบางกันน้ำ",
+    "typeSpec": "คอนแน็คเตอร์ท่อบางกันน้ำ",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 35
+  },
+  {
+    "partName": "ข้อต่อบางกันน้ำ",
+    "typeSpec": "ข้อต่อบางกันน้ำ",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 22
+  },
+  {
+    "partName": "คอนแน็คเตอร์ข้ออ่อนกันน้ำ",
+    "typeSpec": "คอนแน็คเตอร์ข้ออ่อนกันน้ำ",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 45
+  },
+  {
+    "partName": "คอนแน็คเตอร์ข้ออ่อนกันน้ำ 45 \" คอนแน็คเตอร์ข้ออ่อนกันน้ำ 45",
+    "typeSpec": "\"",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 76
+  },
+  {
+    "partName": "คอนแน็คเตอร์ข้ออ่อนกันน้ำ 90 \" คอนแน็คเตอร์ข้ออ่อนกันน้ำ 90",
+    "typeSpec": "\"",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 44
+  },
+  {
+    "partName": "ท่ออ่อนเหล็ก",
+    "typeSpec": "ท่ออ่อนเหล็ก",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 19
+  },
+  {
+    "partName": "ท่ออ่อนกันน้ำ",
+    "typeSpec": "ท่ออ่อนกันน้ำ",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 23
+  },
+  {
+    "partName": "ท่ออ่อนกันน้ำสีดำ",
+    "typeSpec": "ท่ออ่อนกันน้ำสีดำ",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 55
+  },
+  {
+    "partName": "คอนแน็คเตอร์ข้ออ่อนกันน้ำวสีดำ",
+    "typeSpec": "คอนแน็คเตอร์ข้ออ่อนกันน้ำวสีดำ",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 55
+  },
+  {
+    "partName": "ฮับคอนแน็คเตอร์กันน้ำ",
+    "typeSpec": "ฮับคอนแน็คเตอร์กันน้ำ",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 43
+  },
+  {
+    "partName": "CABLE TRAY SMOOTH SIDE",
+    "typeSpec": "600x100x2400",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "LOCAL",
+    "unitPrice": 1083.33
+  },
+  {
+    "partName": "VERTICAL INSIDE",
+    "typeSpec": "600x100x505",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 900
+  },
+  {
+    "partName": "VERTICAL OUTSIDE",
+    "typeSpec": "600x100x506",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 900
+  },
+  {
+    "partName": "HORIZONTAL ELBOW 90",
+    "typeSpec": "600x100x1000",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1300
+  },
+  {
+    "partName": "HORIZONTAL TEE",
+    "typeSpec": "600x100x1400",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1500
+  },
+  {
+    "partName": "HORIZONTAL CROSS",
+    "typeSpec": "600x100x1400",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1700
+  },
+  {
+    "partName": "END CAP",
+    "typeSpec": "600",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 270
+  },
+  {
+    "partName": "BRACKETS",
+    "typeSpec": "SUPPORT",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 510
+  },
+  {
+    "partName": "U-CHANNEL",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 310
+  },
+  {
+    "partName": "CONNECTOR",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 100
+  },
+  {
+    "partName": "ARTICULATED",
+    "typeSpec": "RISER",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 360
+  },
+  {
+    "partName": "MIDDLE",
+    "typeSpec": "SUPPORT",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 504
+  },
+  {
+    "partName": "J-LOCK",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 82
+  },
+  {
+    "partName": "SIDE",
+    "typeSpec": "SUPPORT",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 75
+  },
+  {
+    "partName": "CABLE TRAY",
+    "typeSpec": "COVER",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1400
+  },
+  {
+    "partName": "VERTRICAL INSIDE",
+    "typeSpec": "COVER",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 850
+  },
+  {
+    "partName": "VERTRICAL OUTSIDE",
+    "typeSpec": "COVER",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 820
+  },
+  {
+    "partName": "HORIZONTAL ELBOW 90",
+    "typeSpec": "COVER",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1300
+  },
+  {
+    "partName": "HORIZONTALTEE",
+    "typeSpec": "COVER",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1400
+  },
+  {
+    "partName": "HORIZONTALCROSS",
+    "typeSpec": "COVER",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1800
+  },
+  {
+    "partName": "CONDUIT",
+    "typeSpec": "1\"",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 210
+  },
+  {
+    "partName": "EMT CONDUIT BENDER",
+    "typeSpec": "3/4\"",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "LOCAL",
+    "unitPrice": 1500
+  }
+]

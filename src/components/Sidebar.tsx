@@ -152,13 +152,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
   };
 
   const sidebarContent = (
-    <div className="w-64 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 flex flex-col h-full shadow-lg transition-colors">
+    <div className="w-[280px] bg-white/80 dark:bg-slate-900/80 backdrop-blur-2xl border-r border-slate-200/60 dark:border-slate-800/60 flex flex-col h-full shadow-2xl shadow-slate-200/20 dark:shadow-black/40 transition-colors">
       
       {/* 1. Brand Logo Header */}
-      <div className="p-4 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-white dark:bg-slate-900">
+      <div className="p-5 border-b border-slate-200/60 dark:border-slate-800/60 flex items-center justify-between">
         <div className="flex flex-col items-start w-full">
-          <img src="/logo.png" alt="WARSGATE AUTOMATION" className="h-8 object-contain mb-1 drop-shadow-sm" />
-          <p className="text-[9px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-widest pl-1">
+          <img src="/logo.png" alt="WARSGATE AUTOMATION" className="h-8 object-contain mb-1.5 drop-shadow-md" />
+          <p className="text-[10px] text-slate-500 dark:text-slate-400 font-black uppercase tracking-[0.2em] pl-1 bg-clip-text text-transparent bg-gradient-to-r from-slate-600 to-slate-400 dark:from-slate-300 dark:to-slate-500">
             Multi-Project BOM System
           </p>
         </div>
@@ -175,80 +175,87 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* 2. User Role Switcher Badge */}
-      <div className="px-3 pt-3">
+      <div className="px-4 pt-5 pb-2">
         <div 
           onClick={toggleRole}
-          className={`p-2 rounded-xl border cursor-pointer transition-all flex items-center justify-between text-xs font-black ${
+          className={`p-2.5 rounded-2xl border cursor-pointer transition-all duration-300 flex items-center justify-between text-xs font-black shadow-sm hover:shadow-md ${
             userRole === 'OWNER'
-              ? 'bg-amber-50 dark:bg-amber-950/40 border-amber-300 dark:border-amber-800 text-amber-900 dark:text-amber-300'
-              : 'bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-300'
+              ? 'bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/40 dark:to-orange-950/20 border-amber-200 dark:border-amber-800/60 text-amber-900 dark:text-amber-300 hover:border-amber-400'
+              : 'bg-gradient-to-br from-slate-50 to-white dark:from-slate-800/50 dark:to-slate-900 border-slate-200 dark:border-slate-700/60 text-slate-700 dark:text-slate-300 hover:border-slate-300'
           }`}
           title="คลิกเพื่อสลับสิทธิ์ผู้ใช้งาน (Owner vs Engineer)"
         >
-          <div className="flex items-center space-x-1.5 truncate">
-            {userRole === 'OWNER' ? (
-              <ShieldCheck className="w-4 h-4 text-amber-600 flex-shrink-0" />
-            ) : (
-              <UserCheck className="w-4 h-4 text-blue-600 flex-shrink-0" />
-            )}
-            <span className="truncate">
-              {userRole === 'OWNER' ? '👑 ผู้บริหาร / เจ้าของ' : '👷 วิศวกร / ทีมงาน'}
+          <div className="flex items-center space-x-2 truncate">
+            <div className={`p-1.5 rounded-xl ${userRole === 'OWNER' ? 'bg-amber-100 dark:bg-amber-900/50' : 'bg-slate-200 dark:bg-slate-700'}`}>
+              {userRole === 'OWNER' ? (
+                <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
+              ) : (
+                <UserCheck className="w-4 h-4 text-slate-600 dark:text-slate-300 flex-shrink-0" />
+              )}
+            </div>
+            <span className="truncate tracking-wide">
+              {userRole === 'OWNER' ? 'ผู้บริหาร / เจ้าของ' : 'วิศวกร / ทีมงาน'}
             </span>
           </div>
 
-          <span className="text-[9px] underline text-slate-500 font-bold flex-shrink-0">
+          <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-lg ${userRole === 'OWNER' ? 'bg-amber-200/50 text-amber-800 dark:text-amber-200' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
             สลับสิทธิ์
           </span>
         </div>
       </div>
 
-      {/* 3. Active Project Selector Card */}
-      <div className="p-3 mx-3 my-2.5 bg-red-50/80 dark:bg-slate-950 rounded-xl border border-red-200 dark:border-slate-800 space-y-2">
-        <div className="flex items-center justify-between">
-          <span className="text-[10px] font-black text-red-700 dark:text-red-400 uppercase tracking-wider flex items-center">
-            <FolderKanban className="w-3 h-3 mr-1" /> Active Project
+      {/* 3. Project Selector */}
+      <div className="px-4 pb-4 border-b border-slate-200/60 dark:border-slate-800/60">
+        <div className="flex items-center justify-between mb-2 mt-2">
+          <span className="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest flex items-center">
+            <FolderKanban className="w-3.5 h-3.5 mr-1.5" /> Workspace
           </span>
           <button
             onClick={() => {
               onOpenAddProject();
               if (onCloseMobile) onCloseMobile();
             }}
-            className="px-2 py-0.5 bg-red-600 hover:bg-red-500 text-white rounded text-[10px] font-black transition-all shadow-sm flex items-center"
+            className="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-600 dark:hover:text-white rounded-lg text-[10px] font-black transition-all duration-200 flex items-center"
             title="สร้างโปรเจกต์ใหม่"
           >
-            <FolderPlus className="w-3 h-3 mr-0.5" />
-            + เพิ่ม
+            <FolderPlus className="w-3 h-3 mr-1" />
+            เพิ่ม
           </button>
         </div>
 
-        <select
-          value={activeProjectId}
-          onChange={(e) => setActiveProjectId(e.target.value)}
-          className="w-full bg-white dark:bg-slate-900 text-xs font-black text-slate-900 dark:text-white border border-slate-300 dark:border-slate-800 rounded-lg p-1.5 focus:outline-none focus:ring-1 focus:ring-red-500 cursor-pointer"
-        >
-          {projects.map(p => (
-            <option key={p.id} value={p.id} className="bg-white dark:bg-slate-900 text-slate-900 dark:text-white font-bold">
-              [{p.code}] {p.name}
-            </option>
-          ))}
-        </select>
+        <div className="relative group">
+          <select
+            value={activeProjectId}
+            onChange={(e) => setActiveProjectId(e.target.value)}
+            className="w-full appearance-none bg-slate-50 dark:bg-slate-800/50 text-xs font-black text-slate-900 dark:text-white border border-slate-200 dark:border-slate-700/80 rounded-xl p-2.5 pr-8 focus:outline-none focus:ring-2 focus:ring-rose-500/50 cursor-pointer transition-colors hover:border-slate-300 dark:hover:border-slate-600"
+          >
+            {projects.map(p => (
+              <option key={p.id} value={p.id} className="font-bold">
+                [{p.code}] {p.name}
+              </option>
+            ))}
+          </select>
+          <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-slate-500">
+            <svg className="fill-current h-4 w-4" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z"/></svg>
+          </div>
+        </div>
 
         {activeProject && (
-          <div className="flex items-center justify-between mt-1">
-            <div className="text-[10px] text-slate-600 dark:text-slate-400 font-bold truncate">
-              ลูกค้า: <span className="text-slate-900 dark:text-slate-200 font-extrabold">{activeProject.customer}</span>
+          <div className="flex items-center justify-between mt-3 bg-slate-50 dark:bg-slate-800/30 p-2.5 rounded-xl border border-slate-100 dark:border-slate-800">
+            <div className="text-[10px] text-slate-500 dark:text-slate-400 font-bold truncate">
+              ลูกค้า: <span className="text-slate-800 dark:text-slate-200 font-black">{activeProject.customer}</span>
             </div>
             <div className="flex items-center space-x-1.5 flex-shrink-0 ml-2">
               <button
                 onClick={() => onEditProject(activeProject)}
-                className="p-1 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700 shadow-sm transition-colors"
+                className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 transition-colors"
                 title="แก้ไขข้อมูลโปรเจกต์"
               >
-                <Edit2 className="w-3 h-3" />
+                <Edit2 className="w-3.5 h-3.5" />
               </button>
               <button
                 onClick={() => onDeleteProject(activeProject.id)}
-                className="p-1 text-slate-400 hover:text-red-600 dark:hover:text-red-400 bg-white dark:bg-slate-900 rounded border border-slate-200 dark:border-slate-700 shadow-sm transition-colors"
+                className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 transition-colors"
                 title="ลบโปรเจกต์"
               >
                 <Trash2 className="w-3 h-3" />
@@ -259,9 +266,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
       </div>
 
       {/* 4. Main Navigation Menu */}
-      <nav className="flex-1 px-3 space-y-1 overflow-y-auto">
-        <div className="text-[10px] font-black text-slate-400 dark:text-slate-500 uppercase tracking-wider px-3 py-1">
-          NAVIGATION MENU
+      <nav className="flex-1 px-4 py-4 space-y-1.5 overflow-y-auto overflow-x-hidden no-scrollbar">
+        <div className="text-[10px] font-black text-slate-400/80 dark:text-slate-500/80 uppercase tracking-[0.2em] px-2 py-1 mb-2">
+          Menu
         </div>
 
         {navItems.map((item) => {
@@ -273,24 +280,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <button
               key={item.id}
               onClick={() => handleSelectTab(item.id)}
-              className={`w-full flex items-center justify-between px-3 py-2.5 rounded-xl text-xs font-black transition-all ${
+              className={`group w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-black transition-all duration-300 ${
                 isActive
-                  ? 'bg-gradient-to-r from-red-600 to-rose-700 text-white shadow-md shadow-red-600/30'
-                  : 'text-slate-700 dark:text-slate-300 hover:bg-red-50 dark:hover:bg-slate-800 hover:text-red-600'
+                  ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-lg shadow-rose-600/25 scale-[1.02]'
+                  : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100/80 dark:hover:bg-slate-800/80 hover:text-rose-600 dark:hover:text-rose-400 hover:translate-x-1'
               }`}
             >
-              <div className="flex items-center space-x-2.5 truncate">
-                <Icon className={`w-4 h-4 flex-shrink-0 ${isActive ? 'text-white' : 'text-slate-500 dark:text-slate-400'}`} />
-                <span className="truncate">{item.label}</span>
+              <div className="flex items-center space-x-3 truncate">
+                <Icon className={`w-4 h-4 flex-shrink-0 transition-transform duration-300 ${isActive ? 'text-white' : 'text-slate-400 group-hover:scale-110 group-hover:text-rose-500'}`} />
+                <span className="truncate tracking-wide">{item.label}</span>
               </div>
 
               {isLocked ? (
-                <span className="px-1.5 py-0.5 rounded text-[9px] bg-red-100 dark:bg-red-950 text-red-700 dark:text-red-400 font-bold flex items-center">
-                  <Lock className="w-3 h-3 mr-0.5" /> เฉพาะผู้บริหาร
+                <span className="px-1.5 py-0.5 rounded-md text-[9px] bg-red-100/80 dark:bg-red-950/80 text-red-700 dark:text-red-400 font-bold flex items-center backdrop-blur-sm">
+                  <Lock className="w-3 h-3 mr-0.5" /> Owner Only
                 </span>
               ) : item.badge !== null ? (
-                <span className={`px-2 py-0.5 rounded-full text-[10px] font-mono font-bold ${
-                  isActive ? 'bg-white/20 text-white' : 'bg-slate-200 dark:bg-slate-800 text-slate-900 dark:text-slate-100'
+                <span className={`px-2 py-0.5 rounded-lg text-[10px] font-mono font-black shadow-sm transition-colors ${
+                  isActive ? 'bg-white/25 text-white' : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-600 group-hover:border-rose-200 dark:group-hover:border-rose-900/50'
                 }`}>
                   {item.badge}
                 </span>

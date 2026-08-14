@@ -62,4 +62,5 @@ export const masterPartsApi = {
   create: (data: any) => request<any>('/master-parts', { method: 'POST', body: JSON.stringify(data) }),
   update: (id: string, data: any) => request<any>(`/master-parts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => request<any>(`/master-parts/${id}`, { method: 'DELETE' }),
+  sync: () => request<any>('/master-parts/sync', { method: 'POST' }),
 };

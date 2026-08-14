@@ -45,6 +45,55 @@ router.put('/:id', async (req: Request, res: Response) => {
   }
 });
 
+// POST sync from existing BOM parts
+router.post('/sync', async (req: Request, res: Response) => {
+  try {
+    // ดึง Part ทั้งหมดจาก BOM ปัจจุบัน
+    const existingParts = await prisma.part.findMany({
+      select: {
+        partName: true,
+        typeSpec: true,
+        category: true,
+        partType: true,
+        unit: true,
+        maker: true,
+        supplier: true,
+        unitPrice: true,
+        storeLocation: true,
+      }
+    });
+
+    // กรองเอาเฉพาะที่ไม่ซ้ำ (อิงจาก partName + typeSpec)
+    const uniquePartsMap = new Map();
+    existingParts.forEach(p => {
+      const key = `${p.partName}-${p.typeSpec}`;
+      if (!uniquePartsMap.has(key)) {
+        uniquePartsMap.set(key, p);
+      }
+    });
+
+    // ดึง MasterPart ที่มีอยู่แล้วเพื่อกันไม่ให้เพิ่มซ้ำ
+    const currentMasters = await prisma.masterPart.findMany();
+    const currentMasterKeys = new Set(currentMasters.map(m => `${m.partName}-${m.typeSpec}`));
+
+    // คัดกรองตัวที่จะเพิ่มใหม่
+    const partsToInsert = Array.from(uniquePartsMap.values()).filter(p => {
+      return !currentMasterKeys.has(`${p.partName}-${p.typeSpec}`);
+    });
+
+    if (partsToInsert.length > 0) {
+      await prisma.masterPart.createMany({
+        data: partsToInsert
+      });
+    }
+
+    res.json({ success: true, count: partsToInsert.length });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to sync master parts' });
+  }
+});
+
 // DELETE master part
 router.delete('/:id', async (req: Request, res: Response) => {
   try {

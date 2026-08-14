@@ -79,48 +79,51 @@ export const PartModal: React.FC<PartModalProps> = ({
   };
 
   useEffect(() => {
-    if (initialPart) {
-      setDwgNo(initialPart.dwgNo || '');
-      setItemNo(initialPart.itemNo || 1);
-      setPartName(initialPart.partName || '');
-      setTypeSpec(initialPart.typeSpec || '');
-      setCategory(initialPart.category || 'MC');
-      setPartType(initialPart.partType || 'Standard Part');
-      setModuleId(initialPart.moduleId || modules[0]?.id || '');
-      setQty(initialPart.qty || 1);
-      setUnit(initialPart.unit || 'EA');
-      setMaker(initialPart.maker || '');
-      setSupplier(initialPart.supplier || '');
-      setTargetUnitPrice(initialPart.targetUnitPrice || initialPart.unitPrice || 0);
-      setUnitPrice(initialPart.unitPrice || 0);
-      setPoNumber(initialPart.poNumber || '');
-      setQuotationId(initialPart.quotationId || '');
-      setStoreLocation(initialPart.storeLocation || '');
-      setStatus(initialPart.status || 'Planned');
-      setWorkflowStage(initialPart.workflowStage || '2. BOM Part List');
-      setRemarks(initialPart.remarks || '');
-    } else {
-      setDwgNo('073007-000-000-A');
-      setItemNo(Date.now() % 1000);
-      setPartName('');
-      setTypeSpec('');
-      setCategory('MC');
-      setPartType('Standard Part');
-      setModuleId(defaultModuleId || modules[0]?.id || '');
-      setQty(1);
-      setUnit('EA');
-      setMaker('');
-      setSupplier('');
-      setTargetUnitPrice(0);
-      setUnitPrice(0);
-      setPoNumber('');
-      setQuotationId('');
-      setStoreLocation('');
-      setStatus('Planned');
-      setWorkflowStage('2. BOM Part List');
-      setRemarks('');
+    if (isOpen) {
+      if (initialPart) {
+        setDwgNo(initialPart.dwgNo || '');
+        setItemNo(initialPart.itemNo || 1);
+        setPartName(initialPart.partName || '');
+        setTypeSpec(initialPart.typeSpec || '');
+        setCategory(initialPart.category || 'MC');
+        setPartType(initialPart.partType || 'Standard Part');
+        setModuleId(initialPart.moduleId || defaultModuleId || modules[0]?.id || '');
+        setQty(initialPart.qty || 1);
+        setUnit(initialPart.unit || 'EA');
+        setMaker(initialPart.maker || '');
+        setSupplier(initialPart.supplier || '');
+        setTargetUnitPrice(initialPart.targetUnitPrice || initialPart.unitPrice || 0);
+        setUnitPrice(initialPart.unitPrice || 0);
+        setPoNumber(initialPart.poNumber || '');
+        setQuotationId(initialPart.quotationId || '');
+        setStoreLocation(initialPart.storeLocation || '');
+        setStatus(initialPart.status || 'Planned');
+        setWorkflowStage(initialPart.workflowStage || '2. BOM Part List');
+        setRemarks(initialPart.remarks || '');
+      } else {
+        setDwgNo('073007-000-000-A');
+        setItemNo(Date.now() % 1000);
+        setPartName('');
+        setTypeSpec('');
+        setCategory('MC');
+        setPartType('Standard Part');
+        setModuleId(defaultModuleId || modules[0]?.id || '');
+        setQty(1);
+        setUnit('EA');
+        setMaker('');
+        setSupplier('');
+        setTargetUnitPrice(0);
+        setUnitPrice(0);
+        setPoNumber('');
+        setQuotationId('');
+        setStoreLocation('');
+        setStatus('Planned');
+        setWorkflowStage('2. BOM Part List');
+        setRemarks('');
+      }
     }
-  }, [initialPart, isOpen, modules, defaultModuleId]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isOpen, initialPart]);
 
   if (!isOpen) return null;
 

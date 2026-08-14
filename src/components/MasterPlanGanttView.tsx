@@ -28,22 +28,54 @@ interface MasterPlanGanttViewProps {
   onUpdateCellRange?: (task: MasterPlanTaskItem, isoDates: string[], isAdding: boolean) => void;
 }
 
-// Generate continuous daily columns (60 days from 2026-02-01)
-const generateDailyColumns = () => {
-  const cols = [];
-  const start = new Date(2026, 1, 1); // 1 Feb 2026
-  const thaiMonths = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
-  const thaiDays = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+// Helper to get global start and end dates
+export const getProjectDateRange = (tasks: MasterPlanTaskItem[]) => {
+  let minDate = new Date();
+  let maxDate = new Date();
+  
+  if (tasks.length > 0) {
+    const allDates = tasks.flatMap(t => [
+      t.planStartDate, t.planEndDate, 
+      t.actualStartDate, t.actualEndDate, 
+      ...(t.actualDates || [])
+    ]).filter(Boolean) as string[];
+    
+    if (allDates.length > 0) {
+      allDates.sort();
+      minDate = new Date(allDates[0]);
+      maxDate = new Date(allDates[allDates.length - 1]);
+    }
+  }
+  
+  // Start at 1st of the min month
+  const start = new Date(minDate.getFullYear(), minDate.getMonth(), 1);
+  // End at last day of max month + 1 month padding
+  const end = new Date(maxDate.getFullYear(), maxDate.getMonth() + 2, 0);
+  
+  const diffDays = Math.max(60, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)));
+  const diffWeeks = Math.max(12, Math.ceil(diffDays / 7));
+  
+  return { start, diffDays, diffWeeks };
+};
 
-  for (let i = 0; i < 60; i++) {
+const THAI_MONTHS_FULL = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม', 'เมษายน', 'พฤษภาคม', 'มิถุนายน', 'กรกฎาคม', 'สิงหาคม', 'กันยายน', 'ตุลาคม', 'พฤศจิกายน', 'ธันวาคม'];
+const THAI_MONTHS_SHORT = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+const THAI_DAYS = ['อา.', 'จ.', 'อ.', 'พ.', 'พฤ.', 'ศ.', 'ส.'];
+
+// Generate continuous daily columns dynamically
+const generateDailyColumns = (startDate: Date, daysCount: number) => {
+  const cols = [];
+  const start = new Date(startDate);
+
+  for (let i = 0; i < daysCount; i++) {
     const d = new Date(start);
     d.setDate(start.getDate() + i);
 
     const year = d.getFullYear();
     const monthIndex = d.getMonth();
-    const monthStr = `${thaiMonths[monthIndex]} ${year}`;
+    const monthStr = `${THAI_MONTHS_SHORT[monthIndex]} ${year}`;
     const dateNum = d.getDate();
-    const dayOfWeek = thaiDays[d.getDay()];
+    const dayOfWeek = THAI_DAYS[d.getDay()];
     const dateIso = d.toISOString().split('T')[0];
 
     cols.push({
@@ -57,20 +89,18 @@ const generateDailyColumns = () => {
   return cols;
 };
 
-// Generate continuous weekly columns (12 weeks from 2026-02-01)
-const generateWeeklyColumns = () => {
+// Generate continuous weekly columns dynamically
+const generateWeeklyColumns = (startDate: Date, weeksCount: number) => {
   const cols = [];
-  const start = new Date(2026, 1, 1); // 1 Feb 2026
-  const thaiMonths = ['ก.พ. 2026', 'มี.ค. 2026', 'เม.ย. 2026', 'พ.ค. 2026'];
+  const start = new Date(startDate);
 
-  for (let i = 0; i < 12; i++) {
+  for (let i = 0; i < weeksCount; i++) {
     const wStart = new Date(start);
     wStart.setDate(start.getDate() + (i * 7));
     const wEnd = new Date(wStart);
     wEnd.setDate(wStart.getDate() + 6);
 
-    const mIdx = wStart.getMonth() - 1;
-    const monthStr = thaiMonths[mIdx] || `${wStart.getMonth() + 1}/${wStart.getFullYear()}`;
+    const monthStr = `${THAI_MONTHS_SHORT[wStart.getMonth()]} ${wStart.getFullYear()}`;
     const startDay = String(wStart.getDate()).padStart(2, '0');
     const startM = String(wStart.getMonth() + 1).padStart(2, '0');
     const endDay = String(wEnd.getDate()).padStart(2, '0');
@@ -109,8 +139,11 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   const [dragHoverIso, setDragHoverIso] = useState<string | null>(null);
   const [isErasing, setIsErasing] = useState<boolean>(false);
 
-  const dailyColumns = useMemo(() => generateDailyColumns(), []);
-  const weeklyColumns = useMemo(() => generateWeeklyColumns(), []);
+  // Calculate dynamic date range based on actual project tasks
+  const dateRange = useMemo(() => getProjectDateRange(masterTasks), [masterTasks]);
+
+  const dailyColumns = useMemo(() => generateDailyColumns(dateRange.start, dateRange.diffDays), [dateRange]);
+  const weeklyColumns = useMemo(() => generateWeeklyColumns(dateRange.start, dateRange.diffWeeks), [dateRange]);
 
   // Filter parts based on module
   const filteredParts = useMemo(() => {

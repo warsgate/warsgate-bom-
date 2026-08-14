@@ -9,6 +9,7 @@ interface MasterTaskModalProps {
   onDelete?: (taskId: string) => void;
   initialTask?: MasterPlanTaskItem | null;
   projectId: string;
+  allTasks?: MasterPlanTaskItem[];
 }
 
 const STAGE_OPTIONS: MachineWorkflowStage[] = [
@@ -30,6 +31,7 @@ export const MasterTaskModal: React.FC<MasterTaskModalProps> = ({
   onDelete,
   initialTask,
   projectId,
+  allTasks = [],
 }) => {
   const [wbs, setWbs] = useState('1.0');
   const [stageName, setStageName] = useState<MachineWorkflowStage>('1. Design (DS,EE,PG)');
@@ -41,6 +43,10 @@ export const MasterTaskModal: React.FC<MasterTaskModalProps> = ({
   const [actualEndDate, setActualEndDate] = useState('');
   const [progressPct, setProgressPct] = useState(0);
   const [status, setStatus] = useState<'Pending' | 'In Progress' | 'Completed'>('Pending');
+  const [parentId, setParentId] = useState<string | undefined>(undefined);
+
+  // Parent options (only top-level tasks to avoid infinite nesting for now, or just any task except itself)
+  const parentOptions = allTasks.filter(t => !initialTask || t.id !== initialTask.id);
 
   useEffect(() => {
     if (initialTask) {
@@ -54,6 +60,7 @@ export const MasterTaskModal: React.FC<MasterTaskModalProps> = ({
       setActualEndDate(initialTask.actualEndDate || '');
       setProgressPct(initialTask.progressPct || 0);
       setStatus(initialTask.status || 'Pending');
+      setParentId(initialTask.parentId);
     } else {
       setWbs(`${Date.now() % 10}.0`);
       setStageName('1. Design (DS,EE,PG)');
@@ -65,6 +72,7 @@ export const MasterTaskModal: React.FC<MasterTaskModalProps> = ({
       setActualEndDate('');
       setProgressPct(0);
       setStatus('Pending');
+      setParentId(undefined);
     }
   }, [initialTask, isOpen]);
 
@@ -85,6 +93,7 @@ export const MasterTaskModal: React.FC<MasterTaskModalProps> = ({
       actualEndDate,
       progressPct: Number(progressPct),
       status,
+      parentId: parentId || undefined,
     });
     onClose();
   };
@@ -167,6 +176,23 @@ export const MasterTaskModal: React.FC<MasterTaskModalProps> = ({
               placeholder="e.g. ออกแบบโครงสร้างกลไก & ระบบตู้ไฟ"
               className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
+          </div>
+
+          <div>
+            <label className="block font-bold text-slate-700 dark:text-slate-300 mb-1">
+              หมวดหมู่งานหลัก (Parent Task / Main Task)
+            </label>
+            <select
+              value={parentId || ''}
+              onChange={(e) => setParentId(e.target.value || undefined)}
+              className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 font-bold text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="">-- ไม่มี (ให้งานนี้เป็น Main Task) --</option>
+              {parentOptions.map(p => (
+                <option key={p.id} value={p.id}>[{p.wbs}] {p.title}</option>
+              ))}
+            </select>
+            <p className="text-[10px] text-slate-500 mt-1">หากเลือก หมวดหมู่งานหลัก งานนี้จะกลายเป็น Sub Task ที่อยู่ภายใต้งานหลักนั้นๆ</p>
           </div>
 
           <div>

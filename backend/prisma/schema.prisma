@@ -105,6 +105,10 @@ model MasterTask {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  parentId       String?
+  parent         MasterTask?  @relation("TaskToSubTask", fields: [parentId], references: [id])
+  subTasks       MasterTask[] @relation("TaskToSubTask")
+
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
 

@@ -122,6 +122,8 @@ export interface MasterPlanTaskItem {
   progressPct: number;   // 0-100
   status: 'Completed' | 'In Progress' | 'Pending';
   color?: string;
+  parentId?: string;
+  subTasks?: MasterPlanTaskItem[];
   createdAt?: string;
   updatedAt?: string;
 }

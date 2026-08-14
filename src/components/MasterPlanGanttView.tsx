@@ -151,6 +151,38 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
     return parts.filter(p => p.moduleId === selectedModuleFilter);
   }, [parts, selectedModuleFilter]);
 
+  // Organize tasks into hierarchy (Main Task -> Sub Tasks) and flatten for table rendering
+  const orderedTasks = useMemo(() => {
+    const mainTasks = masterTasks.filter(t => !t.parentId);
+    const subTasksMap = new Map<string, MasterPlanTaskItem[]>();
+    
+    masterTasks.filter(t => t.parentId).forEach(subTask => {
+      if (!subTasksMap.has(subTask.parentId!)) {
+        subTasksMap.set(subTask.parentId!, []);
+      }
+      subTasksMap.get(subTask.parentId!)!.push(subTask);
+    });
+
+    const result: (MasterPlanTaskItem & { isSubTask?: boolean })[] = [];
+    
+    mainTasks.forEach(mainTask => {
+      result.push(mainTask);
+      const children = subTasksMap.get(mainTask.id) || [];
+      children.forEach(child => {
+        result.push({ ...child, isSubTask: true });
+      });
+    });
+
+    const handledIds = new Set(result.map(t => t.id));
+    masterTasks.forEach(t => {
+      if (!handledIds.has(t.id)) {
+        result.push({ ...t, isSubTask: true });
+      }
+    });
+
+    return result;
+  }, [masterTasks]);
+
   // Calculate stage cost from parts
   const stageCostMap = useMemo(() => {
     const map: Record<string, number> = {};
@@ -516,35 +548,38 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
             {/* Task Rows */}
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
-              {masterTasks.length === 0 ? (
+              {orderedTasks.length === 0 ? (
                 <tr>
                   <td colSpan={timelineMode === 'days' ? 67 : 19} className="p-8 text-center text-slate-400 font-medium">
                     ยังไม่มีรายการ WBS Task ในโปรเจกต์นี้ (กดปุ่ม "+ เพิ่ม Task WBS" ด้านบนเพื่อเริ่มวางแผน)
                   </td>
                 </tr>
               ) : (
-                masterTasks.map((task) => {
+                orderedTasks.map((task) => {
                   const cost = stageCostMap[task.stageName] || 0;
                   const actualCount = task.actualDates?.length || (task.actualStartDate ? 1 : 0);
+                  const isSub = (task as any).isSubTask;
 
                   return (
-                    <tr key={task.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors">
+                    <tr key={task.id} className={`hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors ${isSub ? 'bg-slate-50/50 dark:bg-slate-900/30' : ''}`}>
                       
                       {/* Sticky WBS Code */}
                       <td className="p-2 border-r border-slate-200 dark:border-slate-800 text-center font-mono font-bold text-slate-500 sticky left-0 z-10 bg-white dark:bg-slate-900">
-                        {task.wbs}
+                        {isSub ? <span className="text-slate-300 dark:text-slate-600 pl-2">↳ {task.wbs}</span> : task.wbs}
                       </td>
 
                       {/* Sticky Task Title */}
                       <td className="p-2 border-r border-slate-200 dark:border-slate-800 sticky left-10 z-10 bg-white dark:bg-slate-900">
-                        <div 
-                          onClick={() => onOpenEditTask(task)}
-                          className="font-black text-slate-900 dark:text-white hover:text-blue-600 cursor-pointer truncate max-w-[200px]"
-                        >
-                          {task.title}
-                        </div>
-                        <div className="text-[10px] text-slate-400 font-mono font-bold truncate">
-                          {task.stageName}
+                        <div className={`flex flex-col ${isSub ? 'pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-1' : ''}`}>
+                          <div 
+                            onClick={() => onOpenEditTask(task)}
+                            className={`font-black hover:text-blue-600 cursor-pointer truncate max-w-[200px] ${isSub ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white'}`}
+                          >
+                            {task.title}
+                          </div>
+                          <div className="text-[10px] text-slate-400 font-mono font-bold truncate">
+                            {task.stageName}
+                          </div>
                         </div>
                       </td>
 
@@ -568,7 +603,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
                       {/* Stage Cost */}
                       <td className="p-2 border-r border-slate-200 dark:border-slate-800 text-right font-mono font-black text-slate-900 dark:text-white">
-                        {formatCurrency(cost)}
+                        {!isSub ? formatCurrency(cost) : '-'}
                       </td>
 
                       {/* Status */}

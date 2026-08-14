@@ -4,7 +4,8 @@ import {
   Search, 
   Edit3, 
   Trash2, 
-  ArrowUpDown
+  ArrowUpDown,
+  Printer
 } from 'lucide-react';
 import { BomPartItem, ModuleItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -83,7 +84,7 @@ export const BomTable: React.FC<BomTableProps> = ({
     <div className="space-y-3">
       
       {/* Compact Controls & Filter Bar */}
-      <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-2 text-xs">
+      <div className="print:hidden p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-2 text-xs">
         
         {/* Filters */}
         <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
@@ -144,8 +145,16 @@ export const BomTable: React.FC<BomTableProps> = ({
           </div>
 
           <button
+            onClick={() => window.print()}
+            className="px-3 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-black transition-all shadow-sm flex items-center whitespace-nowrap print:hidden"
+            title="พิมพ์เพื่อขอราคา (ซ่อนราคาและแถบจัดการ)"
+          >
+            <Printer className="w-3.5 h-3.5 mr-1" />
+            <span className="hidden sm:inline">พิมพ์ขอราคา</span>
+          </button>
+          <button
             onClick={onAddPart}
-            className="px-3 py-1 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-800 text-white rounded-lg text-xs font-black transition-all shadow-sm flex items-center whitespace-nowrap"
+            className="px-3 py-1 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-800 text-white rounded-lg text-xs font-black transition-all shadow-sm flex items-center whitespace-nowrap print:hidden"
           >
             <Plus className="w-3.5 h-3.5 mr-1" />
             + Part
@@ -177,16 +186,16 @@ export const BomTable: React.FC<BomTableProps> = ({
                 <th className="p-2.5 text-center">CAT</th>
                 <th className="p-2.5 text-center">PART TYPE</th>
                 <th className="p-2.5 text-right">Q'TY</th>
-                <th className="p-2.5 text-right">UNIT PRICE</th>
-                <th onClick={() => handleSort('totalAmount')} className="p-2.5 text-right cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900">
+                <th className="p-2.5 text-right print:hidden">UNIT PRICE</th>
+                <th onClick={() => handleSort('totalAmount')} className="p-2.5 text-right cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900 print:hidden">
                   <div className="flex items-center justify-end space-x-1">
                     <span>TOTAL (฿)</span>
-                    <ArrowUpDown className="w-3 h-3 text-slate-400" />
+                    <ArrowUpDown className="w-3 h-3 text-slate-400 print:hidden" />
                   </div>
                 </th>
                 <th className="p-2.5">SUPPLIER</th>
-                <th className="p-2.5 text-center">STATUS</th>
-                <th className="p-2.5 text-center">ACTION</th>
+                <th className="p-2.5 text-center print:hidden">STATUS</th>
+                <th className="p-2.5 text-center print:hidden">ACTION</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -235,16 +244,16 @@ export const BomTable: React.FC<BomTableProps> = ({
                       <td className="p-2.5 text-right font-mono font-bold text-slate-800 dark:text-slate-200">
                         {part.qty} <span className="text-[10px] text-slate-400 font-normal">{part.unit}</span>
                       </td>
-                      <td className="p-2.5 text-right font-mono text-slate-600 dark:text-slate-400">
+                      <td className="p-2.5 text-right font-mono text-slate-600 dark:text-slate-400 print:hidden">
                         {formatCurrency(part.unitPrice)}
                       </td>
-                      <td className="p-2.5 text-right font-mono font-black text-slate-900 dark:text-white">
+                      <td className="p-2.5 text-right font-mono font-black text-slate-900 dark:text-white print:hidden">
                         {formatCurrency(amount)}
                       </td>
                       <td className="p-2.5 text-slate-800 dark:text-slate-200 font-bold text-[11px]">
                         {part.supplier || part.maker || '-'}
                       </td>
-                      <td className="p-2.5 text-center">
+                      <td className="p-2.5 text-center print:hidden">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           part.status === 'Received' || part.status === 'Completed' || part.status === 'In Assembly'
                             ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
@@ -255,7 +264,7 @@ export const BomTable: React.FC<BomTableProps> = ({
                           {part.status}
                         </span>
                       </td>
-                      <td className="p-2.5 text-center">
+                      <td className="p-2.5 text-center print:hidden">
                         <div className="flex items-center justify-center space-x-1">
                           <button
                             onClick={() => onEditPart(part)}

@@ -369,7 +369,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {/* Desktop Sidebar (Pinned Left) */}
-      <aside className="hidden lg:flex h-screen sticky top-0 z-30 flex-shrink-0">
+      <aside className="hidden lg:flex h-screen sticky top-0 z-30 flex-shrink-0 print:hidden">
         {sidebarContent}
       </aside>
 

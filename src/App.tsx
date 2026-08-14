@@ -266,7 +266,7 @@ export function App() {
   }
 
   return (
-    <div className="flex h-screen overflow-hidden bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
+    <div className="flex h-screen print:h-auto overflow-hidden print:overflow-visible bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -290,7 +290,7 @@ export function App() {
         onDeleteProject={handleDeleteProject}
       />
 
-      <div className="flex-1 flex flex-col h-screen overflow-y-auto">
+      <div className="flex-1 flex flex-col h-screen print:h-auto overflow-y-auto print:overflow-visible">
         <TopNavbar
           activeProject={activeProject}
           searchQuery={searchQuery}

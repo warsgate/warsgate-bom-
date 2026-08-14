@@ -54,3 +54,12 @@ export const masterTasksApi = {
   update: (id: string, data: any) => request<any>(`/master-tasks/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => request<any>(`/master-tasks/${id}`, { method: 'DELETE' }),
 };
+
+// ─── Master Parts ─────────────────────────────────────────────
+export const masterPartsApi = {
+  getAll: () => request<any[]>('/master-parts'),
+  getOne: (id: string) => request<any>(`/master-parts/${id}`),
+  create: (data: any) => request<any>('/master-parts', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: any) => request<any>(`/master-parts/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id: string) => request<any>(`/master-parts/${id}`, { method: 'DELETE' }),
+};

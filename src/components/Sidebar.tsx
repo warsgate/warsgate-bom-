@@ -19,13 +19,14 @@ import {
   UserCheck,
   Calendar,
   Edit2,
-  Trash2
+  Trash2,
+  Library
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 
 interface SidebarProps {
-  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report';
-  setActiveTab: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report') => void;
+  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library';
+  setActiveTab: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library') => void;
   projects: ProjectItem[];
   activeProjectId: string;
   setActiveProjectId: (id: string) => void;
@@ -117,6 +118,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'report',
       label: 'สรุป Cost แยก Module',
       icon: Calculator,
+      badge: null,
+      isProtected: false,
+    },
+    {
+      id: 'master-library',
+      label: 'คลังอะไหล่ (Master Data)',
+      icon: Library,
       badge: null,
       isProtected: false,
     },

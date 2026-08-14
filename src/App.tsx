@@ -16,6 +16,7 @@ import { ProjectModal } from './components/ProjectModal';
 import { MasterTaskModal } from './components/MasterTaskModal';
 import { ActualCompletionModal } from './components/ActualCompletionModal';
 import { ExportImportModal } from './components/ExportImportModal';
+import { MasterPartLibrary } from './components/MasterPartLibrary';
 import { BomPartItem, MasterPlanTaskItem, ModuleItem, ProjectItem, PartStatus } from './types/bom';
 import { calculateProjectCostSummary } from './utils/costCalculator';
 
@@ -370,6 +371,10 @@ export function App() {
 
           {activeTab === 'report' && (
             <CostSummaryReport summary={costSummary} modules={projectModules} />
+          )}
+
+          {activeTab === 'master-library' && (
+            <MasterPartLibrary />
           )}
         </main>
 

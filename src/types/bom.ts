@@ -47,6 +47,21 @@ export interface ModuleItem {
   createdAt: string;
   updatedAt: string;
 }
+export interface MasterPartItem {
+  id: string;
+  partName: string;
+  typeSpec: string;
+  category: CategoryType;
+  partType: PartCategoryType;
+  unit: string;
+  maker: string;
+  supplier: string;
+  unitPrice: number;
+  storeLocation: string;
+  description: string;
+  createdAt?: string;
+  updatedAt?: string;
+}
 
 export interface BomPartItem {
   id: string;

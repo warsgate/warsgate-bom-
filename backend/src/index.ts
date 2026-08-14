@@ -5,6 +5,7 @@ import projectsRouter from './routes/projects';
 import modulesRouter from './routes/modules';
 import partsRouter from './routes/parts';
 import masterTasksRouter from './routes/masterTasks';
+import masterPartsRouter from './routes/masterParts';
 
 dotenv.config();
 
@@ -30,6 +31,7 @@ app.use('/api/projects', projectsRouter);
 app.use('/api/modules', modulesRouter);
 app.use('/api/parts', partsRouter);
 app.use('/api/master-tasks', masterTasksRouter);
+app.use('/api/master-parts', masterPartsRouter);
 
 // ─── 404 Handler ─────────────────────────────────────────────
 app.use((_req, res) => {

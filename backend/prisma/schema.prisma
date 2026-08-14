@@ -104,3 +104,19 @@ model MasterTask {
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
 }
+
+model MasterPart {
+  id              String   @id @default(cuid())
+  partName        String
+  typeSpec        String   @default("")
+  category        String   @default("MC")
+  partType        String   @default("Standard Part")
+  unit            String   @default("EA")
+  maker           String   @default("")
+  supplier        String   @default("")
+  unitPrice       Float    @default(0)
+  storeLocation   String   @default("")
+  description     String   @default("")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}

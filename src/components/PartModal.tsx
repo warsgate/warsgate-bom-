@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, Wrench, Zap, Save, GitCommit } from 'lucide-react';
-import { BomPartItem, CategoryType, MachineWorkflowStage, ModuleItem, PartCategoryType, PartStatus } from '../types/bom';
+import { X, Wrench, Zap, Save, GitCommit, Search, Database } from 'lucide-react';
+import { BomPartItem, CategoryType, MachineWorkflowStage, MasterPartItem, ModuleItem, PartCategoryType, PartStatus } from '../types/bom';
+import { PartLibraryModal } from './PartLibraryModal';
 
 interface PartModalProps {
   isOpen: boolean;
@@ -49,6 +50,19 @@ export const PartModal: React.FC<PartModalProps> = ({
   const [status, setStatus] = useState<PartStatus>('Planned');
   const [workflowStage, setWorkflowStage] = useState<MachineWorkflowStage>('2. BOM Part List');
   const [remarks, setRemarks] = useState('');
+  
+  const [isLibraryOpen, setIsLibraryOpen] = useState(false);
+
+  const handleSelectMasterPart = (master: MasterPartItem) => {
+    setPartName(master.partName);
+    setTypeSpec(master.typeSpec || '');
+    setCategory(master.category);
+    setPartType(master.partType);
+    setUnit(master.unit || 'EA');
+    setMaker(master.maker || '');
+    setSupplier(master.supplier || '');
+    setUnitPrice(master.unitPrice || 0);
+  };
 
   useEffect(() => {
     if (initialPart) {
@@ -287,9 +301,19 @@ export const PartModal: React.FC<PartModalProps> = ({
               />
             </div>
             <div className="sm:col-span-5">
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                Part Name <span className="text-rose-500">*</span>
-              </label>
+              <div className="flex justify-between items-center mb-1">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Part Name <span className="text-rose-500">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setIsLibraryOpen(true)}
+                  className="inline-flex items-center text-[10px] font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300"
+                >
+                  <Database className="w-3 h-3 mr-1" />
+                  เลือกจากคลังอะไหล่
+                </button>
+              </div>
               <input
                 type="text"
                 required
@@ -438,6 +462,12 @@ export const PartModal: React.FC<PartModalProps> = ({
         </form>
 
       </div>
+      
+      <PartLibraryModal 
+        isOpen={isLibraryOpen}
+        onClose={() => setIsLibraryOpen(false)}
+        onSelectPart={handleSelectMasterPart}
+      />
     </div>
   );
 };

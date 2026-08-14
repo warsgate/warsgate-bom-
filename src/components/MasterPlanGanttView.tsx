@@ -343,7 +343,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
             Master Plan แผนงานหลักสร้างเครื่องจักร [{project?.code || 'PRJ'}] {project?.name}
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-bold mt-0.5">
-            <b>คลิกค้างแล้วลาก (Drag)</b> หรือ <b>Double-Click</b> ที่ Cell เพื่อกำหนด/ลบ วันเสร็จจริง (Actual 🟢) ได้อย่างอิสระ
+            <b>Double-Click</b> ที่ Cell เพื่อกำหนด/ลบ วันเสร็จจริง (Actual 🟢) ได้อย่างอิสระ
           </p>
         </div>
 
@@ -420,7 +420,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
         {/* Legend */}
         <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-center space-y-1.5">
-          <span className="text-[10px] text-slate-500 font-bold uppercase block">สัญลักษณ์ (คลิกลาก/Double-Click เปิดปิด Actual อิสระ):</span>
+          <span className="text-[10px] text-slate-500 font-bold uppercase block">สัญลักษณ์ (Double-Click เปิด/ปิด Actual อิสระ):</span>
           <div className="flex items-center space-x-3 text-[11px] font-bold">
             <div className="flex items-center space-x-1">
               <span className="w-3 h-2 rounded bg-blue-600"></span>
@@ -671,8 +671,6 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                           return (
                             <td 
                               key={idx} 
-                              onMouseDown={() => handleCellMouseDown(task, col.dateIso, false)}
-                              onMouseEnter={() => handleCellMouseEnter(task, col.dateIso)}
                               onDoubleClick={() => handleCellDoubleClick(task, col.dateIso)}
                               className={`p-0.5 border-r border-slate-200 dark:border-slate-800 text-center relative h-12 w-9 min-w-[36px] cursor-pointer transition-colors ${
                                 inDrag
@@ -681,7 +679,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                     ? 'bg-emerald-100/60 dark:bg-emerald-950/40' 
                                     : col.isWeekend ? 'bg-amber-50/30 dark:bg-amber-950/20' : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
                               }`}
-                              title={`ลาก/Double-Click เพื่อสลับวันเสร็จจริง (Actual): ${col.dateIso}`}
+                              title={`Double-Click เพื่อสลับวันเสร็จจริง (Actual): ${col.dateIso}`}
                             >
                               <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
                                 <div className="h-2.5 w-full">
@@ -710,15 +708,13 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                           return (
                             <td 
                               key={idx} 
-                              onMouseDown={() => handleCellMouseDown(task, col.startIso, true, col.startIso, col.endIso)}
-                              onMouseEnter={() => handleCellMouseEnter(task, col.startIso)}
                               onDoubleClick={() => handleCellDoubleClick(task, col.startIso)}
                               className={`p-0.5 border-r border-slate-200 dark:border-slate-800 text-center relative h-12 w-20 min-w-[80px] cursor-pointer hover:bg-emerald-50/80 dark:hover:bg-slate-800 transition-colors ${
                                 inDrag
                                   ? (isErasing ? 'bg-rose-200 dark:bg-rose-900/50' : 'bg-emerald-300 dark:bg-emerald-700')
                                   : inActual ? 'bg-emerald-100/60 dark:bg-emerald-950/40' : ''
                               }`}
-                              title={`ลาก/Double-Click เพื่อสลับสัปดาห์เสร็จจริง (Actual): W${col.weekNum}`}
+                              title={`Double-Click เพื่อสลับสัปดาห์เสร็จจริง (Actual): W${col.weekNum}`}
                             >
                               <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
                                 <div className="h-3 w-full">

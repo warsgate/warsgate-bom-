@@ -169,59 +169,70 @@ export const MasterPartLibrary: React.FC = () => {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="max-h-[55vh] overflow-y-auto overflow-x-auto">
-          <table className="w-full text-left text-xs whitespace-nowrap">
-            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/90 backdrop-blur-sm text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800 shadow-sm">
+      <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
+        <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
+          <table className="w-full text-left border-collapse text-xs">
+            <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-black">
               <tr>
-                <th className="px-4 py-3 w-10 text-center">No.</th>
-                <th className="px-4 py-3">Part Name (ชื่อชิ้นส่วน)</th>
-                <th className="px-4 py-3">Type / Spec (สเปค)</th>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Type</th>
-                <th className="px-4 py-3">Maker</th>
-                <th className="px-4 py-3">Supplier</th>
-                <th className="px-4 py-3 text-right">Standard Price</th>
-                <th className="px-4 py-3 text-center">Actions</th>
+                <th className="p-2.5 w-10 text-center">NO.</th>
+                <th className="p-2.5">PART NAME & TYPE SPEC</th>
+                <th className="p-2.5 text-center">CAT</th>
+                <th className="p-2.5 text-center">PART TYPE</th>
+                <th className="p-2.5">MAKER</th>
+                <th className="p-2.5">SUPPLIER</th>
+                <th className="p-2.5 text-right">STANDARD PRICE</th>
+                <th className="p-2.5 text-center">ACTION</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 bg-white dark:bg-slate-900">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900">
               {isLoading ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-8 text-center text-slate-400">Loading...</td>
+                  <td colSpan={8} className="p-8 text-center text-slate-400 font-medium">Loading...</td>
                 </tr>
               ) : filteredParts.length === 0 ? (
                 <tr>
-                  <td colSpan={9} className="px-4 py-12 text-center text-slate-400">
+                  <td colSpan={8} className="p-12 text-center text-slate-400 font-medium">
                     <PackageOpen className="w-8 h-8 mx-auto mb-3 opacity-20" />
                     <p>ยังไม่มีรายการอะไหล่ในคลัง</p>
                   </td>
                 </tr>
               ) : (
                 filteredParts.map((part, index) => (
-                  <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-                    <td className="px-4 py-3 text-center text-slate-400">{index + 1}</td>
-                    <td className="px-4 py-3 font-bold text-slate-900 dark:text-white">{part.partName}</td>
-                    <td className="px-4 py-3 font-mono text-slate-500 dark:text-slate-400">{part.typeSpec || '-'}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-black ${
-                        part.category === 'MC' ? 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400' : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
+                  <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors">
+                    <td className="p-2.5 font-mono font-bold text-slate-500 text-center">{index + 1}</td>
+                    <td className="p-2.5">
+                      <div className="font-extrabold text-slate-900 dark:text-white">{part.partName}</div>
+                      <div className="text-[10px] font-mono text-slate-500">{part.typeSpec || '-'}</div>
+                    </td>
+                    <td className="p-2.5 text-center">
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-black ${
+                        part.category === 'MC' 
+                          ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300' 
+                          : 'bg-amber-100 text-amber-800 dark:bg-amber-950 dark:text-amber-300'
                       }`}>
                         {part.category}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-slate-500">{part.partType}</td>
-                    <td className="px-4 py-3 text-slate-500">{part.maker || '-'}</td>
-                    <td className="px-4 py-3 text-slate-500">{part.supplier || '-'}</td>
-                    <td className="px-4 py-3 text-right font-mono font-bold text-emerald-600 dark:text-emerald-400">
-                      ฿{formatCurrency(part.unitPrice)}
+                    <td className="p-2.5 text-center">
+                      <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
+                        part.partType === 'Standard Part'
+                          ? 'bg-sky-50 text-sky-800 dark:bg-sky-950 dark:text-sky-300'
+                          : 'bg-indigo-50 text-indigo-800 dark:bg-indigo-950 dark:text-indigo-300'
+                      }`}>
+                        {part.partType}
+                      </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="p-2.5 text-slate-600 dark:text-slate-400">{part.maker || '-'}</td>
+                    <td className="p-2.5 text-slate-600 dark:text-slate-400">{part.supplier || '-'}</td>
+                    <td className="p-2.5 text-right font-mono font-black text-slate-900 dark:text-white">
+                      {formatCurrency(part.unitPrice)}
+                    </td>
+                    <td className="p-2.5">
                       <div className="flex items-center justify-center space-x-2">
-                        <button onClick={() => openEditModal(part)} className="p-1 text-slate-400 hover:text-slate-800 dark:hover:text-white bg-slate-100 dark:bg-slate-800 rounded">
+                        <button onClick={() => openEditModal(part)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors" title="แก้ไข">
                           <Edit3 className="w-3.5 h-3.5" />
                         </button>
-                        <button onClick={() => handleDelete(part.id)} className="p-1 text-slate-400 hover:text-red-600 bg-slate-100 dark:bg-slate-800 rounded">
+                        <button onClick={() => handleDelete(part.id)} className="p-1.5 text-slate-400 hover:text-red-600 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-lg transition-colors" title="ลบ">
                           <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>

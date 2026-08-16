@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react';
+import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { 
   Calendar, 
   User, 
@@ -146,6 +146,9 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
   // Daily Note Modal State
   const [activeNoteModal, setActiveNoteModal] = useState<{task: MasterPlanTaskItem, dateIso: string} | null>(null);
+  
+  const lastClickTimeRef = useRef<number>(0);
+  const lastClickCellRef = useRef<string>('');
 
   // Calculate dynamic date range based on actual project tasks
   const dateRange = useMemo(() => getProjectDateRange(masterTasks), [masterTasks]);
@@ -278,7 +281,20 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
         const end = dragStartIso < dragHoverIso ? dragHoverIso : dragStartIso;
 
         const affectedDates: string[] = [];
-        if (dragStartIso !== dragHoverIso) {
+        if (dragStartIso === dragHoverIso) {
+          // Single cell click
+          const now = Date.now();
+          if (now - lastClickTimeRef.current < 400 && lastClickCellRef.current === dragStartIso) {
+            // It's the second click of a double click, ignore it
+          } else {
+            lastClickTimeRef.current = now;
+            lastClickCellRef.current = dragStartIso;
+            if (onToggleCellActualDate) {
+              onToggleCellActualDate(dragTask, dragStartIso);
+            }
+          }
+        } else {
+          // Dragging multiple cells
           if (timelineMode === 'days') {
             dailyColumns.forEach(c => {
               if (c.dateIso >= start && c.dateIso <= end) {
@@ -332,17 +348,6 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
     return colIso >= minIso && colIso <= maxIso;
   };
 
-  // Double-Click Cell Handler: Toggle cell independently or open popup
-  const handleCellDoubleClick = (task: MasterPlanTaskItem, colIso: string) => {
-    if (!(task as any).isSubTask) return; // Prevent interaction on Main Tasks
-
-    if (onToggleCellActualDate) {
-      onToggleCellActualDate(task, colIso);
-    } else if (onOpenActualCompletionPopup) {
-      onOpenActualCompletionPopup(task, colIso);
-    }
-  };
-
   const handleCellContextMenu = (e: React.MouseEvent, task: MasterPlanTaskItem, colIso: string) => {
     e.preventDefault();
     setActiveNoteModal({ task, dateIso: colIso });
@@ -356,13 +361,13 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
         <div>
           <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 mb-1">
             <CheckCircle2 className="w-3 h-3 mr-1" />
-            Drag & Drop / Double-Click Actual Date Update
+            Drag & Drop / Single Click Actual Date Update
           </div>
           <h2 className="text-lg font-black text-slate-900 dark:text-white">
             Master Plan แผนงานหลักสร้างเครื่องจักร [{project?.code || 'PRJ'}] {project?.name}
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-bold mt-0.5">
-            <b>Double-Click</b> ที่ Cell เพื่อกำหนด/ลบ วันเสร็จจริง (Actual 🟢) ได้อย่างอิสระ
+            <b>Click</b> ที่ Cell เพื่อกำหนด/ลบ วันเสร็จจริง (Actual 🟢) ได้อย่างอิสระ
           </p>
         </div>
 
@@ -442,9 +447,9 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
         <div className="p-3 bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm flex flex-col justify-center space-y-1.5">
           <span className="text-[10px] text-slate-500 font-bold uppercase block">สัญลักษณ์การใช้งาน:</span>
           <div className="flex items-center space-x-3 text-[11px] font-bold">
-            <div className="flex items-center space-x-1" title="Double-Click เพื่อสลับสถานะ">
+            <div className="flex items-center space-x-1" title="คลิกเพื่อสลับสถานะ">
               <span className="w-3 h-2 rounded bg-emerald-500"></span>
-              <span className="text-emerald-900 dark:text-emerald-300">Actual (Double-Click)</span>
+              <span className="text-emerald-900 dark:text-emerald-300">Actual (Click)</span>
             </div>
             <div className="flex items-center space-x-1" title="คลิกขวา เพื่อจดบันทึก">
               <span>📝</span>
@@ -468,7 +473,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
         </div>
       </div>
 
-      {/* Main Split Table & Double-Click Interactive Gantt Chart */}
+      {/* Main Split Table & Interactive Gantt Chart */}
       <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
         
         {/* Table Header Bar */}
@@ -480,7 +485,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
             </span>
           </div>
           <span className="font-mono text-[11px] text-slate-500 print:hidden">
-            💡 <b>คลิกลากเมาส์ (Drag)</b> หรือ <b>Double-Click</b> เพื่อเปิด/ปิด วันเสร็จจริง (Actual 🟢) ได้อิสระ
+            💡 <b>คลิกลากเมาส์ (Drag)</b> หรือ <b>Click</b> เพื่อเปิด/ปิด วันเสร็จจริง (Actual 🟢) ได้อิสระ
           </span>
         </div>
 
@@ -704,7 +709,6 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                               key={idx} 
                               onMouseDown={() => handleCellMouseDown(task, col.dateIso, false)}
                               onMouseEnter={() => handleCellMouseEnter(task, col.dateIso)}
-                              onDoubleClick={() => handleCellDoubleClick(task, col.dateIso)}
                               onContextMenu={(e) => handleCellContextMenu(e, task, col.dateIso)}
                               className={`p-0.5 border-r border-slate-200 dark:border-slate-800 text-center relative h-12 w-9 min-w-[36px] cursor-pointer transition-colors ${
                                 inDrag
@@ -715,7 +719,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                       ? 'bg-emerald-100/40 dark:bg-emerald-900/40'
                                       : col.isWeekend ? 'bg-amber-50/30 dark:bg-amber-950/20' : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
                               }`}
-                              title={task.dailyNotes && task.dailyNotes[col.dateIso] ? `Note: ${task.dailyNotes[col.dateIso]}` : `คลิกขวาเพื่อบันทึก Note\nDouble-Click เพื่อสลับ Actual: ${col.dateIso}`}
+                              title={task.dailyNotes && task.dailyNotes[col.dateIso] ? `Note: ${task.dailyNotes[col.dateIso]}` : `คลิกซ้าย 1 ครั้งเพื่อสลับ Actual\nลากเพื่อระบายสีหลายช่อง\nคลิกขวาเพื่อบันทึก Note`}
                             >
                               <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
                                 <div className="h-2.5 w-full">
@@ -764,13 +768,19 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                           return (
                             <td 
                               key={idx} 
-                              onDoubleClick={() => handleCellDoubleClick(task, col.startIso)}
-                              className={`p-0.5 border-r border-slate-200 dark:border-slate-800 text-center relative h-12 w-20 min-w-[80px] cursor-pointer hover:bg-emerald-50/80 dark:hover:bg-slate-800 transition-colors ${
+                              onMouseDown={() => handleCellMouseDown(task, col.startIso, true, col.startIso, col.endIso)}
+                              onMouseEnter={() => handleCellMouseEnter(task, col.startIso)}
+                              onContextMenu={(e) => handleCellContextMenu(e, task, col.startIso)}
+                              className={`p-0.5 border-r border-slate-200 dark:border-slate-800 text-center relative h-12 w-20 min-w-[80px] cursor-pointer transition-colors ${
                                 inDrag
                                   ? (isErasing ? 'bg-rose-200 dark:bg-rose-900/50' : 'bg-emerald-300 dark:bg-emerald-700')
-                                  : inActual ? 'bg-emerald-100/60 dark:bg-emerald-950/40' : ''
+                                  : inActual 
+                                    ? 'bg-emerald-100/60 dark:bg-emerald-950/40' 
+                                    : (!isSub && activeCountInCol > 0)
+                                      ? 'bg-emerald-100/40 dark:bg-emerald-900/40'
+                                      : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
                               }`}
-                              title={`Double-Click เพื่อสลับสัปดาห์เสร็จจริง (Actual): W${col.weekNum}`}
+                              title={task.dailyNotes && task.dailyNotes[col.startIso] ? `Note: ${task.dailyNotes[col.startIso]}` : `คลิกซ้าย 1 ครั้งเพื่อสลับ Actual\nลากเพื่อระบายสีหลายช่อง\nคลิกขวาเพื่อบันทึก Note`}
                             >
                               <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
                                 <div className="h-3 w-full">

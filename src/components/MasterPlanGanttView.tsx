@@ -278,22 +278,24 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
         const end = dragStartIso < dragHoverIso ? dragHoverIso : dragStartIso;
 
         const affectedDates: string[] = [];
-        if (timelineMode === 'days') {
-          dailyColumns.forEach(c => {
-            if (c.dateIso >= start && c.dateIso <= end) {
-              affectedDates.push(c.dateIso);
-            }
-          });
-        } else {
-          weeklyColumns.forEach(c => {
-            if (c.startIso >= start && c.startIso <= end) {
-              affectedDates.push(c.startIso);
-            }
-          });
-        }
+        if (dragStartIso !== dragHoverIso) {
+          if (timelineMode === 'days') {
+            dailyColumns.forEach(c => {
+              if (c.dateIso >= start && c.dateIso <= end) {
+                affectedDates.push(c.dateIso);
+              }
+            });
+          } else {
+            weeklyColumns.forEach(c => {
+              if (c.startIso >= start && c.startIso <= end) {
+                affectedDates.push(c.startIso);
+              }
+            });
+          }
 
-        if (affectedDates.length > 0) {
-          onUpdateCellRange(dragTask, affectedDates, !isErasing);
+          if (affectedDates.length > 0) {
+            onUpdateCellRange(dragTask, affectedDates, !isErasing);
+          }
         }
       }
       

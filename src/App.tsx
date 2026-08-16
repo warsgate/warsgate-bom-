@@ -23,11 +23,12 @@ import { calculateProjectCostSummary } from './utils/costCalculator';
 import { LoginPage } from './pages/LoginPage';
 import { useAuth } from './contexts/AuthContext';
 import { HistoryLogTable } from './components/HistoryLogTable';
+import { WorkspaceManagement } from './components/WorkspaceManagement';
 
 export function App() {
   const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
   
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history'>('master-plan');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces'>('master-plan');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -615,6 +616,15 @@ export function App() {
 
           {activeTab === 'history' && (
             <HistoryLogTable />
+          )}
+
+          {activeTab === 'workspaces' && (
+            <WorkspaceManagement
+              projects={projects}
+              onOpenAddProject={() => { setEditingProject(null); setIsProjectModalOpen(true); }}
+              onEditProject={(p) => { setEditingProject(p); setIsProjectModalOpen(true); }}
+              onDeleteProject={handleDeleteProject}
+            />
           )}
 
           {activeTab === 'report' && (

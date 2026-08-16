@@ -28,6 +28,8 @@ export interface ProjectItem {
   currentStage?: MachineWorkflowStage;
   startDate?: string;
   targetDeliveryDate?: string;
+  poDate?: string;
+  contactPerson?: string;
   createdAt: string;
   updatedAt: string;
 }

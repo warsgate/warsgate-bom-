@@ -22,6 +22,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [targetBudget, setTargetBudget] = useState(100000);
   const [description, setDescription] = useState('');
   const [status, setStatus] = useState<'Active' | 'Completed' | 'On Hold' | 'Archived'>('Active');
+  const [poDate, setPoDate] = useState('');
+  const [contactPerson, setContactPerson] = useState('');
 
   useEffect(() => {
     if (initialProject) {
@@ -32,6 +34,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setTargetBudget(initialProject.targetBudget || 100000);
       setDescription(initialProject.description || '');
       setStatus(initialProject.status || 'Active');
+      setPoDate(initialProject.poDate || '');
+      setContactPerson(initialProject.contactPerson || '');
     } else {
       setCode(`PRJ-${Math.floor(Math.random() * 899 + 100)}`);
       setName('');
@@ -40,6 +44,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setTargetBudget(150000);
       setDescription('');
       setStatus('Active');
+      setPoDate('');
+      setContactPerson('');
     }
   }, [initialProject, isOpen]);
 
@@ -57,6 +63,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       targetBudget: Number(targetBudget),
       description,
       status,
+      poDate,
+      contactPerson,
     });
     onClose();
   };
@@ -158,6 +166,32 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
                 value={targetBudget}
                 onChange={(e) => setTargetBudget(Number(e.target.value))}
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                วันที่ได้รับ PO (PO Date)
+              </label>
+              <input
+                type="date"
+                value={poDate}
+                onChange={(e) => setPoDate(e.target.value)}
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-mono focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
+                ผู้ติดต่อ (Contact Person)
+              </label>
+              <input
+                type="text"
+                value={contactPerson}
+                onChange={(e) => setContactPerson(e.target.value)}
+                placeholder="ชื่อ / เบอร์โทร"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
               />
             </div>
           </div>

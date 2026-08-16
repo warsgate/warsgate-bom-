@@ -24,6 +24,8 @@ model Project {
   currentStage        String?
   startDate           String?
   targetDeliveryDate  String?
+  poDate              String?       // วันรับ PO (YYYY-MM-DD)
+  contactPerson       String?       // ผู้ติดต่อ
   createdAt           DateTime      @default(now())
   updatedAt           DateTime      @updatedAt
 

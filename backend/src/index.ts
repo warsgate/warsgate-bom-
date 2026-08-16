@@ -27,7 +27,12 @@ app.get('/health', (_req, res) => {
   res.json({ status: 'ok', service: 'WARSGATE BOM API', timestamp: new Date().toISOString() });
 });
 
+import authRouter from './routes/auth';
+import auditLogsRouter from './routes/auditLogs';
+
 // ─── API Routes ───────────────────────────────────────────────
+app.use('/api/auth', authRouter);
+app.use('/api/audit-logs', auditLogsRouter);
 app.use('/api/projects', projectsRouter);
 app.use('/api/modules', modulesRouter);
 app.use('/api/parts', partsRouter);

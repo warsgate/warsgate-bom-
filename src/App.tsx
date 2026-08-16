@@ -20,15 +20,32 @@ import { MasterPartLibrary } from './components/MasterPartLibrary';
 import { QuotationsView } from './components/QuotationsView';
 import { BomPartItem, MasterPlanTaskItem, ModuleItem, ProjectItem, PartStatus } from './types/bom';
 import { calculateProjectCostSummary } from './utils/costCalculator';
+import { LoginPage } from './pages/LoginPage';
+import { useAuth } from './contexts/AuthContext';
+import { HistoryLogTable } from './components/HistoryLogTable';
 
 export function App() {
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations'>('master-plan');
+  const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
+  
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history'>('master-plan');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
-  const [userRole, setUserRole] = useState<'OWNER' | 'ENGINEER'>('ENGINEER');
   const [activeProjectId, setActiveProjectId] = useState<string>('proj-1');
   const [isLoading, setIsLoading] = useState(true);
+
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div></div>;
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
+
+  // Ensure LEVEL_1 user cannot access dashboard or history
+  if (user?.role === 'LEVEL_1' && (activeTab === 'dashboard' || activeTab === 'history')) {
+    setActiveTab('master-plan');
+  }
 
   // Data state (replaces Dexie useLiveQuery)
   const [projects, setProjects] = useState<ProjectItem[]>([]);
@@ -99,7 +116,7 @@ export function App() {
 
   const costSummary = useMemo(() => calculateProjectCostSummary(projectModules, projectParts), [projectModules, projectParts]);
 
-  // ─── Project CRUD ─────────────────────────────────────────
+  // Handle shifts from gantt view
   const handleSaveProject = async (data: Partial<ProjectItem>) => {
     if (data.id) {
       const updated = await projectsApi.update(data.id, data);
@@ -476,9 +493,9 @@ export function App() {
 
   return (
     <div className="flex h-screen print:h-auto overflow-hidden print:overflow-visible bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 font-sans transition-colors duration-200">
-      <Sidebar
-        activeTab={activeTab}
-        setActiveTab={setActiveTab}
+      <Sidebar 
+        activeTab={activeTab} 
+        onTabChange={setActiveTab} 
         projects={projects}
         activeProjectId={activeProjectId}
         setActiveProjectId={setActiveProjectId}
@@ -493,8 +510,8 @@ export function App() {
         setIsDarkMode={setIsDarkMode}
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
-        userRole={userRole}
-        setUserRole={setUserRole}
+        userRole={user?.role === 'LEVEL_2' ? 'OWNER' : 'ENGINEER'}
+        setUserRole={() => {}} // No longer manually toggleable
         onEditProject={handleEditProject}
         onDeleteProject={handleDeleteProject}
       />
@@ -511,10 +528,10 @@ export function App() {
 
         <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto">
           {activeTab === 'dashboard' && (
-            userRole === 'OWNER' ? (
+            (user?.role === 'LEVEL_2' ? 'OWNER' : 'ENGINEER') === 'OWNER' ? (
               <Dashboard summary={costSummary} modules={projectModules} onSelectModuleTab={() => setActiveTab('modules')} onSelectBomTab={() => setActiveTab('bom')} isDarkMode={isDarkMode} />
             ) : (
-              <ExecutiveAuthOverlay onUnlock={() => setUserRole('OWNER')} onSwitchToEngineer={() => setActiveTab('all-modules')} />
+              <ExecutiveAuthOverlay onUnlock={() => {}} onSwitchToEngineer={() => setActiveTab('all-modules')} />
             )
           )}
 
@@ -590,6 +607,10 @@ export function App() {
 
           {activeTab === 'quotations' && (
             <QuotationsView projectId={activeProjectId} />
+          )}
+
+          {activeTab === 'history' && (
+            <HistoryLogTable />
           )}
 
           {activeTab === 'report' && (

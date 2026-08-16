@@ -144,3 +144,25 @@ model Quotation {
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   parts   Part[]
 }
+
+model User {
+  id        String     @id @default(cuid())
+  username  String     @unique
+  password  String
+  role      String     @default("LEVEL_1") // "LEVEL_1" or "LEVEL_2"
+  name      String     @default("")
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  
+  auditLogs AuditLog[]
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  action    String
+  details   String?
+  createdAt DateTime @default(now())
+
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+}

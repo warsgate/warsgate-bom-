@@ -26,8 +26,8 @@ import {
 import { ProjectItem } from '../types/bom';
 
 interface SidebarProps {
-  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations';
-  setActiveTab: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations') => void;
+  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history';
+  onTabChange: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history') => void;
   projects: ProjectItem[];
   activeProjectId: string;
   setActiveProjectId: (id: string) => void;
@@ -46,11 +46,13 @@ interface SidebarProps {
   setUserRole: (role: 'OWNER' | 'ENGINEER') => void;
   onEditProject: (project: ProjectItem) => void;
   onDeleteProject: (id: string) => void;
+  user?: any;
+  onLogout?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
   activeTab,
-  setActiveTab,
+  onTabChange,
   projects,
   activeProjectId,
   setActiveProjectId,
@@ -138,8 +140,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
   ];
 
-  const handleSelectTab = (tabId: any) => {
-    setActiveTab(tabId);
+  const handleTabClick = (tabId: any) => {
+    onTabChange(tabId);
     if (onCloseMobile) onCloseMobile();
   };
 
@@ -279,7 +281,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           return (
             <button
               key={item.id}
-              onClick={() => handleSelectTab(item.id)}
+              onClick={() => handleTabClick(item.id)}
               className={`group w-full flex items-center justify-between px-3.5 py-3 rounded-xl text-xs font-black transition-all duration-300 ${
                 isActive
                   ? 'bg-gradient-to-r from-red-600 to-rose-600 text-white shadow-[0_4px_12px_rgba(225,29,72,0.4)] scale-[1.03] border-t border-rose-400/50 border-b border-rose-800/80 z-10'

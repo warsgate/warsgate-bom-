@@ -171,11 +171,13 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
       subTasksMap.get(subTask.parentId!)!.push(subTask);
     });
 
-    const result: (MasterPlanTaskItem & { isSubTask?: boolean })[] = [];
+    const result: (MasterPlanTaskItem & { isSubTask?: boolean; activeSubTasksCount?: number })[] = [];
     
     mainTasks.forEach(mainTask => {
-      result.push(mainTask);
       const children = subTasksMap.get(mainTask.id) || [];
+      const activeSubTasksCount = children.filter(child => (child.actualDates && child.actualDates.length > 0) || child.actualStartDate).length;
+      
+      result.push({ ...mainTask, activeSubTasksCount });
       children.forEach(child => {
         result.push({ ...child, isSubTask: true });
       });
@@ -306,6 +308,8 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   }, [dragTask, dragStartIso, dragHoverIso, isErasing, timelineMode, dailyColumns, weeklyColumns, onUpdateCellRange]);
 
   const handleCellMouseDown = (task: MasterPlanTaskItem, colIso: string, isWeekly: boolean, weekStart?: string, weekEnd?: string) => {
+    if (!(task as any).isSubTask) return; // Prevent interaction on Main Tasks
+
     const currentlyActual = checkIsCellActual(task, colIso, isWeekly, weekStart, weekEnd);
     setDragTask(task);
     setDragStartIso(colIso);
@@ -328,6 +332,8 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
   // Double-Click Cell Handler: Toggle cell independently or open popup
   const handleCellDoubleClick = (task: MasterPlanTaskItem, colIso: string) => {
+    if (!(task as any).isSubTask) return; // Prevent interaction on Main Tasks
+
     if (onToggleCellActualDate) {
       onToggleCellActualDate(task, colIso);
     } else if (onOpenActualCompletionPopup) {
@@ -587,9 +593,14 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                         <div className={`flex flex-col ${isSub ? 'pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-1' : ''}`}>
                           <div 
                             onClick={() => onOpenEditTask(task)}
-                            className={`font-black hover:opacity-80 cursor-pointer truncate max-w-[200px] ${isSub ? 'text-sky-700 dark:text-sky-300' : 'text-indigo-700 dark:text-indigo-300'}`}
+                            className={`font-black hover:opacity-80 cursor-pointer max-w-[200px] flex items-center gap-1.5 ${isSub ? 'text-sky-700 dark:text-sky-300' : 'text-indigo-700 dark:text-indigo-300'}`}
                           >
-                            {task.title}
+                            <span className="truncate">{task.title}</span>
+                            {!isSub && (task as any).activeSubTasksCount > 0 && (
+                              <span className="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                                {(task as any).activeSubTasksCount} Active
+                              </span>
+                            )}
                           </div>
                           <div className="text-[10px] text-slate-400 font-mono font-bold truncate">
                             {task.stageName}

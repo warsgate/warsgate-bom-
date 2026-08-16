@@ -691,6 +691,12 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                           const inActual = isSub ? checkIsCellActual(task, col.dateIso, false) : false;
                           const inDrag = isSub ? isCellInDragRange(task.id, col.dateIso) : false;
 
+                          let activeCountInCol = 0;
+                          if (!isSub) {
+                            const subTasks = masterTasks.filter(t => t.parentId === task.id);
+                            activeCountInCol = subTasks.filter(sub => checkIsCellActual(sub, col.dateIso, false)).length;
+                          }
+
                           return (
                             <td 
                               key={idx} 
@@ -722,6 +728,11 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                   {!inActual && inDrag && !isErasing && (
                                     <div className="h-full bg-emerald-400/80 rounded-xs"></div>
                                   )}
+                                  {!isSub && activeCountInCol > 0 && (
+                                    <div className="flex items-center justify-center w-full h-full text-[9px] font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 rounded-xs">
+                                      {activeCountInCol}
+                                    </div>
+                                  )}
                                   {!inActual && task.dailyNotes && task.dailyNotes[col.dateIso] && (
                                     <div className="absolute top-1 right-0.5 text-[8px] opacity-70">📝</div>
                                   )}
@@ -735,6 +746,12 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                           const inPlan = isRangeOverlapping(task.planStartDate, task.planEndDate, col.startIso, col.endIso);
                           const inActual = isSub ? checkIsCellActual(task, col.startIso, true, col.startIso, col.endIso) : false;
                           const inDrag = isSub ? isCellInDragRange(task.id, col.startIso) : false;
+
+                          let activeCountInCol = 0;
+                          if (!isSub) {
+                            const subTasks = masterTasks.filter(t => t.parentId === task.id);
+                            activeCountInCol = subTasks.filter(sub => checkIsCellActual(sub, col.startIso, true, col.startIso, col.endIso)).length;
+                          }
 
                           return (
                             <td 
@@ -759,6 +776,11 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                   )}
                                   {!inActual && inDrag && !isErasing && (
                                     <div className="h-full bg-emerald-400/80 rounded-sm"></div>
+                                  )}
+                                  {!isSub && activeCountInCol > 0 && (
+                                    <div className="flex items-center justify-center w-full h-full text-[10px] font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 rounded-sm">
+                                      {activeCountInCol}
+                                    </div>
                                   )}
                                 </div>
                               </div>

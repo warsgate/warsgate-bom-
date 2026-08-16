@@ -709,7 +709,9 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                   ? (isErasing ? 'bg-rose-200 dark:bg-rose-900/50' : 'bg-emerald-300 dark:bg-emerald-700')
                                   : inActual 
                                     ? 'bg-emerald-100/60 dark:bg-emerald-950/40' 
-                                    : col.isWeekend ? 'bg-amber-50/30 dark:bg-amber-950/20' : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
+                                    : (!isSub && activeCountInCol > 0)
+                                      ? 'bg-emerald-100/40 dark:bg-emerald-900/40'
+                                      : col.isWeekend ? 'bg-amber-50/30 dark:bg-amber-950/20' : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
                               }`}
                               title={task.dailyNotes && task.dailyNotes[col.dateIso] ? `Note: ${task.dailyNotes[col.dateIso]}` : `คลิกขวาเพื่อบันทึก Note\nDouble-Click เพื่อสลับ Actual: ${col.dateIso}`}
                             >
@@ -736,8 +738,8 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                               
                               {/* Main Task Active Count Overlay */}
                               {!isSub && activeCountInCol > 0 && (
-                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none mt-4">
-                                  <span className="text-[11px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-900/60 rounded px-1 shadow-sm">
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                                  <span className="text-[12px] font-black text-emerald-800 dark:text-emerald-300 bg-emerald-200/90 dark:bg-emerald-800/90 border border-emerald-400 dark:border-emerald-600 rounded px-1.5 shadow-sm">
                                     {activeCountInCol}
                                   </span>
                                 </div>
@@ -786,8 +788,8 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
                               {/* Main Task Active Count Overlay */}
                               {!isSub && activeCountInCol > 0 && (
-                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none mt-4">
-                                  <span className="text-[12px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-900/60 rounded px-1.5 shadow-sm">
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none z-20">
+                                  <span className="text-[13px] font-black text-emerald-800 dark:text-emerald-300 bg-emerald-200/90 dark:bg-emerald-800/90 border border-emerald-400 dark:border-emerald-600 rounded px-1.5 shadow-sm">
                                     {activeCountInCol}
                                   </span>
                                 </div>

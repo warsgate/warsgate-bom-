@@ -176,18 +176,40 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
       subTasksMap.get(subTask.parentId!)!.push(subTask);
     });
 
-    const result: (MasterPlanTaskItem & { isSubTask?: boolean; activeSubTasksCount?: number; hasChildren?: boolean })[] = [];
+    const getDaysBetween = (startStr?: string, endStr?: string) => {
+      if (!startStr || !endStr) return 0;
+      const s = new Date(startStr);
+      const e = new Date(endStr);
+      if (isNaN(s.getTime()) || isNaN(e.getTime())) return 0;
+      return Math.max(0, Math.ceil((e.getTime() - s.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+    };
+
+    const result: (MasterPlanTaskItem & { isSubTask?: boolean; activeSubTasksCount?: number; hasChildren?: boolean; progressPct?: number })[] = [];
     
     mainTasks.forEach(mainTask => {
       const children = subTasksMap.get(mainTask.id) || [];
       const activeSubTasksCount = children.filter(child => (child.actualDates && child.actualDates.length > 0) || child.actualStartDate).length;
       
-      result.push({ ...mainTask, activeSubTasksCount, hasChildren: children.length > 0 });
+      let mainPlanDays = 0;
+      let mainActualDays = 0;
+
+      const childrenWithProgress = children.map(child => {
+        const planDays = getDaysBetween(child.planStartDate, child.planEndDate);
+        const actualDays = child.actualDates?.length || 0;
+        const progressPct = planDays > 0 ? Math.min(100, Math.round((actualDays / planDays) * 100)) : 0;
+        
+        mainPlanDays += planDays;
+        mainActualDays += actualDays;
+        
+        return { ...child, isSubTask: true, progressPct };
+      });
+      
+      const mainProgressPct = mainPlanDays > 0 ? Math.min(100, Math.round((mainActualDays / mainPlanDays) * 100)) : 0;
+      
+      result.push({ ...mainTask, activeSubTasksCount, hasChildren: children.length > 0, progressPct: mainProgressPct });
       
       if (!collapsedMainTasks.has(mainTask.id)) {
-        children.forEach(child => {
-          result.push({ ...child, isSubTask: true });
-        });
+        result.push(...childrenWithProgress);
       }
     });
 
@@ -521,6 +543,9 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                 <th rowSpan={2} className="p-2 border-r border-slate-200 dark:border-slate-800 min-w-[140px]">
                   PLAN vs ACTUAL DATES
                 </th>
+                <th rowSpan={2} className="p-2 border-r border-slate-200 dark:border-slate-800 text-center w-24">
+                  PROGRESS
+                </th>
                 <th rowSpan={2} className="p-2 border-r border-slate-200 dark:border-slate-800 text-right w-20">
                   COST (฿)
                 </th>
@@ -649,6 +674,21 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                         </div>
                         <div className="text-emerald-700 dark:text-emerald-400 font-bold">
                           A: {actualCount > 0 ? `${actualCount} วันเสร็จจริง` : 'ยังไม่เริ่ม'}
+                        </div>
+                      </td>
+
+                      {/* Progress */}
+                      <td className="p-2 border-r border-slate-200 dark:border-slate-800 text-center align-middle">
+                        <div className="flex items-center justify-center space-x-1.5" title={`${(task as any).progressPct || 0}% Completed`}>
+                          <div className="w-10 h-1.5 bg-slate-200 dark:bg-slate-700 rounded-full overflow-hidden shrink-0 mt-0.5">
+                            <div 
+                              className={`h-full ${isSub ? 'bg-sky-500' : 'bg-indigo-500'} transition-all duration-300`} 
+                              style={{ width: `${(task as any).progressPct || 0}%` }}
+                            />
+                          </div>
+                          <span className="text-[9px] font-mono font-black w-6 text-right text-slate-700 dark:text-slate-300">
+                            {(task as any).progressPct || 0}%
+                          </span>
                         </div>
                       </td>
 

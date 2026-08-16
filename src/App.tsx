@@ -34,19 +34,6 @@ export function App() {
   const [activeProjectId, setActiveProjectId] = useState<string>('proj-1');
   const [isLoading, setIsLoading] = useState(true);
 
-  if (authLoading) {
-    return <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div></div>;
-  }
-
-  if (!isAuthenticated) {
-    return <LoginPage />;
-  }
-
-  // Ensure LEVEL_1 user cannot access dashboard or history
-  if (user?.role === 'LEVEL_1' && (activeTab === 'dashboard' || activeTab === 'history')) {
-    setActiveTab('master-plan');
-  }
-
   // Data state (replaces Dexie useLiveQuery)
   const [projects, setProjects] = useState<ProjectItem[]>([]);
   const [allModules, setAllModules] = useState<ModuleItem[]>([]);
@@ -98,6 +85,7 @@ export function App() {
   }, [activeProjectId]);
 
   useEffect(() => { 
+    if (!isAuthenticated) return;
     loadAll(true); 
     
     // Auto-refresh background polling every 5 seconds
@@ -106,7 +94,14 @@ export function App() {
     }, 5000);
 
     return () => clearInterval(intervalId);
-  }, [loadAll]);
+  }, [loadAll, isAuthenticated]);
+
+  // Ensure LEVEL_1 user cannot access dashboard or history
+  useEffect(() => {
+    if (user?.role === 'LEVEL_1' && (activeTab === 'dashboard' || activeTab === 'history')) {
+      setActiveTab('master-plan');
+    }
+  }, [user, activeTab]);
 
   const activeProject = projects.find(p => p.id === activeProjectId) || projects[0];
 
@@ -193,6 +188,15 @@ export function App() {
 
   // ─── Master Task CRUD ─────────────────────────────────────
   const [pendingShiftedTasks, setPendingShiftedTasks] = useState<MasterPlanTaskItem[]>([]);
+
+  // Early returns must be AFTER all hooks to prevent React hook order violations
+  if (authLoading) {
+    return <div className="min-h-screen flex items-center justify-center bg-slate-50 dark:bg-slate-950"><div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-indigo-500"></div></div>;
+  }
+
+  if (!isAuthenticated) {
+    return <LoginPage />;
+  }
 
   const handleSaveMasterTask = async (data: Partial<MasterPlanTaskItem>) => {
     let savedTask: MasterPlanTaskItem;

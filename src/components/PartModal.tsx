@@ -75,7 +75,11 @@ export const PartModal: React.FC<PartModalProps> = ({
     setUnit(master.unit || 'EA');
     setMaker(master.maker || '');
     setSupplier(master.supplier || '');
+    setTargetUnitPrice(master.unitPrice || 0);
     setUnitPrice(master.unitPrice || 0);
+    if (master.storeLocation) {
+      setStoreLocation(master.storeLocation);
+    }
   };
 
   useEffect(() => {

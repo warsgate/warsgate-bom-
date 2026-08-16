@@ -42,7 +42,8 @@ export const PartLibraryModal: React.FC<PartLibraryModalProps> = ({
     return masterParts.filter(p => 
       p.partName.toLowerCase().includes(q) || 
       p.typeSpec.toLowerCase().includes(q) || 
-      p.maker.toLowerCase().includes(q)
+      p.maker.toLowerCase().includes(q) ||
+      p.supplier.toLowerCase().includes(q)
     );
   }, [masterParts, searchQuery]);
 

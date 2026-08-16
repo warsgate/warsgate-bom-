@@ -170,9 +170,9 @@ export const MasterPartLibrary: React.FC = () => {
       </div>
 
       <div className="bg-white dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto max-h-[calc(100vh-220px)] overflow-y-auto">
+        <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
           <table className="w-full text-left text-xs whitespace-nowrap">
-            <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-800/90 backdrop-blur-sm text-slate-500 dark:text-slate-400 font-bold border-b border-slate-200 dark:border-slate-800 shadow-sm">
               <tr>
                 <th className="px-4 py-3 w-10 text-center">No.</th>
                 <th className="px-4 py-3">Part Name (ชื่อชิ้นส่วน)</th>
@@ -185,7 +185,7 @@ export const MasterPartLibrary: React.FC = () => {
                 <th className="px-4 py-3 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800/60 bg-white dark:bg-slate-900">
               {isLoading ? (
                 <tr>
                   <td colSpan={9} className="px-4 py-8 text-center text-slate-400">Loading...</td>

@@ -212,17 +212,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
           <span className="text-[10px] font-black text-rose-600 dark:text-rose-400 uppercase tracking-widest flex items-center">
             <FolderKanban className="w-3.5 h-3.5 mr-1.5" /> Workspace
           </span>
-          <button
-            onClick={() => {
-              onOpenAddProject();
-              if (onCloseMobile) onCloseMobile();
-            }}
-            className="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-600 dark:hover:text-white rounded-lg text-[10px] font-black transition-all duration-200 flex items-center"
-            title="สร้างโปรเจกต์ใหม่"
-          >
-            <FolderPlus className="w-3 h-3 mr-1" />
-            เพิ่ม
-          </button>
+          {userRole === 'OWNER' && (
+            <button
+              onClick={() => {
+                onOpenAddProject();
+                if (onCloseMobile) onCloseMobile();
+              }}
+              className="px-2.5 py-1 bg-rose-50 text-rose-700 hover:bg-rose-600 hover:text-white dark:bg-rose-500/10 dark:text-rose-400 dark:hover:bg-rose-600 dark:hover:text-white rounded-lg text-[10px] font-black transition-all duration-200 flex items-center"
+              title="สร้างโปรเจกต์ใหม่"
+            >
+              <FolderPlus className="w-3 h-3 mr-1" />
+              เพิ่ม
+            </button>
+          )}
         </div>
 
         <div className="relative group">
@@ -247,22 +249,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
             <div className="text-[10px] text-slate-500 dark:text-slate-400 font-bold truncate">
               ลูกค้า: <span className="text-slate-800 dark:text-slate-200 font-black">{activeProject.customer}</span>
             </div>
-            <div className="flex items-center space-x-1.5 flex-shrink-0 ml-2">
-              <button
-                onClick={() => onEditProject(activeProject)}
-                className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 transition-colors"
-                title="แก้ไขข้อมูลโปรเจกต์"
-              >
-                <Edit2 className="w-3.5 h-3.5" />
-              </button>
-              <button
-                onClick={() => onDeleteProject(activeProject.id)}
-                className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 transition-colors"
-                title="ลบโปรเจกต์"
-              >
-                <Trash2 className="w-3 h-3" />
-              </button>
-            </div>
+            {userRole === 'OWNER' && (
+              <div className="flex items-center space-x-1.5 flex-shrink-0 ml-2">
+                <button
+                  onClick={() => onEditProject(activeProject)}
+                  className="p-1.5 text-slate-400 hover:text-blue-600 dark:hover:text-blue-400 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 transition-colors"
+                  title="แก้ไขข้อมูลโปรเจกต์"
+                >
+                  <Edit2 className="w-3.5 h-3.5" />
+                </button>
+                <button
+                  onClick={() => onDeleteProject(activeProject.id)}
+                  className="p-1.5 text-slate-400 hover:text-red-600 dark:hover:text-red-400 bg-white dark:bg-slate-800 rounded-lg shadow-sm border border-slate-200 dark:border-slate-700 transition-colors"
+                  title="ลบโปรเจกต์"
+                >
+                  <Trash2 className="w-3 h-3" />
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

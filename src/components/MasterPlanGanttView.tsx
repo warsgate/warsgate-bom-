@@ -694,6 +694,8 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                           return (
                             <td 
                               key={idx} 
+                              onMouseDown={() => handleCellMouseDown(task, col.dateIso, false)}
+                              onMouseEnter={() => handleCellMouseEnter(task, col.dateIso)}
                               onDoubleClick={() => handleCellDoubleClick(task, col.dateIso)}
                               onContextMenu={(e) => handleCellContextMenu(e, task, col.dateIso)}
                               className={`p-0.5 border-r border-slate-200 dark:border-slate-800 text-center relative h-12 w-9 min-w-[36px] cursor-pointer transition-colors ${

@@ -124,8 +124,8 @@ export const MasterPartLibrary: React.FC = () => {
   }, [masterParts, searchQuery]);
 
   return (
-    <div className="space-y-4 max-w-7xl mx-auto px-4 sm:px-6">
-      <div className="p-4 rounded-xl border border-indigo-200 dark:border-indigo-900/40 bg-white dark:bg-slate-900 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3 mt-4">
+    <div className="space-y-3">
+      <div className="p-3 rounded-xl border border-indigo-200 dark:border-indigo-900/40 bg-white dark:bg-slate-900 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3 text-xs">
         <div>
           <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-indigo-100 dark:bg-indigo-500/20 text-indigo-800 dark:text-indigo-300 mb-1">
             <Database className="w-3 h-3 mr-1" />

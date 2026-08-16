@@ -362,8 +362,9 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
           
           {/* Fixed Plan Indicator */}
           <div className="px-2.5 py-1 rounded-xl bg-blue-50 dark:bg-blue-950 border border-blue-200 dark:border-blue-800 text-[11px] font-black text-blue-800 dark:text-blue-300 flex items-center">
-            <span className="w-2 h-2 rounded-full bg-blue-600 mr-1.5"></span>
-            Plan Fixed (แผนตั้งไว้ 🔵)
+            <span className="w-2 h-2 rounded-full bg-indigo-600 mr-1"></span>
+            <span className="w-2 h-2 rounded-full bg-sky-500 mr-1.5"></span>
+            Plan Fixed (หลัก/ย่อย 🔵)
           </div>
 
           {/* Timeline Period Mode Toggle Switcher */}
@@ -696,7 +697,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                               <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
                                 <div className="h-2.5 w-full">
                                   {inPlan && (
-                                    <div className="h-full bg-blue-600 rounded-xs shadow-xs" title="Plan (Fixed 🔒)"></div>
+                                    <div className={`h-full ${isSub ? 'bg-sky-500' : 'bg-indigo-600'} rounded-xs shadow-xs`} title={isSub ? "Sub Plan (Fixed 🔒)" : "Main Plan (Fixed 🔒)"}></div>
                                   )}
                                 </div>
                                 <div className="h-2.5 w-full">
@@ -736,7 +737,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                               <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
                                 <div className="h-3 w-full">
                                   {inPlan && (
-                                    <div className="h-full bg-blue-600 rounded-sm shadow-xs" title="Plan (Fixed 🔒)"></div>
+                                    <div className={`h-full ${isSub ? 'bg-sky-500' : 'bg-indigo-600'} rounded-sm shadow-xs`} title={isSub ? "Sub Plan (Fixed 🔒)" : "Main Plan (Fixed 🔒)"}></div>
                                   )}
                                 </div>
                                 <div className="h-3 w-full">

@@ -37,7 +37,7 @@ router.get('/:id', async (req: Request, res: Response) => {
 // POST create task
 router.post('/', async (req: Request, res: Response) => {
   try {
-    const { actualDates, dailyNotes, ...rest } = req.body;
+    const { actualDates, dailyNotes, isSubTask, activeSubTasksCount, ...rest } = req.body;
     const task = await prisma.masterTask.create({
       data: { ...rest, actualDates: JSON.stringify(actualDates || []), dailyNotes: JSON.stringify(dailyNotes || {}) },
     });
@@ -57,7 +57,7 @@ router.put('/batch', async (req: Request, res: Response) => {
 
     const updatedTasks = await prisma.$transaction(
       tasksToUpdate.map(t => {
-        const { id, createdAt, updatedAt, project, actualDates, dailyNotes, ...rest } = t;
+        const { id, createdAt, updatedAt, project, actualDates, dailyNotes, isSubTask, activeSubTasksCount, ...rest } = t;
         return prisma.masterTask.update({
           where: { id: t.id },
           data: { ...rest, actualDates: JSON.stringify(actualDates || []), dailyNotes: JSON.stringify(dailyNotes || {}) },
@@ -74,7 +74,7 @@ router.put('/batch', async (req: Request, res: Response) => {
 // PUT update task
 router.put('/:id', async (req: Request, res: Response) => {
   try {
-    const { id, createdAt, updatedAt, project, actualDates, dailyNotes, ...rest } = req.body;
+    const { id, createdAt, updatedAt, project, actualDates, dailyNotes, isSubTask, activeSubTasksCount, ...rest } = req.body;
     const task = await prisma.masterTask.update({
       where: { id: req.params.id },
       data: { ...rest, actualDates: JSON.stringify(actualDates || []), dailyNotes: JSON.stringify(dailyNotes || {}) },

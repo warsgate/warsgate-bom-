@@ -1,0 +1,111 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id               String       @id @default(cuid())
+  projectName      String
+  customerName     String
+  projectStatus    String       @default("draft") // draft, in-progress, completed
+  expectedDelivery DateTime?
+  budget           Float?
+  createdAt        DateTime     @default(now())
+  updatedAt        DateTime     @updatedAt
+
+  modules          Module[]
+  parts            Part[]
+  masterTasks      MasterTask[]
+}
+
+model Module {
+  id          String   @id @default(cuid())
+  projectId   String
+  moduleName  String
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  project     Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parts       Part[]
+}
+
+model Part {
+  id               String   @id @default(cuid())
+  projectId        String
+  moduleId         String
+  partName         String
+  typeSpec         String?
+  maker            String?
+  supplier         String?
+  materials        String?
+  drawingNumber    String?
+  qTy              Int      @default(1)
+  targetUnitPrice  Float?
+  actualUnitPrice  Float?
+  status           String   @default("pending") // pending, ordering, received, assembling, completed
+  storeLocation    String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  project          Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  module           Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+}
+
+model MasterTask {
+  id              String       @id @default(cuid())
+  projectId       String
+  taskName        String
+  taskType        String       @default("main") // main, sub
+  parentTaskId    String?
+  assignee        String?
+  startDate       DateTime
+  endDate         DateTime
+  actualStartDate DateTime?
+  actualEndDate   DateTime?
+  progress        Int          @default(0)
+  status          String       @default("pending") // pending, in-progress, completed, delayed
+  createdAt       DateTime     @default(now())
+  updatedAt       DateTime     @updatedAt
+
+  actualDates     String?      @db.Text
+  dailyNotes      String?      @db.Text
+  
+  project         Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parentTask      MasterTask?  @relation("SubTasks", fields: [parentTaskId], references: [id], onDelete: Restrict)
+  subTasks        MasterTask[] @relation("SubTasks")
+}
+
+model MasterPart {
+  id              String   @id @default(cuid())
+  partName        String
+  typeSpec        String
+  maker           String?
+  supplier        String?
+  targetUnitPrice Float?
+  storeLocation   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@unique([partName, typeSpec])
+}
+
+model Quotation {
+  id           String   @id @default(cuid())
+  projectId    String
+  quotationNo  String
+  issueDate    DateTime @default(now())
+  customerName String
+  totalAmount  Float
+  status       String   @default("draft") // draft, sent, approved, rejected
+  pdfUrl       String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  parts   Part[]
+}

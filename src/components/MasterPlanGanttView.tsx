@@ -587,7 +587,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                         <div className={`flex flex-col ${isSub ? 'pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-1' : ''}`}>
                           <div 
                             onClick={() => onOpenEditTask(task)}
-                            className={`font-black hover:text-blue-600 cursor-pointer truncate max-w-[200px] ${isSub ? 'text-slate-700 dark:text-slate-300' : 'text-slate-900 dark:text-white'}`}
+                            className={`font-black hover:opacity-80 cursor-pointer truncate max-w-[200px] ${isSub ? 'text-sky-700 dark:text-sky-300' : 'text-indigo-700 dark:text-indigo-300'}`}
                           >
                             {task.title}
                           </div>

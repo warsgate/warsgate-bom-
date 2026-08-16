@@ -147,6 +147,8 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   // Daily Note Modal State
   const [activeNoteModal, setActiveNoteModal] = useState<{task: MasterPlanTaskItem, dateIso: string} | null>(null);
   
+  const [collapsedMainTasks, setCollapsedMainTasks] = useState<Set<string>>(new Set());
+
   const lastClickTimeRef = useRef<number>(0);
   const lastClickCellRef = useRef<string>('');
 
@@ -174,22 +176,18 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
       subTasksMap.get(subTask.parentId!)!.push(subTask);
     });
 
-    const result: (MasterPlanTaskItem & { isSubTask?: boolean; activeSubTasksCount?: number })[] = [];
+    const result: (MasterPlanTaskItem & { isSubTask?: boolean; activeSubTasksCount?: number; hasChildren?: boolean })[] = [];
     
     mainTasks.forEach(mainTask => {
       const children = subTasksMap.get(mainTask.id) || [];
       const activeSubTasksCount = children.filter(child => (child.actualDates && child.actualDates.length > 0) || child.actualStartDate).length;
       
-      result.push({ ...mainTask, activeSubTasksCount });
-      children.forEach(child => {
-        result.push({ ...child, isSubTask: true });
-      });
-    });
-
-    const handledIds = new Set(result.map(t => t.id));
-    masterTasks.forEach(t => {
-      if (!handledIds.has(t.id)) {
-        result.push({ ...t, isSubTask: true });
+      result.push({ ...mainTask, activeSubTasksCount, hasChildren: children.length > 0 });
+      
+      if (!collapsedMainTasks.has(mainTask.id)) {
+        children.forEach(child => {
+          result.push({ ...child, isSubTask: true });
+        });
       }
     });
 
@@ -351,6 +349,19 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   const handleCellContextMenu = (e: React.MouseEvent, task: MasterPlanTaskItem, colIso: string) => {
     e.preventDefault();
     setActiveNoteModal({ task, dateIso: colIso });
+  };
+
+  const toggleCollapseMainTask = (taskId: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setCollapsedMainTasks(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(taskId)) {
+        newSet.delete(taskId);
+      } else {
+        newSet.add(taskId);
+      }
+      return newSet;
+    });
   };
 
   return (
@@ -597,12 +608,20 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
                       {/* Sticky Task Title */}
                       <td className="p-2 border-r border-slate-200 dark:border-slate-800 sticky left-10 z-10 bg-white dark:bg-slate-900">
-                        <div className={`flex flex-col ${isSub ? 'pl-4 border-l-2 border-slate-200 dark:border-slate-700 ml-1' : ''}`}>
+                        <div className={`flex flex-col ${isSub ? 'pl-6 border-l-2 border-slate-200 dark:border-slate-700 ml-1' : ''}`}>
                           <div 
-                            onClick={() => onOpenEditTask(task)}
-                            className={`font-black hover:opacity-80 cursor-pointer max-w-[200px] flex items-center gap-1.5 ${isSub ? 'text-sky-700 dark:text-sky-300' : 'text-indigo-700 dark:text-indigo-300'}`}
+                            className={`font-black max-w-[200px] flex items-center gap-1.5 ${isSub ? 'text-sky-700 dark:text-sky-300' : 'text-indigo-700 dark:text-indigo-300'}`}
                           >
-                            <span className="truncate">{task.title}</span>
+                            {!isSub && (task as any).hasChildren && (
+                              <button
+                                onClick={(e) => toggleCollapseMainTask(task.id, e)}
+                                className="flex-shrink-0 w-4 h-4 flex items-center justify-center rounded-sm bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-300 hover:bg-indigo-200 dark:hover:bg-indigo-800 transition-colors mr-1 cursor-pointer font-mono text-[10px]"
+                                title={collapsedMainTasks.has(task.id) ? "Expand Sub Tasks" : "Collapse Sub Tasks"}
+                              >
+                                {collapsedMainTasks.has(task.id) ? '+' : '-'}
+                              </button>
+                            )}
+                            <span className="truncate hover:opacity-80 cursor-pointer" onClick={() => onOpenEditTask(task)}>{task.title}</span>
                             {!isSub && (task as any).activeSubTasksCount > 0 && (
                               <span className="shrink-0 px-1.5 py-0.5 rounded text-[9px] font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-900/40 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                                 {(task as any).activeSubTasksCount} Active

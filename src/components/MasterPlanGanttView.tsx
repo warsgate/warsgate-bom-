@@ -728,16 +728,20 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                   {!inActual && inDrag && !isErasing && (
                                     <div className="h-full bg-emerald-400/80 rounded-xs"></div>
                                   )}
-                                  {!isSub && activeCountInCol > 0 && (
-                                    <div className="flex items-center justify-center w-full h-full text-[9px] font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 rounded-xs">
-                                      {activeCountInCol}
-                                    </div>
-                                  )}
                                   {!inActual && task.dailyNotes && task.dailyNotes[col.dateIso] && (
                                     <div className="absolute top-1 right-0.5 text-[8px] opacity-70">📝</div>
                                   )}
                                 </div>
                               </div>
+                              
+                              {/* Main Task Active Count Overlay */}
+                              {!isSub && activeCountInCol > 0 && (
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none mt-4">
+                                  <span className="text-[11px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-900/60 rounded px-1 shadow-sm">
+                                    {activeCountInCol}
+                                  </span>
+                                </div>
+                              )}
                             </td>
                           );
                         })
@@ -777,13 +781,17 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                   {!inActual && inDrag && !isErasing && (
                                     <div className="h-full bg-emerald-400/80 rounded-sm"></div>
                                   )}
-                                  {!isSub && activeCountInCol > 0 && (
-                                    <div className="flex items-center justify-center w-full h-full text-[10px] font-black text-emerald-700 dark:text-emerald-400 bg-emerald-50 dark:bg-emerald-900/20 rounded-sm">
-                                      {activeCountInCol}
-                                    </div>
-                                  )}
                                 </div>
                               </div>
+
+                              {/* Main Task Active Count Overlay */}
+                              {!isSub && activeCountInCol > 0 && (
+                                <div className="absolute inset-0 flex items-center justify-center pointer-events-none mt-4">
+                                  <span className="text-[12px] font-black text-emerald-700 dark:text-emerald-300 bg-emerald-100/80 dark:bg-emerald-900/60 rounded px-1.5 shadow-sm">
+                                    {activeCountInCol}
+                                  </span>
+                                </div>
+                              )}
                             </td>
                           );
                         })

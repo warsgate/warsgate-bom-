@@ -23,7 +23,7 @@ interface MasterPlanGanttViewProps {
   onOpenAddTask: () => void;
   onOpenEditTask: (task: MasterPlanTaskItem) => void;
   onDeleteTask: (taskId: string) => void;
-  onInsertTask?: (baseTask: MasterPlanTaskItem, mode: 'below' | 'sub') => void;
+  onInsertTask?: (baseTask: MasterPlanTaskItem, mode: 'above' | 'below' | 'sub') => void;
   onUpdateTaskDates?: (taskId: string, dates: { planStartDate?: string; planEndDate?: string; actualStartDate?: string; actualEndDate?: string; actualDates?: string[]; status?: 'Pending' | 'In Progress' | 'Completed' }) => void;
   onOpenActualCompletionPopup?: (task: MasterPlanTaskItem, clickedDateIso: string) => void;
   onToggleCellActualDate?: (task: MasterPlanTaskItem, dateIso: string) => void;
@@ -715,6 +715,13 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                         <div className="flex flex-wrap items-center justify-center gap-1">
                           {onInsertTask && (
                             <>
+                              <button
+                                onClick={() => onInsertTask(task, 'above')}
+                                className="px-1.5 py-1 text-[9px] font-bold text-slate-500 hover:text-emerald-600 bg-slate-100 dark:bg-slate-800 rounded flex items-center"
+                                title="แทรกงานด้านบน"
+                              >
+                                <Plus className="w-2.5 h-2.5 mr-0.5" /> บน
+                              </button>
                               <button
                                 onClick={() => onInsertTask(task, 'below')}
                                 className="px-1.5 py-1 text-[9px] font-bold text-slate-500 hover:text-emerald-600 bg-slate-100 dark:bg-slate-800 rounded flex items-center"

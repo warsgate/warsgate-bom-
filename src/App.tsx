@@ -224,7 +224,7 @@ export function App() {
     }
   };
 
-  const handleInsertTask = (baseTask: MasterPlanTaskItem, mode: 'below' | 'sub') => {
+  const handleInsertTask = (baseTask: MasterPlanTaskItem, mode: 'above' | 'below' | 'sub') => {
     let newWbs = '';
     let newParentId: string | undefined = undefined;
     const shiftedTasks: MasterPlanTaskItem[] = [];
@@ -247,23 +247,24 @@ export function App() {
       } else {
         newWbs = `${baseTask.wbs}.1`;
       }
-    } else if (mode === 'below') {
-      // Insert Below
+    } else if (mode === 'below' || mode === 'above') {
+      // Insert Below or Above
       newParentId = baseTask.parentId;
       const parts = baseTask.wbs.split('.');
+      const offset = mode === 'above' ? 0 : 1;
       
       if (!baseTask.parentId) {
         // Main Task
         if (parts.length > 0 && isNum(parts[0])) {
           const baseNum = Number(parts[0]);
-          newWbs = `${baseNum + 1}.0`;
+          newWbs = `${baseNum + offset}.0`;
           
-          // Shift all Main Tasks >= baseNum + 1
+          // Shift all Main Tasks >= baseNum + offset
           projectMasterTasks.forEach(t => {
             const tParts = t.wbs.split('.');
             if (tParts.length > 0 && isNum(tParts[0])) {
               const tNum = Number(tParts[0]);
-              if (tNum >= baseNum + 1) {
+              if (tNum >= baseNum + offset) {
                 const shiftedWbs = `${tNum + 1}${tParts.slice(1).length > 0 ? '.' + tParts.slice(1).join('.') : ''}`;
                 shiftedTasks.push({ ...t, wbs: shiftedWbs });
               }
@@ -274,14 +275,14 @@ export function App() {
         // Sub Task
         if (parts.length >= 2 && isNum(parts[1])) {
           const baseSubNum = Number(parts[1]);
-          newWbs = `${parts[0]}.${baseSubNum + 1}`;
+          newWbs = `${parts[0]}.${baseSubNum + offset}`;
           
-          // Shift all Sub Tasks in the SAME parent >= baseSubNum + 1
+          // Shift all Sub Tasks in the SAME parent >= baseSubNum + offset
           projectMasterTasks.filter(t => t.parentId === baseTask.parentId).forEach(t => {
             const tParts = t.wbs.split('.');
             if (tParts.length >= 2 && isNum(tParts[1])) {
               const tSubNum = Number(tParts[1]);
-              if (tSubNum >= baseSubNum + 1) {
+              if (tSubNum >= baseSubNum + offset) {
                 const shiftedWbs = `${tParts[0]}.${tSubNum + 1}`;
                 shiftedTasks.push({ ...t, wbs: shiftedWbs });
               }

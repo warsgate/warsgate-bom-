@@ -688,8 +688,8 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                       {timelineMode === 'days' ? (
                         dailyColumns.map((col, idx) => {
                           const inPlan = isDateInRange(col.dateIso, task.planStartDate, task.planEndDate);
-                          const inActual = checkIsCellActual(task, col.dateIso, false);
-                          const inDrag = isCellInDragRange(task.id, col.dateIso);
+                          const inActual = isSub ? checkIsCellActual(task, col.dateIso, false) : false;
+                          const inDrag = isSub ? isCellInDragRange(task.id, col.dateIso) : false;
 
                           return (
                             <td 
@@ -733,8 +733,8 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                       ) : (
                         weeklyColumns.map((col, idx) => {
                           const inPlan = isRangeOverlapping(task.planStartDate, task.planEndDate, col.startIso, col.endIso);
-                          const inActual = checkIsCellActual(task, col.startIso, true, col.startIso, col.endIso);
-                          const inDrag = isCellInDragRange(task.id, col.startIso);
+                          const inActual = isSub ? checkIsCellActual(task, col.startIso, true, col.startIso, col.endIso) : false;
+                          const inDrag = isSub ? isCellInDragRange(task.id, col.startIso) : false;
 
                           return (
                             <td 

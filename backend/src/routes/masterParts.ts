@@ -60,6 +60,7 @@ router.post('/sync', async (req: Request, res: Response) => {
         supplier: true,
         unitPrice: true,
         storeLocation: true,
+        purchaseLink: true,
       }
     });
 

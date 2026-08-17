@@ -75,6 +75,49 @@ async function importPdfParts() {
   }
 }
 
+// ─── Cleanup Maker Links ───────────────────────────────────────
+async function cleanupMakerLinks() {
+  try {
+    const partsWithLinks = await prisma.masterPart.findMany({
+      where: {
+        OR: [
+          { maker: { contains: 'http' } },
+          { maker: { contains: 'www.' } },
+        ]
+      }
+    });
+    if (partsWithLinks.length > 0) {
+      for (const p of partsWithLinks) {
+        await prisma.masterPart.update({
+          where: { id: p.id },
+          data: { maker: '-' } // Replace with dash or empty
+        });
+      }
+      console.log(`✅ Cleaned up ${partsWithLinks.length} maker links in master parts`);
+    }
+
+    const bomPartsWithLinks = await prisma.part.findMany({
+      where: {
+        OR: [
+          { maker: { contains: 'http' } },
+          { maker: { contains: 'www.' } },
+        ]
+      }
+    });
+    if (bomPartsWithLinks.length > 0) {
+      for (const p of bomPartsWithLinks) {
+        await prisma.part.update({
+          where: { id: p.id },
+          data: { maker: '-' }
+        });
+      }
+      console.log(`✅ Cleaned up ${bomPartsWithLinks.length} maker links in BOM parts`);
+    }
+  } catch (err) {
+    console.error('Failed to cleanup maker links', err);
+  }
+}
+
 // ─── Start Server ─────────────────────────────────────────────
 app.listen(PORT, async () => {
   console.log(`🚀 WARSGATE BOM API running on port ${PORT}`);
@@ -82,4 +125,5 @@ app.listen(PORT, async () => {
   console.log(`❤️  Health: http://localhost:${PORT}/health`);
   
   await importPdfParts();
+  await cleanupMakerLinks();
 });

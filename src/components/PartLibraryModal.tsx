@@ -118,7 +118,23 @@ export const PartLibraryModal: React.FC<PartLibraryModalProps> = ({
                   <div className="mt-3 flex justify-between items-end">
                     <div className="text-xs text-slate-500 dark:text-slate-400 space-y-0.5">
                       <p>Maker: <span className="font-semibold">{part.maker || '-'}</span></p>
-                      <p>Supplier: <span className="font-semibold">{part.supplier || '-'}</span></p>
+                      <p className="flex items-center">
+                        Supplier: <span className="font-semibold ml-1">{part.supplier || '-'}</span>
+                        {part.purchaseLink && (
+                          <a
+                            href={part.purchaseLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            onClick={(e) => e.stopPropagation()}
+                            className="ml-1.5 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                            title="เปิดลิงก์สั่งซื้อ"
+                          >
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                            </svg>
+                          </a>
+                        )}
+                      </p>
                     </div>
                     <div className="text-right">
                       <p className="text-[10px] text-slate-400 mb-0.5">Standard Price</p>

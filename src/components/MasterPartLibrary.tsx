@@ -23,6 +23,7 @@ export const MasterPartLibrary: React.FC = () => {
   const [supplier, setSupplier] = useState('');
   const [unitPrice, setUnitPrice] = useState<number>(0);
   const [storeLocation, setStoreLocation] = useState('');
+  const [purchaseLink, setPurchaseLink] = useState('');
   const [description, setDescription] = useState('');
 
   const fetchMasterParts = async () => {
@@ -52,6 +53,7 @@ export const MasterPartLibrary: React.FC = () => {
     setSupplier('');
     setUnitPrice(0);
     setStoreLocation('');
+    setPurchaseLink('');
     setDescription('');
     setIsModalOpen(true);
   };
@@ -67,6 +69,7 @@ export const MasterPartLibrary: React.FC = () => {
     setSupplier(part.supplier);
     setUnitPrice(part.unitPrice);
     setStoreLocation(part.storeLocation);
+    setPurchaseLink(part.purchaseLink || '');
     setDescription(part.description);
     setIsModalOpen(true);
   };
@@ -74,7 +77,7 @@ export const MasterPartLibrary: React.FC = () => {
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     const payload = {
-      partName, typeSpec, category, partType, unit, maker, supplier, unitPrice: Number(unitPrice), storeLocation, description
+      partName, typeSpec, category, partType, unit, maker, supplier, unitPrice: Number(unitPrice), storeLocation, purchaseLink, description
     };
     try {
       if (editingPart) {
@@ -180,6 +183,7 @@ export const MasterPartLibrary: React.FC = () => {
                 <th className="p-2.5 text-center">PART TYPE</th>
                 <th className="p-2.5">MAKER</th>
                 <th className="p-2.5">SUPPLIER</th>
+                <th className="p-2.5 text-center">LINK</th>
                 <th className="p-2.5 text-right">STANDARD PRICE</th>
                 <th className="p-2.5 text-center">ACTION</th>
               </tr>
@@ -224,6 +228,23 @@ export const MasterPartLibrary: React.FC = () => {
                     </td>
                     <td className="p-2.5 text-slate-600 dark:text-slate-400">{part.maker || '-'}</td>
                     <td className="p-2.5 text-slate-600 dark:text-slate-400">{part.supplier || '-'}</td>
+                    <td className="p-2.5 text-center">
+                      {part.purchaseLink ? (
+                        <a
+                          href={part.purchaseLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                          title="เปิดลิงก์สั่งซื้อ"
+                        >
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                          </svg>
+                        </a>
+                      ) : (
+                        <span className="text-slate-300 dark:text-slate-600">-</span>
+                      )}
+                    </td>
                     <td className="p-2.5 text-right font-mono font-black text-slate-900 dark:text-white">
                       {formatCurrency(part.unitPrice)}
                     </td>
@@ -304,6 +325,13 @@ export const MasterPartLibrary: React.FC = () => {
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Supplier (ผู้จัดจำหน่าย)</label>
                   <input type="text" value={supplier} onChange={e => setSupplier(e.target.value)} className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                </div>
+              </div>
+
+              <div className="grid grid-cols-1 gap-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Link สั่งซื้อ (URL)</label>
+                  <input type="url" value={purchaseLink} onChange={e => setPurchaseLink(e.target.value)} placeholder="https://..." className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-indigo-500" />
                 </div>
               </div>
 

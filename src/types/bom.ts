@@ -74,6 +74,7 @@ export interface MasterPartItem {
   unitPrice: number;
   storeLocation: string;
   description: string;
+  purchaseLink?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -105,6 +106,7 @@ export interface BomPartItem {
   workflowStage?: MachineWorkflowStage;
   ctrlSpare?: string | boolean;
   remarks?: string;
+  purchaseLink?: string;
   createdAt: string;
   updatedAt: string;
 }

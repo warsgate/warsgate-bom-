@@ -49,6 +49,7 @@ export const PartModal: React.FC<PartModalProps> = ({
   const [poNumber, setPoNumber] = useState('');
   const [storeLocation, setStoreLocation] = useState('');
   const [quotationId, setQuotationId] = useState('');
+  const [purchaseLink, setPurchaseLink] = useState('');
   const [status, setStatus] = useState<PartStatus>('Planned');
   const [workflowStage, setWorkflowStage] = useState<MachineWorkflowStage>('2. BOM Part List');
   const [remarks, setRemarks] = useState('');
@@ -80,6 +81,9 @@ export const PartModal: React.FC<PartModalProps> = ({
     if (master.storeLocation) {
       setStoreLocation(master.storeLocation);
     }
+    if (master.purchaseLink) {
+      setPurchaseLink(master.purchaseLink);
+    }
   };
 
   useEffect(() => {
@@ -101,6 +105,7 @@ export const PartModal: React.FC<PartModalProps> = ({
         setPoNumber(initialPart.poNumber || '');
         setQuotationId(initialPart.quotationId || '');
         setStoreLocation(initialPart.storeLocation || '');
+        setPurchaseLink(initialPart.purchaseLink || '');
         setStatus(initialPart.status || 'Planned');
         setWorkflowStage(initialPart.workflowStage || '2. BOM Part List');
         setRemarks(initialPart.remarks || '');
@@ -121,6 +126,7 @@ export const PartModal: React.FC<PartModalProps> = ({
         setPoNumber('');
         setQuotationId('');
         setStoreLocation('');
+        setPurchaseLink('');
         setStatus('Planned');
         setWorkflowStage('2. BOM Part List');
         setRemarks('');
@@ -156,6 +162,7 @@ export const PartModal: React.FC<PartModalProps> = ({
       poNumber,
       quotationId: quotationId || undefined,
       storeLocation,
+      purchaseLink,
       status,
       workflowStage,
       remarks,
@@ -479,6 +486,17 @@ export const PartModal: React.FC<PartModalProps> = ({
                 onChange={(e) => setStoreLocation(e.target.value)}
                 placeholder="e.g. ตู้ A ชั้น 2"
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">Link สั่งซื้อ (URL)</label>
+              <input
+                type="url"
+                value={purchaseLink}
+                onChange={(e) => setPurchaseLink(e.target.value)}
+                placeholder="https://shopee.co.th/... หรืออื่นๆ"
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
             </div>
           </div>

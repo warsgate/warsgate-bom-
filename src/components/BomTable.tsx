@@ -251,7 +251,22 @@ export const BomTable: React.FC<BomTableProps> = ({
                         {formatCurrency(amount)}
                       </td>
                       <td className="p-2.5 text-slate-800 dark:text-slate-200 font-bold text-[11px] print:hidden">
-                        {part.supplier || part.maker || '-'}
+                        <div className="flex items-center">
+                          {part.supplier || part.maker || '-'}
+                          {part.purchaseLink && (
+                            <a
+                              href={part.purchaseLink}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="ml-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                              title="เปิดลิงก์สั่งซื้อ"
+                            >
+                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
+                              </svg>
+                            </a>
+                          )}
+                        </div>
                       </td>
                       <td className="p-2.5 text-center print:hidden">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${

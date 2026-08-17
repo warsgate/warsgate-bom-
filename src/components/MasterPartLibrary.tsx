@@ -77,6 +77,12 @@ export const MasterPartLibrary: React.FC = () => {
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    if (/https?:\/\/|www\./i.test(maker)) {
+      alert('ช่อง MAKER (ผู้ผลิต) ไม่อนุญาตให้ใส่ Link Web กรุณาใส่ลิงก์ที่ช่อง "Link สั่งซื้อ (URL)" แทนครับ');
+      return;
+    }
+
     const payload = {
       partName, typeSpec, category, partType, unit, maker, supplier, unitPrice: Number(unitPrice), storeLocation, purchaseLink, description
     };

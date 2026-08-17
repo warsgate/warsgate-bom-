@@ -24,11 +24,12 @@ import { LoginPage } from './pages/LoginPage';
 import { useAuth } from './contexts/AuthContext';
 import { HistoryLogTable } from './components/HistoryLogTable';
 import { WorkspaceManagement } from './components/WorkspaceManagement';
+import { UserManagement } from './components/UserManagement';
 
 export function App() {
   const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
   
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces'>('master-plan');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users'>('master-plan');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -99,7 +100,7 @@ export function App() {
 
   // Ensure LEVEL_1 user cannot access dashboard or history
   useEffect(() => {
-    if (user?.role === 'LEVEL_1' && (activeTab === 'dashboard' || activeTab === 'history')) {
+    if (user?.role === 'LEVEL_1' && (activeTab === 'dashboard' || activeTab === 'history' || activeTab === 'workspaces' || activeTab === 'users')) {
       setActiveTab('master-plan');
     }
   }, [user, activeTab]);
@@ -626,6 +627,10 @@ export function App() {
               onEditProject={(p) => { setEditingProject(p); setIsProjectModalOpen(true); }}
               onDeleteProject={handleDeleteProject}
             />
+          )}
+
+          {activeTab === 'users' && (
+            user?.role === 'LEVEL_2' ? <UserManagement /> : <div className="p-8 text-center text-slate-500">Access Denied</div>
           )}
 
           {activeTab === 'report' && (

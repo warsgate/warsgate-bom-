@@ -26,8 +26,8 @@ import {
 import { ProjectItem } from '../types/bom';
 
 interface SidebarProps {
-  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces';
-  onTabChange: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces') => void;
+  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users';
+  onTabChange: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users') => void;
   projects: ProjectItem[];
   activeProjectId: string;
   setActiveProjectId: (id: string) => void;
@@ -86,6 +86,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       id: 'workspaces',
       label: 'จัดการ Workspace',
       icon: FolderKanban,
+      badge: null,
+      isProtected: true, // Admin only
+    },
+    {
+      id: 'users',
+      label: 'จัดการผู้ใช้งาน',
+      icon: UserCheck,
       badge: null,
       isProtected: true, // Admin only
     },

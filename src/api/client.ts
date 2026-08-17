@@ -89,3 +89,11 @@ export const quotationsApi = {
   update: (id: string, data: any) => request<any>(`/quotations/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => request<any>(`/quotations/${id}`, { method: 'DELETE' }),
 };
+
+// ─── Users (Admin Only) ───────────────────────────────────────
+export const usersApi = {
+  getAll: () => request<any[]>('/auth/users'),
+  create: (data: any) => request<any>('/auth/register', { method: 'POST', body: JSON.stringify(data) }),
+  update: (id: string, data: any) => request<any>(`/auth/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
+  delete: (id: string) => request<any>(`/auth/users/${id}`, { method: 'DELETE' }),
+};

@@ -148,6 +148,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
 
   const dailyColumns = useMemo(() => generateDailyColumns(dateRange.start, dateRange.diffDays), [dateRange]);
   const weeklyColumns = useMemo(() => generateWeeklyColumns(dateRange.start, dateRange.diffWeeks), [dateRange]);
+  const todayIso = useMemo(() => new Date().toISOString().split('T')[0], []);
 
   // Filter parts based on module
   const filteredParts = useMemo(() => {
@@ -506,17 +507,22 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
               {/* Row 2: Sub Header (Days/Dates) */}
               <tr>
                 {timelineMode === 'days' ? (
-                  dailyColumns.map((col, idx) => (
-                    <th 
-                      key={idx} 
-                      className={`p-1 border-r border-slate-200 dark:border-slate-800 text-center font-mono text-[9px] w-9 min-w-[36px] ${
-                        col.isWeekend ? 'bg-amber-100/60 dark:bg-amber-950/40 text-amber-900' : 'bg-slate-50 dark:bg-slate-950'
-                      }`}
-                    >
-                      <div>{col.dateNum}</div>
-                      <div className="text-[8px] text-slate-400 font-normal">{col.dayOfWeek}</div>
-                    </th>
-                  ))
+                  dailyColumns.map((col, idx) => {
+                    const isToday = col.dateIso === todayIso;
+                    return (
+                      <th 
+                        key={idx} 
+                        className={`p-1 border-r border-slate-200 dark:border-slate-800 text-center font-mono text-[9px] w-9 min-w-[36px] relative ${
+                          isToday ? 'bg-rose-100 dark:bg-rose-900/60 text-rose-800 dark:text-rose-200 font-black' :
+                          col.isWeekend ? 'bg-amber-100/60 dark:bg-amber-950/40 text-amber-900' : 'bg-slate-50 dark:bg-slate-950'
+                        }`}
+                      >
+                        <div>{col.dateNum}</div>
+                        <div className={`text-[8px] ${isToday ? 'text-rose-600 dark:text-rose-300 font-bold' : 'text-slate-400 font-normal'}`}>{col.dayOfWeek}</div>
+                        {isToday && <div className="absolute top-0 bottom-0 left-1/2 w-[2px] bg-rose-500 -ml-[1px] opacity-30 pointer-events-none" />}
+                      </th>
+                    );
+                  })
                 ) : (
                   weeklyColumns.map((col, idx) => (
                     <th 
@@ -692,6 +698,8 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                             activeCountInCol = subTasks.filter(sub => checkIsCellActual(sub, col.dateIso, false)).length;
                           }
 
+                          const isToday = col.dateIso === todayIso;
+
                           return (
                             <td 
                               key={idx} 
@@ -702,11 +710,14 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                   ? 'bg-emerald-100/60 dark:bg-emerald-950/40' 
                                   : (!isSub && activeCountInCol > 0)
                                     ? 'bg-emerald-100/40 dark:bg-emerald-900/40'
-                                    : col.isWeekend ? 'bg-amber-50/30 dark:bg-amber-950/20' : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
+                                    : isToday
+                                      ? 'bg-rose-50/30 dark:bg-rose-900/20 hover:bg-rose-100/50'
+                                      : col.isWeekend ? 'bg-amber-50/30 dark:bg-amber-950/20 hover:bg-emerald-50/80 dark:hover:bg-slate-800' : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
                               }`}
                               title={task.dailyNotes && task.dailyNotes[col.dateIso] ? `Note: ${task.dailyNotes[col.dateIso]}` : `ดับเบิ้ลคลิกเพื่อสลับ Actual\nคลิกขวาเพื่อบันทึก Note`}
                             >
-                              <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
+                              {isToday && <div className="absolute top-0 bottom-0 left-1/2 w-[2px] bg-rose-500 -ml-[1px] opacity-40 pointer-events-none z-0" />}
+                              <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none relative z-10">
                                 <div className="h-2.5 w-full">
                                   {inPlan && (
                                     <div className={`h-full ${isSub ? 'bg-sky-500' : 'bg-indigo-600'} rounded-xs shadow-xs`} title={isSub ? "Sub Plan (Fixed 🔒)" : "Main Plan (Fixed 🔒)"}></div>

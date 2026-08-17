@@ -3,6 +3,7 @@ import { Search, X, PackageOpen, Check } from 'lucide-react';
 import { MasterPartItem } from '../types/bom';
 import { masterPartsApi } from '../api/client';
 import { formatCurrency } from '../utils/costCalculator';
+import { formatShortUrl } from '../utils/urlFormatter';
 
 interface PartLibraryModalProps {
   isOpen: boolean;
@@ -126,12 +127,10 @@ export const PartLibraryModal: React.FC<PartLibraryModalProps> = ({
                             target="_blank"
                             rel="noopener noreferrer"
                             onClick={(e) => e.stopPropagation()}
-                            className="ml-1.5 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                            className="ml-1.5 inline-flex items-center text-[10px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 px-1.5 py-0.5 rounded transition-colors border border-blue-200 dark:border-blue-800"
                             title="เปิดลิงก์สั่งซื้อ"
                           >
-                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                            </svg>
+                            <span className="truncate max-w-[80px]">{formatShortUrl(part.purchaseLink)}</span>
                           </a>
                         )}
                       </p>

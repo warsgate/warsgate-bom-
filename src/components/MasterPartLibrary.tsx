@@ -3,6 +3,7 @@ import { PackageOpen, Search, Plus, Edit3, Trash2, Database, Info, Filter, X, Re
 import { MasterPartItem, CategoryType, PartCategoryType } from '../types/bom';
 import { masterPartsApi } from '../api/client';
 import { formatCurrency } from '../utils/costCalculator';
+import { formatShortUrl } from '../utils/urlFormatter';
 
 export const MasterPartLibrary: React.FC = () => {
   const [masterParts, setMasterParts] = useState<MasterPartItem[]>([]);
@@ -234,12 +235,10 @@ export const MasterPartLibrary: React.FC = () => {
                           href={part.purchaseLink}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="inline-flex items-center text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                          className="inline-flex items-center text-[10px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 px-2 py-1 rounded-lg transition-colors border border-blue-200 dark:border-blue-800"
                           title="เปิดลิงก์สั่งซื้อ"
                         >
-                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                          </svg>
+                          <span className="truncate max-w-[80px]">{formatShortUrl(part.purchaseLink)}</span>
                         </a>
                       ) : (
                         <span className="text-slate-300 dark:text-slate-600">-</span>

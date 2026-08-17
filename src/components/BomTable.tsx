@@ -5,10 +5,12 @@ import {
   Edit3, 
   Trash2, 
   ArrowUpDown,
-  Printer
+  Printer,
+  ExternalLink
 } from 'lucide-react';
 import { BomPartItem, ModuleItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
+import { formatShortUrl } from '../utils/urlFormatter';
 
 interface BomTableProps {
   parts: BomPartItem[];
@@ -258,12 +260,10 @@ export const BomTable: React.FC<BomTableProps> = ({
                               href={part.purchaseLink}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="ml-2 text-blue-500 hover:text-blue-700 dark:text-blue-400 dark:hover:text-blue-300"
+                              className="ml-2 inline-flex items-center text-[10px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 px-1.5 py-0.5 rounded transition-colors border border-blue-200 dark:border-blue-800"
                               title="เปิดลิงก์สั่งซื้อ"
                             >
-                              <svg className="w-3 h-3" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-                              </svg>
+                              <span className="truncate max-w-[80px]">{formatShortUrl(part.purchaseLink)}</span>
                             </a>
                           )}
                         </div>

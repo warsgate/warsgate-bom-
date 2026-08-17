@@ -138,19 +138,10 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>('ALL');
   const [timelineMode, setTimelineMode] = useState<'days' | 'weeks'>('days'); // 'days' | 'weeks'
 
-  // Drag State for painting/erasing Actual dates
-  const [dragTask, setDragTask] = useState<MasterPlanTaskItem | null>(null);
-  const [dragStartIso, setDragStartIso] = useState<string | null>(null);
-  const [dragHoverIso, setDragHoverIso] = useState<string | null>(null);
-  const [isErasing, setIsErasing] = useState<boolean>(false);
-
   // Daily Note Modal State
   const [activeNoteModal, setActiveNoteModal] = useState<{task: MasterPlanTaskItem, dateIso: string} | null>(null);
   
   const [collapsedMainTasks, setCollapsedMainTasks] = useState<Set<string>>(new Set());
-
-  const lastClickTimeRef = useRef<number>(0);
-  const lastClickCellRef = useRef<string>('');
 
   // Calculate dynamic date range based on actual project tasks
   const dateRange = useMemo(() => getProjectDateRange(masterTasks), [masterTasks]);
@@ -293,79 +284,11 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
     }
   };
 
-  // Global Mouse Up for Dragging Action
-  useEffect(() => {
-    const handleGlobalMouseUp = () => {
-      if (dragTask && dragStartIso && dragHoverIso && onUpdateCellRange) {
-        const start = dragStartIso < dragHoverIso ? dragStartIso : dragHoverIso;
-        const end = dragStartIso < dragHoverIso ? dragHoverIso : dragStartIso;
-
-        const affectedDates: string[] = [];
-        if (dragStartIso === dragHoverIso) {
-          // Single cell click
-          const now = Date.now();
-          if (now - lastClickTimeRef.current < 400 && lastClickCellRef.current === dragStartIso) {
-            // It's the second click of a double click, ignore it
-          } else {
-            lastClickTimeRef.current = now;
-            lastClickCellRef.current = dragStartIso;
-            if (onToggleCellActualDate) {
-              onToggleCellActualDate(dragTask, dragStartIso);
-            }
-          }
-        } else {
-          // Dragging multiple cells
-          if (timelineMode === 'days') {
-            dailyColumns.forEach(c => {
-              if (c.dateIso >= start && c.dateIso <= end) {
-                affectedDates.push(c.dateIso);
-              }
-            });
-          } else {
-            weeklyColumns.forEach(c => {
-              if (c.startIso >= start && c.startIso <= end) {
-                affectedDates.push(c.startIso);
-              }
-            });
-          }
-
-          if (affectedDates.length > 0) {
-            onUpdateCellRange(dragTask, affectedDates, !isErasing);
-          }
-        }
-      }
-      
-      setDragTask(null);
-      setDragStartIso(null);
-      setDragHoverIso(null);
-      setIsErasing(false);
-    };
-
-    window.addEventListener('mouseup', handleGlobalMouseUp);
-    return () => window.removeEventListener('mouseup', handleGlobalMouseUp);
-  }, [dragTask, dragStartIso, dragHoverIso, isErasing, timelineMode, dailyColumns, weeklyColumns, onUpdateCellRange]);
-
-  const handleCellMouseDown = (task: MasterPlanTaskItem, colIso: string, isWeekly: boolean, weekStart?: string, weekEnd?: string) => {
+  const handleCellDoubleClick = (task: MasterPlanTaskItem, colIso: string) => {
     if (!(task as any).isSubTask) return; // Prevent interaction on Main Tasks
-
-    const currentlyActual = checkIsCellActual(task, colIso, isWeekly, weekStart, weekEnd);
-    setDragTask(task);
-    setDragStartIso(colIso);
-    setDragHoverIso(colIso);
-    setIsErasing(currentlyActual); // If it's already actual, we are erasing!
-  };
-
-  const handleCellMouseEnter = (task: MasterPlanTaskItem, colIso: string) => {
-    if (dragTask && dragTask.id === task.id) {
-      setDragHoverIso(colIso);
+    if (onToggleCellActualDate) {
+      onToggleCellActualDate(task, colIso);
     }
-  };
-
-  const isCellInDragRange = (taskId: string, colIso: string) => {
-    if (!dragTask || dragTask.id !== taskId || !dragStartIso || !dragHoverIso) return false;
-    const minIso = dragStartIso < dragHoverIso ? dragStartIso : dragHoverIso;
-    const maxIso = dragStartIso < dragHoverIso ? dragHoverIso : dragStartIso;
-    return colIso >= minIso && colIso <= maxIso;
   };
 
   const handleCellContextMenu = (e: React.MouseEvent, task: MasterPlanTaskItem, colIso: string) => {
@@ -394,13 +317,13 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
         <div>
           <div className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-black bg-emerald-100 dark:bg-emerald-500/20 text-emerald-800 dark:text-emerald-300 mb-1">
             <CheckCircle2 className="w-3 h-3 mr-1" />
-            Drag & Drop / Single Click Actual Date Update
+            Double Click Actual Date Update
           </div>
           <h2 className="text-lg font-black text-slate-900 dark:text-white">
             Master Plan แผนงานหลักสร้างเครื่องจักร [{project?.code || 'PRJ'}] {project?.name}
           </h2>
           <p className="text-xs text-slate-500 dark:text-slate-400 font-bold mt-0.5">
-            <b>Click</b> ที่ Cell เพื่อกำหนด/ลบ วันเสร็จจริง (Actual 🟢) ได้อย่างอิสระ
+            <b>Double Click</b> ที่ Cell เพื่อกำหนด/ลบ วันเสร็จจริง (Actual 🟢)
           </p>
         </div>
 
@@ -762,8 +685,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                         dailyColumns.map((col, idx) => {
                           const inPlan = isDateInRange(col.dateIso, task.planStartDate, task.planEndDate);
                           const inActual = isSub ? checkIsCellActual(task, col.dateIso, false) : false;
-                          const inDrag = isSub ? isCellInDragRange(task.id, col.dateIso) : false;
-
+                          
                           let activeCountInCol = 0;
                           if (!isSub) {
                             const subTasks = masterTasks.filter(t => t.parentId === task.id);
@@ -773,19 +695,16 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                           return (
                             <td 
                               key={idx} 
-                              onMouseDown={() => handleCellMouseDown(task, col.dateIso, false)}
-                              onMouseEnter={() => handleCellMouseEnter(task, col.dateIso)}
+                              onDoubleClick={() => handleCellDoubleClick(task, col.dateIso)}
                               onContextMenu={(e) => handleCellContextMenu(e, task, col.dateIso)}
                               className={`p-0.5 border-r border-slate-200 dark:border-slate-800 text-center relative h-12 w-9 min-w-[36px] cursor-pointer transition-colors ${
-                                inDrag
-                                  ? (isErasing ? 'bg-rose-200 dark:bg-rose-900/50' : 'bg-emerald-300 dark:bg-emerald-700')
-                                  : inActual 
-                                    ? 'bg-emerald-100/60 dark:bg-emerald-950/40' 
-                                    : (!isSub && activeCountInCol > 0)
-                                      ? 'bg-emerald-100/40 dark:bg-emerald-900/40'
-                                      : col.isWeekend ? 'bg-amber-50/30 dark:bg-amber-950/20' : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
+                                inActual 
+                                  ? 'bg-emerald-100/60 dark:bg-emerald-950/40' 
+                                  : (!isSub && activeCountInCol > 0)
+                                    ? 'bg-emerald-100/40 dark:bg-emerald-900/40'
+                                    : col.isWeekend ? 'bg-amber-50/30 dark:bg-amber-950/20' : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
                               }`}
-                              title={task.dailyNotes && task.dailyNotes[col.dateIso] ? `Note: ${task.dailyNotes[col.dateIso]}` : `คลิกซ้าย 1 ครั้งเพื่อสลับ Actual\nลากเพื่อระบายสีหลายช่อง\nคลิกขวาเพื่อบันทึก Note`}
+                              title={task.dailyNotes && task.dailyNotes[col.dateIso] ? `Note: ${task.dailyNotes[col.dateIso]}` : `ดับเบิ้ลคลิกเพื่อสลับ Actual\nคลิกขวาเพื่อบันทึก Note`}
                             >
                               <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
                                 <div className="h-2.5 w-full">
@@ -795,12 +714,9 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                 </div>
                                 <div className="h-2.5 w-full">
                                   {inActual && (
-                                    <div className={`h-full rounded-xs shadow-xs flex items-center justify-center ${inDrag && isErasing ? 'bg-rose-400' : 'bg-emerald-500'}`} title="Actual (เสร็จแล้ว 🟢)">
+                                    <div className="h-full rounded-xs shadow-xs flex items-center justify-center bg-emerald-500" title="Actual (เสร็จแล้ว 🟢)">
                                       {task.dailyNotes && task.dailyNotes[col.dateIso] && <span className="text-[7px]">📝</span>}
                                     </div>
-                                  )}
-                                  {!inActual && inDrag && !isErasing && (
-                                    <div className="h-full bg-emerald-400/80 rounded-xs"></div>
                                   )}
                                   {!inActual && task.dailyNotes && task.dailyNotes[col.dateIso] && (
                                     <div className="absolute top-1 right-0.5 text-[8px] opacity-70">📝</div>
@@ -823,7 +739,6 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                         weeklyColumns.map((col, idx) => {
                           const inPlan = isRangeOverlapping(task.planStartDate, task.planEndDate, col.startIso, col.endIso);
                           const inActual = isSub ? checkIsCellActual(task, col.startIso, true, col.startIso, col.endIso) : false;
-                          const inDrag = isSub ? isCellInDragRange(task.id, col.startIso) : false;
 
                           let activeCountInCol = 0;
                           if (!isSub) {
@@ -834,19 +749,16 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                           return (
                             <td 
                               key={idx} 
-                              onMouseDown={() => handleCellMouseDown(task, col.startIso, true, col.startIso, col.endIso)}
-                              onMouseEnter={() => handleCellMouseEnter(task, col.startIso)}
+                              onDoubleClick={() => handleCellDoubleClick(task, col.startIso)}
                               onContextMenu={(e) => handleCellContextMenu(e, task, col.startIso)}
                               className={`p-0.5 border-r border-slate-200 dark:border-slate-800 text-center relative h-12 w-20 min-w-[80px] cursor-pointer transition-colors ${
-                                inDrag
-                                  ? (isErasing ? 'bg-rose-200 dark:bg-rose-900/50' : 'bg-emerald-300 dark:bg-emerald-700')
-                                  : inActual 
-                                    ? 'bg-emerald-100/60 dark:bg-emerald-950/40' 
-                                    : (!isSub && activeCountInCol > 0)
-                                      ? 'bg-emerald-100/40 dark:bg-emerald-900/40'
-                                      : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
+                                inActual 
+                                  ? 'bg-emerald-100/60 dark:bg-emerald-950/40' 
+                                  : (!isSub && activeCountInCol > 0)
+                                    ? 'bg-emerald-100/40 dark:bg-emerald-900/40'
+                                    : 'hover:bg-emerald-50/80 dark:hover:bg-slate-800'
                               }`}
-                              title={task.dailyNotes && task.dailyNotes[col.startIso] ? `Note: ${task.dailyNotes[col.startIso]}` : `คลิกซ้าย 1 ครั้งเพื่อสลับ Actual\nลากเพื่อระบายสีหลายช่อง\nคลิกขวาเพื่อบันทึก Note`}
+                              title={task.dailyNotes && task.dailyNotes[col.startIso] ? `Note: ${task.dailyNotes[col.startIso]}` : `ดับเบิ้ลคลิกเพื่อสลับ Actual\nคลิกขวาเพื่อบันทึก Note`}
                             >
                               <div className="flex flex-col h-full justify-center space-y-1 pointer-events-none">
                                 <div className="h-3 w-full">
@@ -856,10 +768,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
                                 </div>
                                 <div className="h-3 w-full">
                                   {inActual && (
-                                    <div className={`h-full rounded-sm shadow-xs ${inDrag && isErasing ? 'bg-rose-400' : 'bg-emerald-500'}`} title="Actual (เสร็จแล้ว 🟢)"></div>
-                                  )}
-                                  {!inActual && inDrag && !isErasing && (
-                                    <div className="h-full bg-emerald-400/80 rounded-sm"></div>
+                                    <div className="h-full rounded-sm shadow-xs bg-emerald-500" title="Actual (เสร็จแล้ว 🟢)"></div>
                                   )}
                                 </div>
                               </div>

@@ -143,8 +143,9 @@ export const PartModal: React.FC<PartModalProps> = ({
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (/https?:\/\/|www\./i.test(maker)) {
-      alert('ช่อง MAKER (ผู้ผลิต) ไม่อนุญาตให้ใส่ Link Web กรุณาใส่ลิงก์ที่ช่อง "Link สั่งซื้อ (URL)" แทนครับ');
+    const textFields = [dwgNo, partName, typeSpec, maker, supplier, poNumber, storeLocation, remarks];
+    if (textFields.some(val => /https?:\/\/|www\./i.test(String(val || '')))) {
+      alert('ไม่อนุญาตให้ใส่ Link Web ในช่องข้อมูลทั่วไป กรุณาใส่ลิงก์ที่ช่อง "Link สั่งซื้อ (URL)" เท่านั้นครับ');
       return;
     }
 

@@ -1861,5 +1861,155 @@
     "unit": "EA",
     "maker": "LOCAL",
     "unitPrice": 1500
+  },
+  {
+    "partName": "YSLY-JZ(4C X 6 SQMM.)",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 167
+  },
+  {
+    "partName": "YSLY-JZ (4C X 4 SQMM.)",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 109
+  },
+  {
+    "partName": "YSLY-OZ (2C X 2.5SQMM)",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 39
+  },
+  {
+    "partName": "VCT (4C X 6SQMM)",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 153
+  },
+  {
+    "partName": "VCT (4C X 4SQMM.)",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 102
+  },
+  {
+    "partName": "H07V-K (1 X 2.5 SQMM.) BLACK",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 15
+  },
+  {
+    "partName": "H07V-K (1C X 4 SQMM.)RED",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 24
+  },
+  {
+    "partName": "H07V-K (1 X 2.5 SQMM.) G/Y",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 15
+  },
+  {
+    "partName": "YSLY-JZ(4C X 2.5SQMM)",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 60
+  },
+  {
+    "partName": "LIYY (21C X 0.25SQMM.)",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 97
+  },
+  {
+    "partName": "H05V-K (1C X 0.5SQMM.)WHITE",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 4
+  },
+  {
+    "partName": "H05V-K (1C X 0.5SQMM.) BLACK",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 4
+  },
+  {
+    "partName": "H05V-K (1C X 0.5SQMM.) BLUE(ฟ้า)",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 4
+  },
+  {
+    "partName": "H05V-K (1C X 0.5SQMM.)ORANGE",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 4
+  },
+  {
+    "partName": "(VCT) IEC 53 (4C X 2.5SQMM.) [300/500V]",
+    "typeSpec": "",
+    "category": "EE",
+    "partType": "Standard Part",
+    "unit": "M",
+    "maker": "-",
+    "supplier": "PLANET T AND S CO.,LTD.",
+    "unitPrice": 71
   }
 ]

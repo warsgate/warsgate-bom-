@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useMemo } from 'react';
-import { PackageOpen, Search, Plus, Edit3, Trash2, Database, Info, Filter, X, RefreshCw } from 'lucide-react';
+import { PackageOpen, Search, Plus, Edit3, Trash2, Database, Info, Filter, X, RefreshCw, FileSpreadsheet } from 'lucide-react';
+import * as XLSX from 'xlsx';
 import { MasterPartItem, CategoryType, PartCategoryType } from '../types/bom';
 import { masterPartsApi } from '../api/client';
 import { formatCurrency } from '../utils/costCalculator';
@@ -13,6 +14,9 @@ export const MasterPartLibrary: React.FC = () => {
   // Modal state
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingPart, setEditingPart] = useState<MasterPartItem | null>(null);
+
+  // Selection state for RFQ
+  const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
 
   // Form state
   const [partName, setPartName] = useState('');
@@ -134,6 +138,63 @@ export const MasterPartLibrary: React.FC = () => {
     );
   }, [masterParts, searchQuery]);
 
+  const handleSelectAll = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.checked) {
+      const allIds = new Set(filteredParts.map(p => p.id));
+      setSelectedParts(allIds);
+    } else {
+      setSelectedParts(new Set());
+    }
+  };
+
+  const handleSelect = (id: string) => {
+    const next = new Set(selectedParts);
+    if (next.has(id)) {
+      next.delete(id);
+    } else {
+      next.add(id);
+    }
+    setSelectedParts(next);
+  };
+
+  const handleExportRFQ = () => {
+    if (selectedParts.size === 0) return;
+
+    const partsToExport = filteredParts.filter(p => selectedParts.has(p.id));
+    
+    const exportData = partsToExport.map((part, index) => ({
+      'No.': index + 1,
+      'Part Name': part.partName,
+      'Type / Spec': part.typeSpec || '',
+      'Maker': part.maker || '',
+      'Category': part.category,
+      'Unit': part.unit,
+      'Quantity': '',
+      'Unit Price': '',
+      'Total Price': '',
+      'Remark': part.description || ''
+    }));
+
+    const worksheet = XLSX.utils.json_to_sheet(exportData);
+    
+    worksheet['!cols'] = [
+      { wch: 5 },  // No.
+      { wch: 35 }, // Part Name
+      { wch: 25 }, // Type / Spec
+      { wch: 15 }, // Maker
+      { wch: 10 }, // Category
+      { wch: 8 },  // Unit
+      { wch: 12 }, // Quantity
+      { wch: 15 }, // Unit Price
+      { wch: 15 }, // Total Price
+      { wch: 20 }, // Remark
+    ];
+
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'RFQ');
+    XLSX.writeFile(workbook, `RFQ_Request_${new Date().toISOString().split('T')[0]}.xlsx`);
+  };
+
   return (
     <div className="space-y-3">
       <div className="p-3 rounded-xl border border-indigo-200 dark:border-indigo-900/40 bg-white dark:bg-slate-900 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-3 text-xs">
@@ -180,11 +241,34 @@ export const MasterPartLibrary: React.FC = () => {
         </div>
       </div>
 
+      {selectedParts.size > 0 && (
+        <div className="flex items-center justify-between bg-emerald-50 dark:bg-emerald-900/30 border border-emerald-200 dark:border-emerald-800 rounded-xl p-3 animate-in fade-in slide-in-from-top-2">
+          <div className="text-sm font-bold text-emerald-800 dark:text-emerald-300">
+            เลือกแล้ว {selectedParts.size} รายการ
+          </div>
+          <button
+            onClick={handleExportRFQ}
+            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors flex items-center"
+          >
+            <FileSpreadsheet className="w-4 h-4 mr-2" />
+            ส่งขอราคา (Export RFQ)
+          </button>
+        </div>
+      )}
+
       <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
         <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-black">
               <tr>
+                <th className="p-2.5 w-10 text-center">
+                  <input 
+                    type="checkbox" 
+                    className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                    checked={filteredParts.length > 0 && selectedParts.size === filteredParts.length}
+                    onChange={handleSelectAll}
+                  />
+                </th>
                 <th className="p-2.5 w-10 text-center">NO.</th>
                 <th className="p-2.5">PART NAME & TYPE SPEC</th>
                 <th className="p-2.5 text-center">CAT</th>
@@ -199,11 +283,11 @@ export const MasterPartLibrary: React.FC = () => {
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900">
               {isLoading ? (
                 <tr>
-                  <td colSpan={8} className="p-8 text-center text-slate-400 font-medium">Loading...</td>
+                  <td colSpan={9} className="p-8 text-center text-slate-400 font-medium">Loading...</td>
                 </tr>
               ) : filteredParts.length === 0 ? (
                 <tr>
-                  <td colSpan={8} className="p-12 text-center text-slate-400 font-medium">
+                  <td colSpan={9} className="p-12 text-center text-slate-400 font-medium">
                     <PackageOpen className="w-8 h-8 mx-auto mb-3 opacity-20" />
                     <p>ยังไม่มีรายการอะไหล่ในคลัง</p>
                   </td>
@@ -211,6 +295,14 @@ export const MasterPartLibrary: React.FC = () => {
               ) : (
                 filteredParts.map((part, index) => (
                   <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors">
+                    <td className="p-2.5 text-center">
+                      <input 
+                        type="checkbox" 
+                        className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
+                        checked={selectedParts.has(part.id)}
+                        onChange={() => handleSelect(part.id)}
+                      />
+                    </td>
                     <td className="p-2.5 font-mono font-bold text-slate-500 text-center">{index + 1}</td>
                     <td className="p-2.5">
                       <div className="font-extrabold text-slate-900 dark:text-white">{part.partName}</div>

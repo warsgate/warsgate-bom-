@@ -2011,5 +2011,435 @@
     "maker": "-",
     "supplier": "PLANET T AND S CO.,LTD.",
     "unitPrice": 71
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M8X40 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 5.5
+  },
+  {
+    "partName": "SOC BTN SCREW",
+    "typeSpec": "M3X16 ZP**Replace 3x15",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2
+  },
+  {
+    "partName": "SOC BTN SCREW",
+    "typeSpec": "M5X10 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.3
+  },
+  {
+    "partName": "SOC BTN SCREW",
+    "typeSpec": "M5X8 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2
+  },
+  {
+    "partName": "SOC BTN SCREW",
+    "typeSpec": "M6X12 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 3
+  },
+  {
+    "partName": "SOC CSK SCREW",
+    "typeSpec": "M5X10 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2
+  },
+  {
+    "partName": "HEX NUT",
+    "typeSpec": "M5 -0.8 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 1
+  },
+  {
+    "partName": "HEX NUT",
+    "typeSpec": "M8 -1.25 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 1.5
+  },
+  {
+    "partName": "DOWEL PIN",
+    "typeSpec": "M3X20",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 6
+  },
+  {
+    "partName": "DOWEL PIN",
+    "typeSpec": "M4X10",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 6
+  },
+  {
+    "partName": "DOWEL PIN",
+    "typeSpec": "M4X25",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 6
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M4X12 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 1.8
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M4X20 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.2
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M4X40 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 3.4
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M5X12 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.1
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M5X15 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.3
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M5X20 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.5
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M6X20 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.4
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M6X25 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.6
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M6X8 CR3-ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.1
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M8X15 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 3.8
+  },
+  {
+    "partName": "SPRING WASHER",
+    "typeSpec": "M4 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 1
+  },
+  {
+    "partName": "SPRING WASHER",
+    "typeSpec": "M5 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 0.5
+  },
+  {
+    "partName": "SPRING WASHER",
+    "typeSpec": "M6 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 0.6
+  },
+  {
+    "partName": "FLAT WASHER",
+    "typeSpec": "M4 (4.5X10X0.8) ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 1
+  },
+  {
+    "partName": "FLAT WASHER",
+    "typeSpec": "M5 (5.5X12X0.8) ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 0.5
+  },
+  {
+    "partName": "FLAT WASHER",
+    "typeSpec": "M6 (6.5X13X1.0) ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 0.5
+  },
+  {
+    "partName": "H.T. HEX SCREW",
+    "typeSpec": "M6X12 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2
+  },
+  {
+    "partName": "H.T. HEX SCREW",
+    "typeSpec": "M8X80 ZP **Replace 8x75",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 8
+  },
+  {
+    "partName": "NYLON LOCK NUT",
+    "typeSpec": "M8 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2
+  },
+  {
+    "partName": "HEX NUT",
+    "typeSpec": "M12 -1.75 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 3
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M10X25 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 7.6
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M10X30 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 9
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M10X40 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 12
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M10X70 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 15
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M4X25 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.3
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M6X15 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 2.4
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M8X30 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 5
+  },
+  {
+    "partName": "SOC CAP SCREW",
+    "typeSpec": "M8X45 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 6.5
+  },
+  {
+    "partName": "SPRING WASHER",
+    "typeSpec": "M10 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 0.8
+  },
+  {
+    "partName": "SPRING WASHER",
+    "typeSpec": "M8 ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 1
+  },
+  {
+    "partName": "FLAT WASHER",
+    "typeSpec": "M10 (10.5X22X1.5) ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 1.1
+  },
+  {
+    "partName": "FLAT WASHER",
+    "typeSpec": "M8 (8.5X18X1.2) ZP",
+    "category": "MC",
+    "partType": "Standard Part",
+    "unit": "EA",
+    "maker": "-",
+    "supplier": "ZIP SUPPLY LIMITED PARTNERSHIP",
+    "unitPrice": 1
   }
 ]

@@ -88,6 +88,21 @@ export const quotationsApi = {
   create: (data: any) => request<any>('/quotations', { method: 'POST', body: JSON.stringify(data) }),
   update: (id: string, data: any) => request<any>(`/quotations/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => request<any>(`/quotations/${id}`, { method: 'DELETE' }),
+  uploadFile: async (file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const token = localStorage.getItem('token');
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+    
+    const res = await fetch(`${BASE_URL}/quotations/upload`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    if (!res.ok) throw new Error('File upload failed');
+    return res.json();
+  }
 };
 
 // ─── Users (Admin Only) ───────────────────────────────────────

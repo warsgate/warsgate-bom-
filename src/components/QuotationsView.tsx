@@ -15,6 +15,10 @@ export const QuotationsView: React.FC<QuotationsViewProps> = ({ projectId }) => 
   
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingItem, setEditingItem] = useState<Partial<QuotationItem> | null>(null);
+  
+  // File Upload State
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
 
   const loadData = async () => {
     try {
@@ -39,16 +43,32 @@ export const QuotationsView: React.FC<QuotationsViewProps> = ({ projectId }) => 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     try {
+      setIsUploading(true);
+      let fileUrl = editingItem?.fileUrl;
+
+      // Upload file to Google Drive if a new file is selected
+      if (selectedFile) {
+        const uploadRes = await quotationsApi.uploadFile(selectedFile);
+        if (uploadRes.success && uploadRes.fileUrl) {
+          fileUrl = uploadRes.fileUrl;
+        }
+      }
+
+      const itemToSave = { ...editingItem, projectId, fileUrl };
+
       if (editingItem?.id) {
-        await quotationsApi.update(editingItem.id, { ...editingItem, projectId });
+        await quotationsApi.update(editingItem.id, itemToSave);
       } else {
-        await quotationsApi.create({ ...editingItem, projectId });
+        await quotationsApi.create(itemToSave);
       }
       setIsModalOpen(false);
+      setSelectedFile(null);
       loadData();
     } catch (error) {
       console.error('Failed to save quotation:', error);
-      alert('บันทึกไม่สำเร็จ');
+      alert('บันทึกไม่สำเร็จ (อาจเกิดปัญหาขณะอัปโหลดไฟล์ หรือกรุณาตรวจสอบการตั้งค่า Service Account)');
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -86,7 +106,7 @@ export const QuotationsView: React.FC<QuotationsViewProps> = ({ projectId }) => 
         </div>
         
         <button
-          onClick={() => { setEditingItem({}); setIsModalOpen(true); }}
+          onClick={() => { setEditingItem({}); setSelectedFile(null); setIsModalOpen(true); }}
           className="px-4 py-2 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-800 text-white rounded-xl text-sm font-bold shadow-sm flex items-center transition-all"
         >
           <Plus className="w-4 h-4 mr-2" />
@@ -229,13 +249,29 @@ export const QuotationsView: React.FC<QuotationsViewProps> = ({ projectId }) => 
               </div>
 
               <div>
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ลิงก์ไฟล์แนบ (URL เช่น Google Drive)</label>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ไฟล์แนบ (PDF - จะอัปโหลดเข้า Google Drive อัตโนมัติ)</label>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={e => setSelectedFile(e.target.files ? e.target.files[0] : null)}
+                  className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-red-500 file:mr-4 file:py-1 file:px-3 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-red-50 file:text-red-700 hover:file:bg-red-100 dark:file:bg-red-900/30 dark:file:text-red-300"
+                />
+                {(editingItem?.fileUrl || selectedFile) && (
+                  <p className="mt-1 text-xs text-blue-600 truncate max-w-sm">
+                    {selectedFile ? `ไฟล์ที่เลือก: ${selectedFile.name}` : `ลิงก์ปัจจุบัน: ${editingItem?.fileUrl}`}
+                  </p>
+                )}
+              </div>
+              
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">ลิงก์ไฟล์แนบ (URL ปัจจุบัน)</label>
                 <input
                   type="url"
                   placeholder="https://..."
                   value={editingItem?.fileUrl || ''}
                   onChange={e => setEditingItem({ ...editingItem, fileUrl: e.target.value })}
                   className="w-full px-3 py-2 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 text-sm focus:ring-2 focus:ring-red-500"
+                  readOnly={!!selectedFile} // Prevent editing URL manually if a file is selected for upload
                 />
               </div>
               
@@ -259,9 +295,10 @@ export const QuotationsView: React.FC<QuotationsViewProps> = ({ projectId }) => 
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors"
+                  disabled={isUploading}
+                  className="px-4 py-2 text-sm font-bold text-white bg-red-600 hover:bg-red-700 rounded-lg transition-colors disabled:opacity-50"
                 >
-                  บันทึกข้อมูล
+                  {isUploading ? 'กำลังอัปโหลด...' : 'บันทึกข้อมูล'}
                 </button>
               </div>
             </form>

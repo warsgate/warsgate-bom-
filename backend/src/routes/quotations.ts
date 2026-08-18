@@ -1,8 +1,51 @@
 import express, { Request, Response } from 'express';
 import { PrismaClient } from '@prisma/client';
+import multer from 'multer';
+import path from 'path';
+import { uploadToGoogleDrive } from '../services/googleDriveService';
 
 const router = express.Router();
 const prisma = new PrismaClient();
+
+const upload = multer({ 
+  dest: 'uploads/',
+  limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
+  fileFilter: (req, file, cb) => {
+    if (file.mimetype === 'application/pdf') {
+      cb(null, true);
+    } else {
+      cb(new Error('Only PDF files are allowed'));
+    }
+  }
+});
+
+// POST upload file to Google Drive
+router.post('/upload', upload.single('file'), async (req: Request, res: Response) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file uploaded' });
+    }
+
+    const file = req.file;
+    const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
+    
+    // Upload to Google Drive
+    const driveResult = await uploadToGoogleDrive(
+      file.path,
+      originalName,
+      file.mimetype
+    );
+
+    res.json({ 
+      success: true, 
+      fileId: driveResult.id,
+      fileUrl: driveResult.webViewLink 
+    });
+  } catch (err: any) {
+    console.error('File upload error:', err);
+    res.status(500).json({ error: 'Failed to upload file to Google Drive', details: err.message });
+  }
+});
 
 // GET all quotations
 router.get('/', async (req: Request, res: Response) => {

@@ -17,6 +17,9 @@ export const MasterPartLibrary: React.FC = () => {
 
   // Selection state for RFQ
   const [selectedParts, setSelectedParts] = useState<Set<string>>(new Set());
+  const [isRfqModalOpen, setIsRfqModalOpen] = useState(false);
+  const [rfqQuantities, setRfqQuantities] = useState<Record<string, string>>({});
+  const [rfqRemarks, setRfqRemarks] = useState<Record<string, string>>({});
 
   // Form state
   const [partName, setPartName] = useState('');
@@ -157,7 +160,20 @@ export const MasterPartLibrary: React.FC = () => {
     setSelectedParts(next);
   };
 
-  const handleExportRFQ = () => {
+  const openRfqModal = () => {
+    if (selectedParts.size === 0) return;
+    const initQtys: Record<string, string> = {};
+    const initRemarks: Record<string, string> = {};
+    selectedParts.forEach(id => {
+      initQtys[id] = '';
+      initRemarks[id] = '';
+    });
+    setRfqQuantities(initQtys);
+    setRfqRemarks(initRemarks);
+    setIsRfqModalOpen(true);
+  };
+
+  const executeExportRFQ = () => {
     if (selectedParts.size === 0) return;
 
     const partsToExport = filteredParts.filter(p => selectedParts.has(p.id));
@@ -169,10 +185,10 @@ export const MasterPartLibrary: React.FC = () => {
       'Maker': part.maker || '',
       'Category': part.category,
       'Unit': part.unit,
-      'Quantity': '',
+      'Quantity': rfqQuantities[part.id] || '',
       'Unit Price': '',
       'Total Price': '',
-      'Remark': part.description || ''
+      'Remark': rfqRemarks[part.id] !== undefined ? rfqRemarks[part.id] : (part.description || '')
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(exportData);
@@ -193,6 +209,7 @@ export const MasterPartLibrary: React.FC = () => {
     const workbook = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(workbook, worksheet, 'RFQ');
     XLSX.writeFile(workbook, `RFQ_Request_${new Date().toISOString().split('T')[0]}.xlsx`);
+    setIsRfqModalOpen(false);
   };
 
   return (
@@ -247,11 +264,11 @@ export const MasterPartLibrary: React.FC = () => {
             เลือกแล้ว {selectedParts.size} รายการ
           </div>
           <button
-            onClick={handleExportRFQ}
+            onClick={openRfqModal}
             className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold rounded-xl shadow-md transition-colors flex items-center"
           >
             <FileSpreadsheet className="w-4 h-4 mr-2" />
-            ส่งขอราคา (Export RFQ)
+            ระบุจำนวนเพื่อส่งขอราคา
           </button>
         </div>
       )}
@@ -458,6 +475,85 @@ export const MasterPartLibrary: React.FC = () => {
                 </button>
               </div>
             </form>
+          </div>
+        </div>
+      )}
+
+      {/* RFQ Input Modal */}
+      {isRfqModalOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 dark:bg-slate-950/80 backdrop-blur-sm">
+          <div className="glass-panel w-full max-w-5xl rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200 flex flex-col max-h-[90vh]">
+            <div className="flex items-center justify-between p-4 bg-emerald-50 dark:bg-emerald-900/30 border-b border-emerald-200 dark:border-emerald-800">
+              <h3 className="text-base font-extrabold text-emerald-900 dark:text-emerald-100 flex items-center">
+                <FileSpreadsheet className="w-5 h-5 mr-2 text-emerald-600" />
+                ระบุจำนวนและหมายเหตุก่อนส่งขอราคา ({selectedParts.size} รายการ)
+              </h3>
+              <button onClick={() => setIsRfqModalOpen(false)} className="p-1.5 rounded-lg text-emerald-600 hover:text-emerald-800 hover:bg-emerald-100 dark:hover:bg-emerald-800/50 transition-colors">
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            
+            <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50 dark:bg-slate-950">
+              <table className="w-full text-left border-collapse text-xs bg-white dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800">
+                <thead className="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+                  <tr>
+                    <th className="p-2 w-10 text-center">NO.</th>
+                    <th className="p-2">PART NAME & SPEC</th>
+                    <th className="p-2 w-20 text-center">UNIT</th>
+                    <th className="p-2 w-32">QUANTITY</th>
+                    <th className="p-2 w-48">REMARK</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
+                  {filteredParts.filter(p => selectedParts.has(p.id)).map((part, index) => (
+                    <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
+                      <td className="p-2 text-center text-slate-500 font-mono">{index + 1}</td>
+                      <td className="p-2">
+                        <div className="font-bold text-slate-900 dark:text-white">{part.partName}</div>
+                        <div className="text-[10px] text-slate-500 truncate max-w-[250px]">{part.typeSpec || '-'}</div>
+                      </td>
+                      <td className="p-2 text-center text-slate-600 font-medium">{part.unit}</td>
+                      <td className="p-2">
+                        <input 
+                          type="number" 
+                          min="1"
+                          placeholder="จำนวน..."
+                          className="w-full p-1.5 border border-slate-300 dark:border-slate-700 rounded-md bg-white dark:bg-slate-950 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          value={rfqQuantities[part.id] || ''}
+                          onChange={(e) => setRfqQuantities({...rfqQuantities, [part.id]: e.target.value})}
+                        />
+                      </td>
+                      <td className="p-2">
+                        <input 
+                          type="text" 
+                          placeholder="หมายเหตุเพิ่มเติม..."
+                          className="w-full p-1.5 border border-slate-300 dark:border-slate-700 rounded-md bg-white dark:bg-slate-950 text-slate-900 dark:text-white text-xs focus:ring-2 focus:ring-emerald-500 focus:outline-none"
+                          value={rfqRemarks[part.id] !== undefined ? rfqRemarks[part.id] : (part.description || '')}
+                          onChange={(e) => setRfqRemarks({...rfqRemarks, [part.id]: e.target.value})}
+                        />
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+
+            <div className="p-4 bg-white dark:bg-slate-900 border-t border-slate-200 dark:border-slate-800 flex justify-end gap-3">
+              <button
+                type="button"
+                onClick={() => setIsRfqModalOpen(false)}
+                className="px-4 py-2 text-slate-600 dark:text-slate-400 font-bold hover:bg-slate-100 dark:hover:bg-slate-800 rounded-xl transition-colors text-sm"
+              >
+                ยกเลิก
+              </button>
+              <button
+                onClick={executeExportRFQ}
+                className="px-6 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl shadow-md transition-colors text-sm flex items-center"
+              >
+                <FileSpreadsheet className="w-4 h-4 mr-2" />
+                ดาวน์โหลด Excel
+              </button>
+            </div>
           </div>
         </div>
       )}

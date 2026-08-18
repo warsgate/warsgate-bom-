@@ -8,7 +8,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 
 const upload = multer({ 
-  dest: 'uploads/',
+  storage: multer.memoryStorage(),
   limits: { fileSize: 10 * 1024 * 1024 }, // 10MB limit
   fileFilter: (req, file, cb) => {
     if (file.mimetype === 'application/pdf') {
@@ -29,9 +29,9 @@ router.post('/upload', upload.single('file'), async (req: Request, res: Response
     const file = req.file;
     const originalName = Buffer.from(file.originalname, 'latin1').toString('utf8');
     
-    // Upload to Google Drive
+    // Upload to Google Drive using memory buffer
     const driveResult = await uploadToGoogleDrive(
-      file.path,
+      file.buffer,
       originalName,
       file.mimetype
     );

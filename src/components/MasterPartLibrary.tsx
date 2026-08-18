@@ -270,6 +270,22 @@ export const MasterPartLibrary: React.FC = () => {
             </tbody>
           </table>
         </div>
+        {/* Summary Footer */}
+        <div className="bg-slate-50 dark:bg-slate-900/50 p-3 text-xs font-bold text-slate-600 dark:text-slate-400 flex flex-wrap items-center justify-between gap-4">
+          <div>
+            รายการทั้งหมด: <span className="text-indigo-600 dark:text-indigo-400 font-black text-sm">{filteredParts.length}</span> รายการ
+          </div>
+          <div className="flex space-x-6">
+            <div className="flex items-center">
+              <div className="w-2 h-2 rounded-full bg-blue-500 mr-2"></div>
+              Part MC: <span className="text-blue-600 dark:text-blue-400 font-black text-sm ml-1">{filteredParts.filter(p => p.category === 'MC').length}</span> รายการ
+            </div>
+            <div className="flex items-center">
+              <div className="w-2 h-2 rounded-full bg-orange-500 mr-2"></div>
+              Part EE: <span className="text-orange-600 dark:text-orange-400 font-black text-sm ml-1">{filteredParts.filter(p => p.category === 'EE').length}</span> รายการ
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Modal */}

@@ -100,7 +100,11 @@ export const quotationsApi = {
       headers,
       body: formData,
     });
-    if (!res.ok) throw new Error('File upload failed');
+    if (!res.ok) {
+      const errData = await res.json().catch(() => null);
+      const errMsg = errData?.details || errData?.error || 'File upload failed';
+      throw new Error(errMsg);
+    }
     return res.json();
   }
 };

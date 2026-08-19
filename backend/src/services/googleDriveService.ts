@@ -49,6 +49,7 @@ export const uploadToGoogleDrive = async (
       requestBody: fileMetadata,
       media: media,
       fields: 'id, webViewLink',
+      supportsAllDrives: true,
     });
 
     return response.data;

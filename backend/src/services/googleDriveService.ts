@@ -10,8 +10,8 @@ const getAuth = () => {
     const credentialsStr = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
     if (!credentialsStr) return null;
     
-    // Check if the JSON is valid and complete
-    const credentials = JSON.parse(credentialsStr.replace(/\n/g, '\\n')); // safely parse multiline just in case
+    // Parse the JSON directly (Render passes the exact string provided)
+    const credentials = JSON.parse(credentialsStr);
     return new google.auth.GoogleAuth({
       credentials,
       scopes: SCOPES,

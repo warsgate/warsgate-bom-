@@ -1,60 +1,40 @@
-import { google } from 'googleapis';
-import fs from 'fs';
-
-import { Readable } from 'stream';
-
-const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
-
-const getAuth = () => {
-  const credentialsStr = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
-  if (!credentialsStr) {
-    throw new Error('Environment variable GOOGLE_APPLICATION_CREDENTIALS_JSON is completely empty or missing.');
-  }
-  
-  try {
-    const credentials = JSON.parse(credentialsStr);
-    return new google.auth.GoogleAuth({
-      credentials,
-      scopes: SCOPES,
-    });
-  } catch (error: any) {
-    console.error('Failed to parse Google Drive credentials:', error);
-    // Provide a detailed error message about WHY it failed to parse
-    throw new Error(`JSON Format Error: ก๊อปปี้โค้ดมาไม่สมบูรณ์ หรือมีอักขระแปลกปลอม (${error.message})`);
-  }
-};
-
 export const uploadToGoogleDrive = async (
   buffer: Buffer,
   fileName: string,
   mimeType: string,
   folderId: string = '1ibU9OCGBz9_k_Fy2_y62p-iMSNYXGxe3'
 ) => {
-  const auth = getAuth();
+  const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxph31DQf5Sw2qsLsTWAbz6dFraJ0dIRmyCdyO1_FvfpgljwW5cIiSZ3B31J29-zbo/exec';
 
-  const drive = google.drive({ version: 'v3', auth });
-  
   try {
-    const fileMetadata = {
-      name: fileName,
-      parents: [folderId],
-    };
+    const fileData = buffer.toString('base64');
     
-    const media = {
-      mimeType,
-      body: Readable.from(buffer),
-    };
+    // We must send data as x-www-form-urlencoded or multipart/form-data for Apps Script doPost
+    const formData = new URLSearchParams();
+    formData.append('fileName', fileName);
+    formData.append('mimeType', mimeType);
+    formData.append('fileData', fileData);
 
-    const response = await drive.files.create({
-      requestBody: fileMetadata,
-      media: media,
-      fields: 'id, webViewLink',
-      supportsAllDrives: true,
+    const response = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      body: formData,
     });
 
-    return response.data;
+    if (!response.ok) {
+      throw new Error(`Apps Script responded with status: ${response.status}`);
+    }
+
+    const result: any = await response.json();
+    if (!result.success) {
+      throw new Error(result.error || 'Unknown error from Apps Script');
+    }
+
+    return {
+      id: result.fileId,
+      webViewLink: result.fileUrl
+    };
   } catch (error: any) {
-    console.error('Error uploading to Google Drive:', error);
-    throw new Error(`Google Drive API Error: ${error.message}`);
+    console.error('Error uploading via Apps Script:', error);
+    throw new Error(`Upload Failed: ${error.message}`);
   }
 };

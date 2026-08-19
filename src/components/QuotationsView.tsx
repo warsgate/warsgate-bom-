@@ -64,9 +64,10 @@ export const QuotationsView: React.FC<QuotationsViewProps> = ({ projectId }) => 
       setIsModalOpen(false);
       setSelectedFile(null);
       loadData();
-    } catch (error) {
+    } catch (error: any) {
       console.error('Failed to save quotation:', error);
-      alert('บันทึกไม่สำเร็จ (อาจเกิดปัญหาขณะอัปโหลดไฟล์ หรือกรุณาตรวจสอบการตั้งค่า Service Account)');
+      const errorMsg = error.message || 'Unknown error';
+      alert(`บันทึกไม่สำเร็จ\nรายละเอียด: ${errorMsg}\n\n(หากเกี่ยวกับ Google Drive โปรดตรวจสอบการแชร์โฟลเดอร์ให้ Service Account หรือเปิดใช้งาน Drive API)`);
     } finally {
       setIsUploading(false);
     }

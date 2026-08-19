@@ -6,19 +6,21 @@ import { Readable } from 'stream';
 const SCOPES = ['https://www.googleapis.com/auth/drive.file'];
 
 const getAuth = () => {
+  const credentialsStr = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
+  if (!credentialsStr) {
+    throw new Error('Environment variable GOOGLE_APPLICATION_CREDENTIALS_JSON is completely empty or missing.');
+  }
+  
   try {
-    const credentialsStr = process.env.GOOGLE_APPLICATION_CREDENTIALS_JSON;
-    if (!credentialsStr) return null;
-    
-    // Parse the JSON directly (Render passes the exact string provided)
     const credentials = JSON.parse(credentialsStr);
     return new google.auth.GoogleAuth({
       credentials,
       scopes: SCOPES,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error('Failed to parse Google Drive credentials:', error);
-    return null;
+    // Provide a detailed error message about WHY it failed to parse
+    throw new Error(`JSON Format Error: ก๊อปปี้โค้ดมาไม่สมบูรณ์ หรือมีอักขระแปลกปลอม (${error.message})`);
   }
 };
 
@@ -29,9 +31,6 @@ export const uploadToGoogleDrive = async (
   folderId: string = '1ibU9OCGBz9_k_Fy2_y62p-iMSNYXGxe3'
 ) => {
   const auth = getAuth();
-  if (!auth) {
-    throw new Error('Google Drive authentication not configured or invalid JSON Key. Please check the GOOGLE_APPLICATION_CREDENTIALS_JSON setting.');
-  }
 
   const drive = google.drive({ version: 'v3', auth });
   

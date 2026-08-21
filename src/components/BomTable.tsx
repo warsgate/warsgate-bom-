@@ -196,6 +196,7 @@ export const BomTable: React.FC<BomTableProps> = ({
                   </div>
                 </th>
                 <th className="p-2.5 print:hidden">SUPPLIER</th>
+                <th className="p-2.5 text-center print:hidden">LINK</th>
                 <th className="p-2.5 text-center print:hidden">STATUS</th>
                 <th className="p-2.5 text-center print:hidden">ACTION</th>
               </tr>
@@ -203,7 +204,7 @@ export const BomTable: React.FC<BomTableProps> = ({
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {filteredParts.length === 0 ? (
                 <tr>
-                  <td colSpan={12} className="p-8 text-center text-slate-400 font-medium">
+                  <td colSpan={13} className="p-8 text-center text-slate-400 font-medium">
                     ไม่พบรายการ Part List ตามเงื่อนไขที่เลือก
                   </td>
                 </tr>
@@ -255,18 +256,22 @@ export const BomTable: React.FC<BomTableProps> = ({
                       <td className="p-2.5 text-slate-800 dark:text-slate-200 font-bold text-[11px] print:hidden">
                         <div className="flex items-center">
                           {part.supplier || part.maker || '-'}
-                          {part.purchaseLink && (
-                            <a
-                              href={part.purchaseLink}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="ml-2 inline-flex items-center text-[10px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 px-1.5 py-0.5 rounded transition-colors border border-blue-200 dark:border-blue-800"
-                              title="เปิดลิงก์สั่งซื้อ"
-                            >
-                              <span className="truncate max-w-[80px]">{formatShortUrl(part.purchaseLink)}</span>
-                            </a>
-                          )}
                         </div>
+                      </td>
+                      <td className="p-2.5 text-center print:hidden">
+                        {part.purchaseLink ? (
+                          <a
+                            href={part.purchaseLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center text-[10px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 px-2 py-1 rounded-lg transition-colors border border-blue-200 dark:border-blue-800"
+                            title="เปิดลิงก์สั่งซื้อ"
+                          >
+                            <span className="truncate max-w-[80px]">{formatShortUrl(part.purchaseLink)}</span>
+                          </a>
+                        ) : (
+                          <span className="text-slate-300 dark:text-slate-600">-</span>
+                        )}
                       </td>
                       <td className="p-2.5 text-center print:hidden">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${

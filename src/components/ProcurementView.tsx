@@ -272,6 +272,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                 <th className="p-2.5">ITEM #</th>
                 <th className="p-2.5">PART NAME & TYPE SPEC</th>
                 <th className="p-2.5">SUPPLIER</th>
+                <th className="p-2.5 text-center">LINK</th>
                 <th className="p-2.5 font-mono">PO NUMBER</th>
                 <th className="p-2.5 text-right">TARGET COST (฿)</th>
                 <th className="p-2.5 text-right">ACTUAL PO COST (฿)</th>
@@ -298,18 +299,22 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                     <td className="p-2.5 font-bold text-slate-800 dark:text-slate-200">
                       <div className="flex items-center">
                         {part.supplier || 'Unspecified'}
-                        {part.purchaseLink && (
-                          <a
-                            href={part.purchaseLink}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="ml-2 inline-flex items-center text-[10px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 px-1.5 py-0.5 rounded transition-colors border border-blue-200 dark:border-blue-800"
-                            title="เปิดลิงก์สั่งซื้อ"
-                          >
-                            <span className="truncate max-w-[80px]">{formatShortUrl(part.purchaseLink)}</span>
-                          </a>
-                        )}
                       </div>
+                    </td>
+                    <td className="p-2.5 text-center">
+                      {part.purchaseLink ? (
+                        <a
+                          href={part.purchaseLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center text-[10px] font-bold text-blue-600 hover:text-blue-800 dark:text-blue-400 dark:hover:text-blue-300 bg-blue-50 hover:bg-blue-100 dark:bg-blue-900/30 dark:hover:bg-blue-900/50 px-2 py-1 rounded-lg transition-colors border border-blue-200 dark:border-blue-800"
+                          title="เปิดลิงก์สั่งซื้อ"
+                        >
+                          <span className="truncate max-w-[80px]">{formatShortUrl(part.purchaseLink)}</span>
+                        </a>
+                      ) : (
+                        <span className="text-slate-300 dark:text-slate-600">-</span>
+                      )}
                     </td>
                     <td className="p-2.5 font-mono font-bold text-slate-800 dark:text-slate-200">
                       {part.poNumber ? (

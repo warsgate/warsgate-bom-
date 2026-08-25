@@ -144,8 +144,7 @@ export const buildPendingPartsFlexMessage = (
                 text: 'PROCUREMENT ALERT',
                 color: '#f59e0b',
                 weight: 'bold',
-                size: 'xs',
-                letterSpacing: '1px'
+                size: 'xs'
               },
               {
                 type: 'text',

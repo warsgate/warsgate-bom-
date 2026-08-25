@@ -281,8 +281,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                     text: 'PROCUREMENT ALERT',
                     color: '#f59e0b',
                     weight: 'bold',
-                    size: 'xs',
-                    letterSpacing: '1px'
+                    size: 'xs'
                   },
                   {
                     type: 'text',
@@ -435,8 +434,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 text: 'OFFICIAL RECEIPT',
                 color: '#a7f3d0',
                 weight: 'bold',
-                size: 'xs',
-                letterSpacing: '1px'
+                size: 'xs'
               },
               {
                 type: 'text',
@@ -558,8 +556,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 text: 'SCHEDULE & APPOINTMENT',
                 color: '#c7d2fe',
                 weight: 'bold',
-                size: 'xs',
-                letterSpacing: '1px'
+                size: 'xs'
               },
               {
                 type: 'text',

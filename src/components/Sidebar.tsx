@@ -50,6 +50,7 @@ interface SidebarProps {
   onDeleteProject: (id: string) => void;
   user?: any;
   onLogout?: () => void;
+  onOpenSwitchUser?: () => void;
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({
@@ -73,6 +74,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setUserRole,
   onEditProject,
   onDeleteProject,
+  user,
+  onOpenSwitchUser,
 }) => {
   const activeProject = projects.find(p => p.id === activeProjectId) || projects[0];
 
@@ -202,28 +205,39 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* 2. User Role Switcher Badge */}
       <div className="px-4 pt-5 pb-2">
         <div 
-          onClick={toggleRole}
+          onClick={() => {
+            if (onOpenSwitchUser) {
+              onOpenSwitchUser();
+            } else {
+              toggleRole();
+            }
+          }}
           className={`p-2.5 rounded-2xl border cursor-pointer transition-all duration-300 flex items-center justify-between text-xs font-black shadow-sm hover:shadow-md ${
-            userRole === 'OWNER'
+            (user?.role === 'LEVEL_2' || userRole === 'OWNER')
               ? 'bg-gradient-to-br from-amber-50 to-orange-100 dark:from-amber-950/40 dark:to-orange-950/40 border-t border-amber-100 dark:border-t-amber-800 border-b border-amber-300 dark:border-b-amber-900 text-amber-900 dark:text-amber-300 hover:border-amber-400 shadow-[0_2px_10px_rgba(251,191,36,0.2)]'
               : 'bg-gradient-to-br from-slate-50 to-slate-200 dark:from-slate-800 dark:to-slate-900 border-t border-white dark:border-t-slate-700 border-b border-slate-300 dark:border-b-black text-slate-700 dark:text-slate-300 hover:border-slate-400 shadow-[0_2px_8px_rgba(0,0,0,0.05)]'
           }`}
-          title="คลิกเพื่อสลับสิทธิ์ผู้ใช้งาน (Owner vs Engineer)"
+          title="คลิกเพื่อสลับผู้ใช้งาน / สลับสิทธิ์ (Switch User)"
         >
           <div className="flex items-center space-x-2 truncate">
-            <div className={`p-1.5 rounded-xl ${userRole === 'OWNER' ? 'bg-amber-100 dark:bg-amber-900/50' : 'bg-slate-200 dark:bg-slate-700'}`}>
-              {userRole === 'OWNER' ? (
+            <div className={`p-1.5 rounded-xl ${(user?.role === 'LEVEL_2' || userRole === 'OWNER') ? 'bg-amber-100 dark:bg-amber-900/50' : 'bg-slate-200 dark:bg-slate-700'}`}>
+              {(user?.role === 'LEVEL_2' || userRole === 'OWNER') ? (
                 <ShieldCheck className="w-4 h-4 text-amber-600 dark:text-amber-400 flex-shrink-0" />
               ) : (
                 <UserCheck className="w-4 h-4 text-slate-600 dark:text-slate-300 flex-shrink-0" />
               )}
             </div>
-            <span className="truncate tracking-wide">
-              {userRole === 'OWNER' ? 'ผู้บริหาร / เจ้าของ' : 'วิศวกร / ทีมงาน'}
-            </span>
+            <div className="truncate text-left">
+              <div className="truncate tracking-wide font-black">
+                {user?.name || user?.username || (userRole === 'OWNER' ? 'ผู้บริหาร / เจ้าของ' : 'วิศวกร / ทีมงาน')}
+              </div>
+              <div className="text-[9px] opacity-75 font-mono">
+                {user?.role === 'LEVEL_2' ? 'Admin (LEVEL_2)' : (user?.role === 'LEVEL_1' ? 'User (LEVEL_1)' : (userRole === 'OWNER' ? 'Admin' : 'Engineer'))}
+              </div>
+            </div>
           </div>
 
-          <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-lg ${userRole === 'OWNER' ? 'bg-amber-200/50 text-amber-800 dark:text-amber-200' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
+          <span className={`text-[9px] font-black uppercase tracking-wider px-2 py-1 rounded-lg shrink-0 ${(user?.role === 'LEVEL_2' || userRole === 'OWNER') ? 'bg-amber-200/50 text-amber-800 dark:text-amber-200' : 'bg-slate-200/70 dark:bg-slate-700 text-slate-600 dark:text-slate-300'}`}>
             สลับสิทธิ์
           </span>
         </div>

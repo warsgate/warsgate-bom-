@@ -26,6 +26,7 @@ import { HistoryLogTable } from './components/HistoryLogTable';
 import { WorkspaceManagement } from './components/WorkspaceManagement';
 import { UserManagement } from './components/UserManagement';
 import { LineMessagingCenter } from './components/LineMessagingCenter';
+import { SwitchUserModal } from './components/SwitchUserModal';
 
 export function App() {
   const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
@@ -44,6 +45,7 @@ export function App() {
   const [allMasterTasks, setAllMasterTasks] = useState<MasterPlanTaskItem[]>([]);
 
   // Modal states
+  const [isSwitchUserModalOpen, setIsSwitchUserModalOpen] = useState(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [editingProject, setEditingProject] = useState<ProjectItem | null>(null);
   const [isPartModalOpen, setIsPartModalOpen] = useState(false);
@@ -522,6 +524,8 @@ export function App() {
         setUserRole={() => {}} // No longer manually toggleable
         onEditProject={handleEditProject}
         onDeleteProject={handleDeleteProject}
+        user={user}
+        onOpenSwitchUser={() => setIsSwitchUserModalOpen(true)}
       />
 
       <div className="flex-1 flex flex-col h-screen print:h-auto overflow-y-auto print:overflow-visible">
@@ -666,6 +670,7 @@ export function App() {
       </div>
 
       {/* Modals */}
+      <SwitchUserModal isOpen={isSwitchUserModalOpen} onClose={() => setIsSwitchUserModalOpen(false)} />
       <ProjectModal isOpen={isProjectModalOpen} onClose={() => setIsProjectModalOpen(false)} onSave={handleSaveProject} initialProject={editingProject} />
       <MasterTaskModal isOpen={isMasterTaskModalOpen} onClose={() => setIsMasterTaskModalOpen(false)} onSave={handleSaveMasterTask} onDelete={handleDeleteMasterTask} initialTask={editingMasterTask} projectId={activeProjectId} allTasks={projectMasterTasks} />
       <ActualCompletionModal isOpen={isActualModalOpen} onClose={() => setIsActualModalOpen(false)} onSave={handleSaveActualCompletion} onClear={handleClearActualCompletion} task={actualTask} clickedDateIso={clickedDateIso} />

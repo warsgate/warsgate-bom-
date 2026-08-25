@@ -682,6 +682,41 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
     }
   };
 
+  // ─── Send Simple Test Text Message ─────────────────────────────
+  const handleSendTestText = async () => {
+    if (operatingMode === 'SIMULATOR') {
+      showToast('success', 'Simulator: ทดสอบข้อความธรรมดาสำเร็จ', 'จำลองส่ง: 🔔 ทดสอบการเชื่อมต่อ WARSGATE BOT สำเร็จแล้ว!', 200);
+      return;
+    }
+
+    if (!channelToken || !targetId) {
+      showToast('error', 'ข้อมูลไม่ครบถ้วน', 'กรุณาระบุ Channel Access Token และ Target ID');
+      return;
+    }
+
+    try {
+      setIsLoading(true);
+      const res = await lineApi.push({
+        token: channelToken,
+        to: targetId,
+        messages: [{
+          type: 'text',
+          text: '🔔 ทดสอบการเชื่อมต่อ WARSGATE BOT: ระบบส่งข้อความเข้า LINE ทำงานได้ถูกต้องสมบูรณ์แล้วครับ! 🎉'
+        }]
+      });
+
+      if (res.success) {
+        showToast('success', 'ส่งข้อความทดสอบสำเร็จ (200 OK)', 'ข้อความทดสอบถูกส่งตรงเข้าแอป LINE บนมือถือแล้ว!', 200);
+      } else {
+        showToast('error', 'ส่งข้อความไม่สำเร็จ', res.error || 'เกิดข้อผิดพลาด', res.status || 500);
+      }
+    } catch (err: any) {
+      showToast('error', 'เกิดข้อผิดพลาดในการส่ง', err.message, 500);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   // ─── Trigger Scheduled Procurement Alert Instantly ──────────────
   const handleTriggerProcurementAlert = async () => {
     if (operatingMode === 'SIMULATOR') {
@@ -1085,6 +1120,16 @@ pushMessage();`;
                 >
                   {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : operatingMode === 'SIMULATOR' ? <Play className="w-4 h-4" /> : <Send className="w-4 h-4" />}
                   <span>{operatingMode === 'SIMULATOR' ? 'ทดสอบจำลองส่ง (Simulator Run)' : 'ยิงเข้า LINE จริง (Push Message)'}</span>
+                </button>
+
+                <button
+                  onClick={handleSendTestText}
+                  disabled={isLoading}
+                  className="px-4 py-3 bg-slate-700 hover:bg-slate-800 text-white rounded-2xl font-black text-xs flex items-center space-x-1.5 shadow-sm transition-all"
+                  title="ทดสอบส่งข้อความธรรมดาเพื่อตรวจเช็คการเชื่อมต่อ"
+                >
+                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                  <span>ทดสอบส่งข้อความสั้น (Test Text)</span>
                 </button>
 
                 {activeTemplate === 'PROCUREMENT' && (

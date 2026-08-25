@@ -118,11 +118,36 @@ export const usersApi = {
 };
 
 // ─── LINE Messaging API ───────────────────────────────────────
+
+/**
+ * Recursively strip fields that LINE Messaging API does not support
+ * (e.g. letterSpacing) to prevent 400 validation errors.
+ */
+const UNSUPPORTED_LINE_FIELDS = new Set(['letterSpacing']);
+function sanitizeForLine(obj: any): any {
+  if (Array.isArray(obj)) return obj.map(sanitizeForLine);
+  if (obj !== null && typeof obj === 'object') {
+    const out: any = {};
+    for (const key of Object.keys(obj)) {
+      if (UNSUPPORTED_LINE_FIELDS.has(key)) continue;
+      out[key] = sanitizeForLine(obj[key]);
+    }
+    return out;
+  }
+  return obj;
+}
+
 export const lineApi = {
-  push: (data: { token?: string; to?: string; messages: any }) => 
-    request<any>('/line/push', { method: 'POST', body: JSON.stringify(data) }),
-  broadcast: (data: { token?: string; messages: any }) => 
-    request<any>('/line/broadcast', { method: 'POST', body: JSON.stringify(data) }),
+  push: (data: { token?: string; to?: string; messages: any }) =>
+    request<any>('/line/push', {
+      method: 'POST',
+      body: JSON.stringify({ ...data, messages: sanitizeForLine(data.messages) })
+    }),
+  broadcast: (data: { token?: string; messages: any }) =>
+    request<any>('/line/broadcast', {
+      method: 'POST',
+      body: JSON.stringify({ ...data, messages: sanitizeForLine(data.messages) })
+    }),
   testConnection: (token?: string) => 
     request<any>('/line/test-connection', { method: 'POST', body: JSON.stringify({ token }) }),
   getSettings: () => 
@@ -132,4 +157,3 @@ export const lineApi = {
   triggerProcurementAlert: (projectId?: string) => 
     request<any>('/line/trigger-procurement-alert', { method: 'POST', body: JSON.stringify({ projectId }) }),
 };
-

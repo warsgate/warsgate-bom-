@@ -247,14 +247,14 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
               }
             ]
           },
-          ...(item.purchaseLink ? [{
+          ...(item.purchaseLink && (item.purchaseLink.startsWith('http://') || item.purchaseLink.startsWith('https://') || item.purchaseLink.startsWith('www.')) ? [{
             type: 'button',
             style: 'link',
             height: 'sm',
             action: {
               type: 'uri',
-              label: '🔗 สั่งซื้อรายการนี้',
-              uri: item.purchaseLink
+              label: 'สั่งซื้อรายการนี้',
+              uri: item.purchaseLink.startsWith('www.') ? `https://${item.purchaseLink}` : item.purchaseLink
             }
           }] : [])
         ]
@@ -402,8 +402,8 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 height: 'sm',
                 action: {
                   type: 'uri',
-                  label: '📋 เปิดดูระบบจัดซื้อ (BOM)',
-                  uri: window.location.origin
+                  label: 'เปิดดูระบบ BOM',
+                  uri: typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'https://warsgate-bom.onrender.com'
                 }
               }
             ]
@@ -528,8 +528,8 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 height: 'sm',
                 action: {
                   type: 'uri',
-                  label: '📄 ดาวน์โหลดใบเสร็จ (PDF)',
-                  uri: window.location.origin
+                  label: 'ดาวน์โหลดใบเสร็จ',
+                  uri: typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'https://warsgate-bom.onrender.com'
                 }
               }
             ]
@@ -624,7 +624,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 height: 'sm',
                 action: {
                   type: 'uri',
-                  label: '📍 นำทางไปยังสถานที่ (Google Maps)',
+                  label: 'เปิดแผนที่นำทาง',
                   uri: 'https://maps.google.com'
                 }
               }

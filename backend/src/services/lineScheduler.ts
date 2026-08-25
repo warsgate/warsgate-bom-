@@ -110,14 +110,14 @@ export const buildPendingPartsFlexMessage = (
           }
         ]
       },
-      ...(item.purchaseLink ? [{
+      ...(item.purchaseLink && (item.purchaseLink.startsWith('http://') || item.purchaseLink.startsWith('https://') || item.purchaseLink.startsWith('www.')) ? [{
         type: 'button',
         style: 'link',
         height: 'sm',
         action: {
           type: 'uri',
-          label: '🔗 สั่งซื้อรายการนี้',
-          uri: item.purchaseLink
+          label: 'สั่งซื้อรายการนี้',
+          uri: item.purchaseLink.startsWith('www.') ? `https://${item.purchaseLink}` : item.purchaseLink
         }
       }] : [])
     ]
@@ -265,7 +265,7 @@ export const buildPendingPartsFlexMessage = (
             height: 'sm',
             action: {
               type: 'uri',
-              label: '📋 เปิดดูระบบจัดซื้อ (BOM)',
+              label: 'เปิดดูระบบ BOM',
               uri: process.env.FRONTEND_URL || 'https://warsgate-bom.onrender.com'
             }
           }

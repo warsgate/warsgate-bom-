@@ -306,7 +306,11 @@ export const pushLineMessage = async (
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
-    const errorMsg = (data as any).message || `LINE API Error (${response.status}: ${response.statusText})`;
+    let errorMsg = (data as any).message || `LINE API Error (${response.status}: ${response.statusText})`;
+    if ((data as any).details && Array.isArray((data as any).details)) {
+      const detailStrs = (data as any).details.map((d: any) => d.message ? `${d.property ? d.property + ': ' : ''}${d.message}` : JSON.stringify(d)).join(', ');
+      errorMsg += ` (${detailStrs})`;
+    }
     throw new Error(errorMsg);
   }
 

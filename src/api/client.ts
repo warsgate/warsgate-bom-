@@ -116,3 +116,20 @@ export const usersApi = {
   update: (id: string, data: any) => request<any>(`/auth/users/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
   delete: (id: string) => request<any>(`/auth/users/${id}`, { method: 'DELETE' }),
 };
+
+// ─── LINE Messaging API ───────────────────────────────────────
+export const lineApi = {
+  push: (data: { token?: string; to?: string; messages: any }) => 
+    request<any>('/line/push', { method: 'POST', body: JSON.stringify(data) }),
+  broadcast: (data: { token?: string; messages: any }) => 
+    request<any>('/line/broadcast', { method: 'POST', body: JSON.stringify(data) }),
+  testConnection: (token?: string) => 
+    request<any>('/line/test-connection', { method: 'POST', body: JSON.stringify({ token }) }),
+  getSettings: () => 
+    request<any>('/line/settings'),
+  saveSettings: (settings: { channelAccessToken?: string; targetId?: string; enabled?: boolean; times?: string[] }) => 
+    request<any>('/line/settings', { method: 'POST', body: JSON.stringify(settings) }),
+  triggerProcurementAlert: (projectId?: string) => 
+    request<any>('/line/trigger-procurement-alert', { method: 'POST', body: JSON.stringify({ projectId }) }),
+};
+

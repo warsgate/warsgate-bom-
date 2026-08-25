@@ -21,13 +21,15 @@ import {
   Edit2,
   Trash2,
   Library,
-  FileText
+  FileText,
+  MessageSquare,
+  BellRing
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 
 interface SidebarProps {
-  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users';
-  onTabChange: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users') => void;
+  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify';
+  onTabChange: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify') => void;
   projects: ProjectItem[];
   activeProjectId: string;
   setActiveProjectId: (id: string) => void;
@@ -150,6 +152,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
       label: 'ใบเสนอราคา (Quotations)',
       icon: FileText,
       badge: null,
+      isProtected: false,
+    },
+    {
+      id: 'line-notify',
+      label: 'แจ้งเตือน LINE (Real-time)',
+      icon: MessageSquare,
+      badge: 'Bot Flex',
       isProtected: false,
     },
   ];

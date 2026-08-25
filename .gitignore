@@ -13,5 +13,11 @@ backend/.env
 *.log
 npm-debug.log*
 
+# Credentials & Service Accounts
+*service-account*.json
+meta-coral-*.json
+project-*.json
+*.numbers
+
 # Prisma
 backend/prisma/migrations/

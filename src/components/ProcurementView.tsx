@@ -10,11 +10,14 @@ import {
   Truck,
   Warehouse,
   Check,
-  ChevronDown
+  ChevronDown,
+  Send,
+  BellRing
 } from 'lucide-react';
 import { BomPartItem, ModuleItem, PartStatus } from '../types/bom';
 import { calculateProcurementSummary, formatCurrency } from '../utils/costCalculator';
 import { formatShortUrl } from '../utils/urlFormatter';
+import { lineApi } from '../api/client';
 
 interface ProcurementViewProps {
   parts: BomPartItem[];
@@ -251,17 +254,44 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
             </button>
           </div>
 
-          <div className="w-full md:w-56 relative">
-            <input
-              type="text"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ค้นหา PO, Supplier..."
-              className="w-full pl-7 pr-2 py-1 text-xs bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-red-500 font-bold"
-            />
-            <Search className="w-3 h-3 text-slate-400 absolute left-2 top-2" />
-          </div>
+          <div className="flex items-center space-x-2 w-full md:w-auto">
+            <button
+              onClick={async () => {
+                if (pendingItemsCount === 0) {
+                  alert('ไม่มีรายการที่ค้างสั่งซื้อในระบบขณะนี้');
+                  return;
+                }
+                if (!confirm(`ต้องการส่งสรุปรายการค้างสั่งซื้อ (${pendingItemsCount} รายการ) เข้าแอป LINE หรือไม่?`)) return;
+                try {
+                  const activeProjId = parts[0]?.projectId;
+                  const res = await lineApi.triggerProcurementAlert(activeProjId);
+                  if (res.success) {
+                    alert('✅ ส่งการ์ดสรุปรายการค้างสั่งซื้อเข้า LINE สำเร็จเรียบร้อยแล้ว!');
+                  } else {
+                    alert('❌ ไม่สามารถส่งเข้า LINE ได้: ' + (res.error || 'กรุณาตรวจสอบการตั้งค่า LINE Token ในเมนูแจ้งเตือน LINE'));
+                  }
+                } catch (err: any) {
+                  alert('❌ เกิดข้อผิดพลาด: ' + err.message + '\n\n(หากยังไม่ได้ตั้งค่า Token ให้ไปที่เมนู แจ้งเตือน LINE ก่อนครับ)');
+                }
+              }}
+              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-black text-xs flex items-center space-x-1.5 shadow-sm shrink-0 transition-all"
+              title="ส่งสรุปรายการค้างสั่งซื้อเข้า LINE ทันที"
+            >
+              <Send className="w-3.5 h-3.5" />
+              <span>ส่งแจ้งเตือน LINE</span>
+            </button>
 
+            <div className="w-full md:w-56 relative">
+              <input
+                type="text"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                placeholder="ค้นหา PO, Supplier..."
+                className="w-full pl-7 pr-2 py-1 text-xs bg-white dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-red-500 font-bold"
+              />
+              <Search className="w-3 h-3 text-slate-400 absolute left-2 top-2" />
+            </div>
+          </div>
         </div>
 
         {/* Data Table */}

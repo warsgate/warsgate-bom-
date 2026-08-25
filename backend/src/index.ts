@@ -29,6 +29,8 @@ app.get('/health', (_req, res) => {
 
 import authRouter from './routes/auth';
 import auditLogsRouter from './routes/auditLogs';
+import lineRouter from './routes/line';
+import { startLineScheduler } from './services/lineScheduler';
 
 // ─── API Routes ───────────────────────────────────────────────
 app.use('/api/auth', authRouter);
@@ -39,6 +41,7 @@ app.use('/api/parts', partsRouter);
 app.use('/api/master-tasks', masterTasksRouter);
 app.use('/api/master-parts', masterPartsRouter);
 app.use('/api/quotations', quotationsRouter);
+app.use('/api/line', lineRouter);
 
 // ─── 404 Handler ─────────────────────────────────────────────
 app.use((_req, res) => {
@@ -126,4 +129,5 @@ app.listen(PORT, async () => {
   
   await importPdfParts();
   await cleanupMakerLinks();
+  startLineScheduler();
 });

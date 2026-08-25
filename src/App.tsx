@@ -25,11 +25,12 @@ import { useAuth } from './contexts/AuthContext';
 import { HistoryLogTable } from './components/HistoryLogTable';
 import { WorkspaceManagement } from './components/WorkspaceManagement';
 import { UserManagement } from './components/UserManagement';
+import { LineMessagingCenter } from './components/LineMessagingCenter';
 
 export function App() {
   const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
   
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users'>('master-plan');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify'>('master-plan');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -639,6 +640,14 @@ export function App() {
 
           {activeTab === 'master-library' && (
             <MasterPartLibrary />
+          )}
+
+          {activeTab === 'line-notify' && (
+            <LineMessagingCenter 
+              projects={projects}
+              activeProjectId={activeProjectId}
+              parts={allParts}
+            />
           )}
         </main>
 

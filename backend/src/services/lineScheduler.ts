@@ -278,6 +278,23 @@ export const buildPendingPartsFlexMessage = (
 };
 
 /**
+ * Recursively sanitize flex message payload to strip unknown/unsupported LINE properties
+ */
+export const sanitizeFlexPayload = (obj: any): any => {
+  if (Array.isArray(obj)) {
+    return obj.map(sanitizeFlexPayload);
+  } else if (obj !== null && typeof obj === 'object') {
+    const cleaned: any = {};
+    for (const key of Object.keys(obj)) {
+      if (key === 'letterSpacing') continue; // Remove unsupported field
+      cleaned[key] = sanitizeFlexPayload(obj[key]);
+    }
+    return cleaned;
+  }
+  return obj;
+};
+
+/**
  * Dispatch LINE push message directly to LINE Messaging API
  */
 export const pushLineMessage = async (
@@ -288,9 +305,12 @@ export const pushLineMessage = async (
   if (!token) throw new Error('LINE Channel Access Token is required');
   if (!to) throw new Error('Target User ID / Group ID is required');
 
+  const rawMessages = Array.isArray(messages) ? messages : [messages];
+  const sanitizedMessages = sanitizeFlexPayload(rawMessages);
+
   const payload = {
     to,
-    messages: Array.isArray(messages) ? messages : [messages]
+    messages: sanitizedMessages
   };
 
   const response = await fetch('https://api.line.me/v2/bot/message/push', {

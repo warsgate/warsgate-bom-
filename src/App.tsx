@@ -108,6 +108,20 @@ export function App() {
     }
   }, [user, activeTab]);
 
+  // Read URL search params on mount (e.g. ?tab=procurement&filter=pending)
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const tabParam = params.get('tab');
+    const projectParam = params.get('projectId');
+    
+    if (tabParam && ['dashboard', 'master-plan', 'all-modules', 'modules', 'bom', 'procurement', 'report', 'master-library', 'quotations', 'history', 'workspaces', 'users', 'line-notify'].includes(tabParam)) {
+      setActiveTab(tabParam as any);
+    }
+    if (projectParam) {
+      setActiveProjectId(projectParam);
+    }
+  }, []);
+
   const activeProject = projects.find(p => p.id === activeProjectId) || projects[0];
 
   const projectModules = useMemo(() => allModules.filter(m => m.projectId === activeProjectId), [allModules, activeProjectId]);

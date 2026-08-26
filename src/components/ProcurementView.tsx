@@ -32,9 +32,25 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
   onUpdatePartStatus,
   onEditPart,
 }) => {
-  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>('ALL');
+  const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>(() => {
+    const params = new URLSearchParams(window.location.search);
+    const filter = params.get('filter')?.toUpperCase() || params.get('status')?.toUpperCase();
+    if (filter === 'PENDING' || filter === 'ORDERED' || filter === 'RECEIVED' || filter === 'STORE') {
+      return filter;
+    }
+    return 'ALL';
+  });
   const [selectedSupplierFilter, setSelectedSupplierFilter] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
+
+  // Sync status filter if URL parameter changes
+  React.useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const filter = params.get('filter')?.toUpperCase() || params.get('status')?.toUpperCase();
+    if (filter === 'PENDING' || filter === 'ORDERED' || filter === 'RECEIVED' || filter === 'STORE') {
+      setSelectedStatusFilter(filter);
+    }
+  }, []);
 
   const procurementSummary = useMemo(() => {
     return calculateProcurementSummary(parts);

@@ -411,7 +411,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 action: {
                   type: 'uri',
                   label: 'เปิดดูรายละเอียด',
-                  uri: getPublicAppUrl()
+                  uri: `${getPublicAppUrl()}?tab=procurement&filter=pending${activeProjectId ? `&projectId=${activeProjectId}` : ''}`
                 }
               }
             ]

@@ -246,7 +246,7 @@ export const buildPendingPartsFlexMessage = (
             height: 'sm',
             action: {
               type: 'uri',
-              label: 'เปิดดูระบบ BOM',
+              label: 'เปิดดูรายละเอียด',
               uri: process.env.FRONTEND_URL || 'https://warsgate-bom.onrender.com'
             }
           }

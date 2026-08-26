@@ -27,7 +27,9 @@ import {
   ChevronRight,
   ShieldCheck,
   Zap,
-  Info
+  Info,
+  X,
+  Search
 } from 'lucide-react';
 import { ProjectItem, BomPartItem } from '../types/bom';
 import { lineApi } from '../api/client';
@@ -62,6 +64,9 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
   const [isTestingConnection, setIsTestingConnection] = useState(false);
   const [botInfo, setBotInfo] = useState<any>(null);
   const [copiedKey, setCopiedKey] = useState<string | null>(null);
+  // Detail Modal state
+  const [isDetailModalOpen, setIsDetailModalOpen] = useState(false);
+  const [detailSearchQuery, setDetailSearchQuery] = useState('');
 
   // Toast Notification
   const [toast, setToast] = useState<{
@@ -395,7 +400,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 height: 'sm',
                 action: {
                   type: 'uri',
-                  label: 'เปิดดูระบบ BOM',
+                  label: 'เปิดดูรายละเอียด',
                   uri: typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'https://warsgate-bom.onrender.com'
                 }
               }
@@ -1488,12 +1493,26 @@ pushMessage();`;
                             </div>
                           </div>
 
-                          <div className="text-[10px] font-bold text-slate-500 pt-1">รายการด่วน:</div>
-                          <div className="space-y-2 max-h-48 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
+                          <div className="text-[10px] font-bold text-slate-500 pt-1 flex items-center justify-between">
+                            <span>รายการด่วน:</span>
+                            <button
+                              onClick={() => setIsDetailModalOpen(true)}
+                              className="text-[9px] text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-0.5"
+                            >
+                              <span>ดูทั้งหมด ({pendingParts.length})</span>
+                              <ChevronRight className="w-2.5 h-2.5" />
+                            </button>
+                          </div>
+                          <div className="space-y-1.5 max-h-48 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
                             {pendingParts.slice(0, 4).map((item, idx) => (
-                              <div key={item.id} className="pt-1.5 text-[10px]">
+                              <div 
+                                key={item.id} 
+                                onClick={() => setIsDetailModalOpen(true)}
+                                className="pt-1.5 text-[10px] cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-1.5 rounded-lg transition-colors group"
+                                title="คลิกเพื่อดูรายละเอียด"
+                              >
                                 <div className="flex justify-between font-bold">
-                                  <span className="truncate max-w-[140px]">{idx + 1}. {item.partName}</span>
+                                  <span className="truncate max-w-[140px] group-hover:text-blue-600 transition-colors">{idx + 1}. {item.partName}</span>
                                   <span className="text-rose-600 font-mono">฿{(item.totalAmount || (item.qty * item.unitPrice)).toLocaleString('th-TH')}</span>
                                 </div>
                                 <div className="flex justify-between text-[9px] text-slate-400 mt-0.5">
@@ -1505,7 +1524,8 @@ pushMessage();`;
                                     href={item.purchaseLink}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="mt-1 inline-flex items-center gap-1 text-[9px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900"
+                                    onClick={e => e.stopPropagation()}
+                                    className="mt-1 inline-flex items-center gap-1 text-[9px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900 hover:bg-blue-100 transition-colors"
                                   >
                                     <span>🔗 สั่งซื้อ</span>
                                     <ExternalLink className="w-2.5 h-2.5" />
@@ -1518,7 +1538,11 @@ pushMessage();`;
                       )}
 
                       {activeTemplate === 'RECEIPT' && (
-                        <div className="space-y-1.5 text-[10px]">
+                        <div 
+                          onClick={() => setIsDetailModalOpen(true)}
+                          className="space-y-1.5 text-[10px] cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-1.5 rounded-lg transition-colors"
+                          title="คลิกเพื่อดูรายละเอียดใบเสร็จ"
+                        >
                           <div className="flex justify-between">
                             <span className="text-slate-500">ลูกค้า:</span>
                             <span className="font-bold">{receiptForm.customerName}</span>
@@ -1541,7 +1565,11 @@ pushMessage();`;
                       )}
 
                       {activeTemplate === 'APPOINTMENT' && (
-                        <div className="space-y-1.5 text-[10px]">
+                        <div 
+                          onClick={() => setIsDetailModalOpen(true)}
+                          className="space-y-1.5 text-[10px] cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-1.5 rounded-lg transition-colors"
+                          title="คลิกเพื่อดูรายละเอียดใบนัดหมาย"
+                        >
                           <div className="flex justify-between">
                             <span className="text-slate-500">📅 วันที่:</span>
                             <span className="font-bold">{appointmentForm.date} ({appointmentForm.time})</span>
@@ -1567,9 +1595,10 @@ pushMessage();`;
                     {/* Footer CTA Button */}
                     <div className="p-2.5 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
                       <button 
-                        onClick={() => showToast('info', 'Interaction Test', 'ปุ่ม Action ในการ์ด Flex Message ทำงานถูกต้อง')}
-                        className="w-full py-2 bg-emerald-500 hover:bg-emerald-600 text-white font-bold rounded-xl text-xs flex items-center justify-center space-x-1 shadow-sm transition-all"
+                        onClick={() => setIsDetailModalOpen(true)}
+                        className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-md transition-all active:scale-95"
                       >
+                        <Eye className="w-3.5 h-3.5" />
                         <span>เปิดดูรายละเอียด</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
@@ -1606,6 +1635,161 @@ pushMessage();`;
         </div>
 
       </div>
+
+      {/* ─── Notification Details Modal ─────────────────────────────── */}
+      {isDetailModalOpen && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="bg-white dark:bg-slate-900 rounded-3xl max-w-2xl w-full max-h-[85vh] flex flex-col shadow-2xl border border-slate-200 dark:border-slate-800 overflow-hidden animate-in zoom-in-95 duration-200">
+            
+            {/* Modal Header */}
+            <div className="p-5 border-b border-slate-200 dark:border-slate-800 flex items-center justify-between bg-slate-50/50 dark:bg-slate-950/50">
+              <div className="flex items-center space-x-3">
+                <div className="w-10 h-10 rounded-2xl bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 flex items-center justify-center font-bold">
+                  <Package className="w-5 h-5" />
+                </div>
+                <div>
+                  <h3 className="text-base font-black text-slate-900 dark:text-white flex items-center gap-2">
+                    <span>รายละเอียดรายการแจ้งเตือน</span>
+                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-emerald-100 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+                      {activeTemplate}
+                    </span>
+                  </h3>
+                  <p className="text-xs text-slate-500">
+                    โปรเจกต์: <span className="font-bold text-slate-700 dark:text-slate-300">{activeProject?.code || '-'} - {activeProject?.name || '-'}</span>
+                  </p>
+                </div>
+              </div>
+
+              <button
+                onClick={() => setIsDetailModalOpen(false)}
+                className="w-8 h-8 rounded-full bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-600 dark:text-slate-300 flex items-center justify-center transition-all"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+
+            {/* Modal Body */}
+            <div className="p-5 overflow-y-auto flex-1 space-y-4">
+              
+              {activeTemplate === 'PROCUREMENT' && (
+                <>
+                  {/* Stats Cards */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-900/50 rounded-2xl p-3.5">
+                      <div className="text-xs font-bold text-amber-700 dark:text-amber-400">จำนวนค้างสั่งซื้อทั้งหมด</div>
+                      <div className="text-xl font-black text-amber-900 dark:text-amber-200 mt-1">{pendingParts.length} รายการ</div>
+                    </div>
+                    <div className="bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-900/50 rounded-2xl p-3.5">
+                      <div className="text-xs font-bold text-emerald-700 dark:text-emerald-400">งบประมาณรวม</div>
+                      <div className="text-xl font-black text-emerald-900 dark:text-emerald-200 mt-1">฿{totalPendingAmount.toLocaleString('th-TH')}</div>
+                    </div>
+                  </div>
+
+                  {/* Search filter in modal */}
+                  <div className="relative">
+                    <Search className="w-4 h-4 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
+                    <input
+                      type="text"
+                      placeholder="ค้นหาชื่ออะไหล่, Maker หรือ Spec..."
+                      value={detailSearchQuery}
+                      onChange={e => setDetailSearchQuery(e.target.value)}
+                      className="w-full pl-9 pr-4 py-2 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 text-slate-900 dark:text-white"
+                    />
+                  </div>
+
+                  {/* Parts List */}
+                  <div className="space-y-2">
+                    {pendingParts
+                      .filter(p => 
+                        p.partName.toLowerCase().includes(detailSearchQuery.toLowerCase()) || 
+                        (p.maker && p.maker.toLowerCase().includes(detailSearchQuery.toLowerCase())) || 
+                        (p.typeSpec && p.typeSpec.toLowerCase().includes(detailSearchQuery.toLowerCase()))
+                      )
+                      .map((item, idx) => (
+                        <div 
+                          key={item.id}
+                          className="p-3 bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl flex flex-col sm:flex-row sm:items-center justify-between gap-2 hover:border-emerald-500/50 transition-all"
+                        >
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center space-x-2">
+                              <span className="text-xs font-mono font-bold text-slate-400">#{idx + 1}</span>
+                              <span className="text-xs font-black text-slate-900 dark:text-white truncate">{item.partName}</span>
+                            </div>
+                            <div className="text-[11px] text-slate-500 mt-0.5 flex flex-wrap gap-x-3 gap-y-1">
+                              {item.maker && <span>Maker: <strong className="text-slate-700 dark:text-slate-300">{item.maker}</strong></span>}
+                              {item.typeSpec && <span>Spec: <strong className="text-slate-700 dark:text-slate-300">{item.typeSpec}</strong></span>}
+                              <span>จำนวน: <strong className="text-slate-700 dark:text-slate-300">{item.qty} {item.unit || 'EA'}</strong></span>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center justify-between sm:justify-end space-x-3 pt-2 sm:pt-0 border-t sm:border-t-0 border-slate-100 dark:border-slate-800">
+                            <div className="text-right">
+                              <div className="text-[10px] text-slate-400">ยอดรวม</div>
+                              <div className="text-xs font-mono font-black text-rose-600">
+                                ฿{(item.totalAmount || (item.qty * item.unitPrice)).toLocaleString('th-TH')}
+                              </div>
+                            </div>
+                            {item.purchaseLink && (
+                              <a
+                                href={item.purchaseLink.startsWith('www.') ? `https://${item.purchaseLink}` : item.purchaseLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="px-3 py-1.5 bg-blue-50 dark:bg-blue-950/60 hover:bg-blue-100 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-900 rounded-xl text-xs font-bold flex items-center space-x-1 transition-all"
+                              >
+                                <span>สั่งซื้อ</span>
+                                <ExternalLink className="w-3 h-3" />
+                              </a>
+                            )}
+                          </div>
+                        </div>
+                    ))}
+                  </div>
+                </>
+              )}
+
+              {activeTemplate === 'RECEIPT' && (
+                <div className="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 space-y-3">
+                  <div className="grid grid-cols-2 gap-2 text-xs">
+                    <div><span className="text-slate-500">เลขที่บิล:</span> <strong className="text-slate-900 dark:text-white">{receiptForm.orderNo}</strong></div>
+                    <div><span className="text-slate-500">ลูกค้า:</span> <strong className="text-slate-900 dark:text-white">{receiptForm.customerName}</strong></div>
+                    <div><span className="text-slate-500">ช่องทางชำระ:</span> <strong className="text-emerald-600">{receiptForm.paymentMethod}</strong></div>
+                    <div><span className="text-slate-500">รายการ:</span> <strong className="text-slate-900 dark:text-white">{receiptForm.itemName} (x{receiptForm.itemQty})</strong></div>
+                  </div>
+                  <div className="border-t border-slate-200 dark:border-slate-800 pt-2 flex justify-between font-black text-sm text-emerald-600">
+                    <span>ยอดรวมสุทธิ (VAT 7%)</span>
+                    <span>฿{((receiptForm.itemQty * receiptForm.itemPrice) * 1.07).toLocaleString('th-TH')}</span>
+                  </div>
+                </div>
+              )}
+
+              {activeTemplate === 'APPOINTMENT' && (
+                <div className="bg-slate-50 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-800 rounded-2xl p-4 space-y-3 text-xs">
+                  <div className="text-sm font-black text-indigo-600 dark:text-indigo-400">{appointmentForm.title}</div>
+                  <div><span className="text-slate-500">📅 วันที่และเวลา:</span> <strong>{appointmentForm.date} ({appointmentForm.time})</strong></div>
+                  <div><span className="text-slate-500">📍 สถานที่:</span> <strong>{appointmentForm.location}</strong></div>
+                  <div><span className="text-slate-500">👷 วิศวกรผู้รับผิดชอบ:</span> <strong>{appointmentForm.engineerName} (โทร: {appointmentForm.contactTel})</strong></div>
+                </div>
+              )}
+
+            </div>
+
+            {/* Modal Footer */}
+            <div className="p-4 border-t border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50 flex items-center justify-between">
+              <span className="text-xs text-slate-500">
+                {activeTemplate === 'PROCUREMENT' ? `แสดง ${pendingParts.length} รายการ` : 'ข้อมูลการแจ้งเตือน'}
+              </span>
+              <button
+                onClick={() => setIsDetailModalOpen(false)}
+                className="px-5 py-2 bg-slate-800 hover:bg-slate-900 text-white rounded-xl text-xs font-bold transition-all"
+              >
+                ปิดหน้าต่าง
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
     </div>
   );
 };

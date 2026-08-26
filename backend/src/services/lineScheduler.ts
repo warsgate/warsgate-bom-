@@ -82,7 +82,6 @@ export const buildPendingPartsFlexMessage = (
             text: `${item.qty} ${item.unit || 'EA'}`,
             size: 'xs',
             color: '#64748b',
-            align: 'end',
             flex: 2
           }
         ]
@@ -96,7 +95,7 @@ export const buildPendingPartsFlexMessage = (
             text: item.typeSpec ? `Spec: ${item.typeSpec}` : (item.maker ? `Maker: ${item.maker}` : 'Standard Part'),
             size: 'xxs',
             color: '#94a3b8',
-            flex: 4,
+            flex: 5,
             wrap: true
           },
           {
@@ -105,7 +104,6 @@ export const buildPendingPartsFlexMessage = (
             size: 'xs',
             color: '#ef4444',
             weight: 'bold',
-            align: 'end',
             flex: 3
           }
         ]
@@ -125,7 +123,7 @@ export const buildPendingPartsFlexMessage = (
 
   const flexMessage = {
     type: 'flex',
-    altText: `⚠️ แจ้งเตือน: มีรายการอะไหล่ค้างสั่งซื้อ ${totalItems} รายการ (${projectName})`,
+    altText: `แจ้งเตือน: มีรายการอะไหล่ค้างสั่งซื้อ ${totalItems} รายการ (${projectName})`,
     contents: {
       type: 'bubble',
       size: 'mega',
@@ -136,24 +134,11 @@ export const buildPendingPartsFlexMessage = (
         paddingAll: 'lg',
         contents: [
           {
-            type: 'box',
-            layout: 'horizontal',
-            contents: [
-              {
-                type: 'text',
-                text: 'PROCUREMENT ALERT',
-                color: '#f59e0b',
-                weight: 'bold',
-                size: 'xs'
-              },
-              {
-                type: 'text',
-                text: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.',
-                color: '#94a3b8',
-                size: 'xxs',
-                align: 'end'
-              }
-            ]
+            type: 'text',
+            text: 'PROCUREMENT ALERT',
+            color: '#f59e0b',
+            weight: 'bold',
+            size: 'xs'
           },
           {
             type: 'text',
@@ -208,22 +193,19 @@ export const buildPendingPartsFlexMessage = (
                 type: 'box',
                 layout: 'vertical',
                 flex: 1,
-                align: 'end',
                 contents: [
                   {
                     type: 'text',
-                    text: 'ยอดงบประมาณรวม',
+                    text: 'งบประมาณรวม',
                     size: 'xxs',
-                    color: '#92400e',
-                    align: 'end'
+                    color: '#92400e'
                   },
                   {
                     type: 'text',
                     text: `฿${totalBudget.toLocaleString('th-TH')}`,
                     size: 'md',
                     weight: 'bold',
-                    color: '#b45309',
-                    align: 'end'
+                    color: '#b45309'
                   }
                 ]
               }
@@ -247,7 +229,6 @@ export const buildPendingPartsFlexMessage = (
             text: `... และอีก ${totalItems - 5} รายการในระบบ`,
             size: 'xxs',
             color: '#64748b',
-            align: 'center',
             margin: 'md'
           }] : [])
         ]
@@ -278,16 +259,30 @@ export const buildPendingPartsFlexMessage = (
 };
 
 /**
+ * Known unsupported properties that LINE Messaging API rejects.
+ * Use a blacklist approach to strip these from any Flex Message payload.
+ */
+const LINE_UNSUPPORTED_FIELDS = new Set([
+  'letterSpacing',
+  'align',        // only valid on certain component types - strip globally to be safe
+]);
+
+/**
  * Recursively sanitize flex message payload to strip unknown/unsupported LINE properties
  */
-export const sanitizeFlexPayload = (obj: any): any => {
+export const sanitizeFlexPayload = (obj: any, parentType?: string): any => {
   if (Array.isArray(obj)) {
-    return obj.map(sanitizeFlexPayload);
+    return obj.map(item => sanitizeFlexPayload(item, parentType));
   } else if (obj !== null && typeof obj === 'object') {
+    const currentType: string = obj.type || parentType || '';
     const cleaned: any = {};
     for (const key of Object.keys(obj)) {
-      if (key === 'letterSpacing') continue; // Remove unsupported field
-      cleaned[key] = sanitizeFlexPayload(obj[key]);
+      // Skip globally unsupported fields
+      if (key === 'letterSpacing') continue;
+      // 'align' is only valid on text components at top level of bubble sections,
+      // not nested inside box contents - strip it to avoid validation errors
+      if (key === 'align' && currentType === 'text' && parentType === 'box') continue;
+      cleaned[key] = sanitizeFlexPayload(obj[key], currentType);
     }
     return cleaned;
   }

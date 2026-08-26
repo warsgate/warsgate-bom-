@@ -179,6 +179,16 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
     }
   };
 
+  // ─── Public Production URL Helper for LINE Actions ─────────────
+  const getPublicAppUrl = () => {
+    if (typeof window !== 'undefined' && window.location.origin) {
+      if (!window.location.origin.includes('localhost') && !window.location.origin.includes('127.0.0.1')) {
+        return window.location.origin;
+      }
+    }
+    return 'https://warsgate-bom.onrender.com';
+  };
+
   // ─── Build Payloads for Templates ──────────────────────────────
   const currentPayload = useMemo(() => {
     if (activeTemplate === 'CUSTOM') {
@@ -401,7 +411,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 action: {
                   type: 'uri',
                   label: 'เปิดดูรายละเอียด',
-                  uri: typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'https://warsgate-bom.onrender.com'
+                  uri: getPublicAppUrl()
                 }
               }
             ]
@@ -524,7 +534,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 action: {
                   type: 'uri',
                   label: 'ดาวน์โหลดใบเสร็จ',
-                  uri: typeof window !== 'undefined' && window.location.origin ? window.location.origin : 'https://warsgate-bom.onrender.com'
+                  uri: getPublicAppUrl()
                 }
               }
             ]

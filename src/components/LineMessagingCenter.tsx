@@ -219,7 +219,6 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 text: `${item.qty} ${item.unit || 'EA'}`,
                 size: 'xs',
                 color: '#64748b',
-                align: 'end',
                 flex: 2
               }
             ]
@@ -242,7 +241,6 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 size: 'xs',
                 color: '#ef4444',
                 weight: 'bold',
-                align: 'end',
                 flex: 3
               }
             ]
@@ -288,7 +286,6 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                     text: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.',
                     color: '#94a3b8',
                     size: 'xxs',
-                    align: 'end'
                   }
                 ]
               },
@@ -345,14 +342,12 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                     type: 'box',
                     layout: 'vertical',
                     flex: 1,
-                    align: 'end',
                     contents: [
                       {
                         type: 'text',
                         text: 'ยอดงบประมาณรวม',
                         size: 'xxs',
                         color: '#92400e',
-                        align: 'end'
                       },
                       {
                         type: 'text',
@@ -360,7 +355,6 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                         size: 'md',
                         weight: 'bold',
                         color: '#b45309',
-                        align: 'end'
                       }
                     ]
                   }
@@ -384,7 +378,6 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 text: `... และอีก ${pendingParts.length - 5} รายการในระบบ`,
                 size: 'xxs',
                 color: '#64748b',
-                align: 'center',
                 margin: 'md'
               }] : [])
             ]
@@ -491,7 +484,6 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 margin: 'md',
                 contents: [
                   { type: 'text', text: `${receiptForm.itemName} (x${receiptForm.itemQty})`, size: 'xs', color: '#334155', flex: 5, wrap: true },
-                  { type: 'text', text: `฿${total.toLocaleString('th-TH')}`, size: 'xs', color: '#334155', align: 'end', flex: 3 }
                 ]
               },
               {
@@ -500,7 +492,6 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 margin: 'xs',
                 contents: [
                   { type: 'text', text: 'ภาษีมูลค่าเพิ่ม (VAT 7%)', size: 'xxs', color: '#94a3b8', flex: 5 },
-                  { type: 'text', text: `฿${vat.toLocaleString('th-TH')}`, size: 'xxs', color: '#94a3b8', align: 'end', flex: 3 }
                 ]
               },
               { type: 'separator', margin: 'md' },
@@ -510,7 +501,6 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 margin: 'md',
                 contents: [
                   { type: 'text', text: 'ยอดรวมสุทธิ (Grand Total)', size: 'sm', color: '#0f172a', weight: 'bold', flex: 4 },
-                  { type: 'text', text: `฿${grandTotal.toLocaleString('th-TH')}`, size: 'lg', color: '#059669', weight: 'bold', align: 'end', flex: 4 }
                 ]
               }
             ]
@@ -1107,41 +1097,40 @@ pushMessage();`;
                 </div>
               )}
 
-              {/* Action Buttons */}
-              <div className="mt-5 flex flex-wrap items-center gap-3">
+              {/* Action Buttons (2 Sleek Modern Buttons) */}
+              <div className="mt-6 flex flex-wrap items-center gap-3">
+                {/* Button 1: Primary Push / Simulator Run */}
                 <button
                   onClick={handleDispatchMessage}
                   disabled={isLoading}
-                  className={`px-5 py-3 rounded-2xl font-black text-xs flex items-center space-x-2 text-white shadow-lg transition-all ${
+                  className={`flex-1 sm:flex-initial px-6 py-3.5 rounded-2xl font-black text-xs flex items-center justify-center space-x-2.5 text-white shadow-xl transition-all duration-200 hover:scale-[1.02] active:scale-[0.98] ${
                     operatingMode === 'SIMULATOR'
-                      ? 'bg-emerald-600 hover:bg-emerald-700 shadow-emerald-900/30'
-                      : 'bg-blue-600 hover:bg-blue-700 shadow-blue-900/30'
+                      ? 'bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 shadow-emerald-500/25'
+                      : 'bg-gradient-to-r from-blue-600 via-indigo-600 to-violet-600 hover:from-blue-500 hover:to-violet-500 shadow-indigo-500/25'
                   }`}
                 >
-                  {isLoading ? <RefreshCw className="w-4 h-4 animate-spin" /> : operatingMode === 'SIMULATOR' ? <Play className="w-4 h-4" /> : <Send className="w-4 h-4" />}
-                  <span>{operatingMode === 'SIMULATOR' ? 'ทดสอบจำลองส่ง (Simulator Run)' : 'ยิงเข้า LINE จริง (Push Message)'}</span>
+                  {isLoading ? (
+                    <RefreshCw className="w-4 h-4 animate-spin" />
+                  ) : operatingMode === 'SIMULATOR' ? (
+                    <Play className="w-4 h-4" />
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                  <span className="tracking-wide">
+                    {operatingMode === 'SIMULATOR' ? 'ทดสอบจำลองส่ง (Simulator Run)' : 'ยิงเข้า LINE จริง (Push Message)'}
+                  </span>
                 </button>
 
+                {/* Button 2: Instant Procurement Alert Trigger */}
                 <button
-                  onClick={handleSendTestText}
+                  onClick={handleTriggerProcurementAlert}
                   disabled={isLoading}
-                  className="px-4 py-3 bg-slate-700 hover:bg-slate-800 text-white rounded-2xl font-black text-xs flex items-center space-x-1.5 shadow-sm transition-all"
-                  title="ทดสอบส่งข้อความธรรมดาเพื่อตรวจเช็คการเชื่อมต่อ"
+                  className="flex-1 sm:flex-initial px-5 py-3.5 bg-gradient-to-r from-amber-500 to-orange-600 hover:from-amber-400 hover:to-orange-500 text-white rounded-2xl font-black text-xs flex items-center justify-center space-x-2 shadow-xl shadow-orange-500/20 transition-all duration-200 hover:scale-[1.02] active:scale-[0.98]"
+                  title="ประมวลผลอะไหล่ค้างสั่งซื้อและยิงการ์ดแจ้งเตือนเข้า LINE ทันที"
                 >
-                  <Sparkles className="w-3.5 h-3.5 text-amber-400" />
-                  <span>ทดสอบส่งข้อความสั้น (Test Text)</span>
+                  <BellRing className="w-4 h-4" />
+                  <span className="tracking-wide">ยิงสรุปค้างสั่งซื้อทันที (Trigger Now)</span>
                 </button>
-
-                {activeTemplate === 'PROCUREMENT' && (
-                  <button
-                    onClick={handleTriggerProcurementAlert}
-                    disabled={isLoading}
-                    className="px-4 py-3 bg-amber-600 hover:bg-amber-700 text-white rounded-2xl font-black text-xs flex items-center space-x-2 shadow-lg shadow-amber-900/20 transition-all"
-                  >
-                    <BellRing className="w-4 h-4" />
-                    <span>ทดสอบยิงสรุปค้างสั่งซื้อทันที (Trigger Now)</span>
-                  </button>
-                )}
               </div>
 
             </div>

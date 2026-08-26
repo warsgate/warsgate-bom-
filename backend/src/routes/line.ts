@@ -8,6 +8,30 @@ import {
 
 const router = Router();
 
+/**
+ * Aggressively strip ALL known unsupported LINE Flex Message fields from any payload
+ * before forwarding to LINE API. This catches stale frontend payloads.
+ */
+const LINE_BANNED_FIELDS = new Set(['letterSpacing']);
+
+// 'align' is only valid on text/image components, NOT on box components.
+// Since we can't easily know the parent context, we strip 'align' from any
+// object whose type is 'box'.
+function deepCleanLinePayload(obj: any): any {
+  if (Array.isArray(obj)) return obj.map(deepCleanLinePayload);
+  if (obj !== null && typeof obj === 'object') {
+    const out: any = {};
+    for (const key of Object.keys(obj)) {
+      if (LINE_BANNED_FIELDS.has(key)) continue;
+      // Strip 'align' when the parent element is a box
+      if (key === 'align' && obj.type === 'box') continue;
+      out[key] = deepCleanLinePayload(obj[key]);
+    }
+    return out;
+  }
+  return obj;
+}
+
 // ─── POST /api/line/push ──────────────────────────────────────────
 // Proxy endpoint to push messages to LINE user/group (Solves CORS)
 router.post('/push', async (req: Request, res: Response) => {
@@ -27,7 +51,12 @@ router.post('/push', async (req: Request, res: Response) => {
       return res.status(400).json({ error: 'Missing messages payload' });
     }
 
-    const result = await pushLineMessage(effectiveToken, effectiveTo, messages);
+    // Clean the payload before sending to LINE
+    const cleanMessages = deepCleanLinePayload(
+      Array.isArray(messages) ? messages : [messages]
+    );
+
+    const result = await pushLineMessage(effectiveToken, effectiveTo, cleanMessages);
     res.json({
       success: true,
       status: 200,

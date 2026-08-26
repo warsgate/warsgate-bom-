@@ -50,7 +50,8 @@ export const buildPendingPartsFlexMessage = (
     unitPrice: number;
     totalAmount: number;
     purchaseLink?: string;
-  }>
+  }>,
+  projectId?: string
 ) => {
   const totalItems = pendingParts.length;
   const totalBudget = pendingParts.reduce((sum, p) => sum + (p.totalAmount || (p.qty * p.unitPrice)), 0);
@@ -247,7 +248,7 @@ export const buildPendingPartsFlexMessage = (
             action: {
               type: 'uri',
               label: 'เปิดดูรายละเอียด',
-              uri: `${(process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost')) ? process.env.FRONTEND_URL : 'https://warsgate-bom.onrender.com'}?tab=procurement&filter=pending`
+              uri: `${(process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost')) ? process.env.FRONTEND_URL : 'https://warsgate-bom.onrender.com'}?tab=procurement&filter=pending${projectId ? `&projectId=${projectId}` : ''}`
             }
           }
         ]
@@ -332,43 +333,95 @@ export const pushLineMessage = async (
 };
 
 /**
- * Trigger check for pending parts and push notification
+ * Trigger check for pending parts and push notification across all workspaces
  */
-export const triggerProcurementAlertNow = async (projectId?: string) => {
+export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
   const settings = getLineSettings();
   if (!settings.channelAccessToken || !settings.targetId) {
     throw new Error('LINE Channel Access Token and Target ID must be configured in settings');
   }
 
-  // Query projects and pending parts
-  const project = projectId 
-    ? await prisma.project.findUnique({ where: { id: projectId } })
-    : await prisma.project.findFirst({ where: { status: 'Active' }, orderBy: { updatedAt: 'desc' } });
+  // 1. If a specific projectId is requested (e.g. single workspace test)
+  if (targetProjectId) {
+    const project = await prisma.project.findUnique({ where: { id: targetProjectId } });
+    if (!project) {
+      throw new Error('Project not found');
+    }
 
-  if (!project) {
-    throw new Error('No active project found to check pending parts');
+    const pendingParts = await prisma.part.findMany({
+      where: {
+        projectId: project.id,
+        status: { in: ['Planned', 'Pending', 'Waiting'] }
+      },
+      orderBy: { totalAmount: 'desc' }
+    });
+
+    if (pendingParts.length === 0) {
+      const clearMessage = {
+        type: 'text',
+        text: `✅ แจ้งเตือนจัดซื้อ (${project.code} - ${project.name})\nขณะนี้ไม่มีรายการอะไหล่ค้างสั่งซื้อใน Workspace นี้ ทุกรายการสั่งซื้อเรียบร้อยแล้วครับ!`
+      };
+      return await pushLineMessage(settings.channelAccessToken, settings.targetId, [clearMessage]);
+    }
+
+    const flexMessage = buildPendingPartsFlexMessage(project.name, project.code, pendingParts, project.id);
+    return await pushLineMessage(settings.channelAccessToken, settings.targetId, [flexMessage]);
   }
 
-  const pendingParts = await prisma.part.findMany({
-    where: {
-      projectId: project.id,
-      status: {
-        in: ['Planned', 'Pending', 'Waiting']
-      }
-    },
-    orderBy: { totalAmount: 'desc' }
+  // 2. Scan ALL Active Projects / Workspaces
+  const allProjects = await prisma.project.findMany({
+    where: { status: 'Active' },
+    orderBy: { updatedAt: 'desc' }
   });
 
-  if (pendingParts.length === 0) {
+  if (allProjects.length === 0) {
+    throw new Error('No active workspaces found in system');
+  }
+
+  // Collect workspaces with pending parts
+  const workspacesWithPending: Array<{ project: any; parts: any[] }> = [];
+
+  for (const proj of allProjects) {
+    const parts = await prisma.part.findMany({
+      where: {
+        projectId: proj.id,
+        status: { in: ['Planned', 'Pending', 'Waiting'] }
+      },
+      orderBy: { totalAmount: 'desc' }
+    });
+
+    if (parts.length > 0) {
+      workspacesWithPending.push({ project: proj, parts });
+    }
+  }
+
+  // If no workspaces have pending parts
+  if (workspacesWithPending.length === 0) {
     const clearMessage = {
       type: 'text',
-      text: `✅ แจ้งเตือนจัดซื้อ (${project.code} - ${project.name})\nขณะนี้ไม่มีรายการอะไหล่ค้างสั่งซื้อ ทุกรายการได้รับการสั่งซื้อเรียบร้อยแล้วครับ!`
+      text: `✅ แจ้งเตือนจัดซื้อ (ทุก Workspace)\nตรวจสอบแล้วทั้ง ${allProjects.length} Workspace ไม่มีรายการอะไหล่ค้างสั่งซื้อครับ!`
     };
     return await pushLineMessage(settings.channelAccessToken, settings.targetId, [clearMessage]);
   }
 
-  const flexMessage = buildPendingPartsFlexMessage(project.name, project.code, pendingParts);
-  return await pushLineMessage(settings.channelAccessToken, settings.targetId, [flexMessage]);
+  // Build Flex Message cards for each workspace that has pending items
+  const flexMessages = workspacesWithPending.map(({ project, parts }) =>
+    buildPendingPartsFlexMessage(project.name, project.code, parts, project.id)
+  );
+
+  // Send in batches of up to 5 messages per LINE push API call
+  let lastResult: any = null;
+  for (let i = 0; i < flexMessages.length; i += 5) {
+    const batch = flexMessages.slice(i, i + 5);
+    lastResult = await pushLineMessage(settings.channelAccessToken, settings.targetId, batch);
+  }
+
+  return {
+    success: true,
+    totalWorkspacesScanned: allProjects.length,
+    workspacesAlerted: workspacesWithPending.length,
+    data: lastResult?.data
+  };
 };
 
 /**

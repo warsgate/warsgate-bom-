@@ -4,7 +4,8 @@ const prisma = new PrismaClient();
 
 export interface LineSettings {
   channelAccessToken: string;
-  targetId: string; // User ID or Group ID
+  targetId: string; // User ID or Group ID (for PUSH mode)
+  sendMode: 'BROADCAST' | 'PUSH'; // 'BROADCAST' sends to all followers, 'PUSH' sends to specific targetId
   enabled: boolean;
   times: string[]; // e.g. ["09:00", "14:00"]
   lastTriggeredDate?: string;
@@ -14,6 +15,7 @@ export interface LineSettings {
 let currentSettings: LineSettings = {
   channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN || '',
   targetId: process.env.LINE_TARGET_ID || '',
+  sendMode: (process.env.LINE_SEND_MODE as any) || 'BROADCAST',
   enabled: true,
   times: ['09:00', '14:00'],
   lastTriggeredTimes: []
@@ -381,13 +383,62 @@ export const pushLineMessage = async (
 };
 
 /**
- * Trigger check for pending parts and push notification across all workspaces
+ * Dispatch LINE broadcast message directly to LINE Messaging API (Sends to all followers/friends)
+ */
+export const broadcastLineMessage = async (
+  token: string,
+  messages: any[]
+) => {
+  if (!token) throw new Error('LINE Channel Access Token is required');
+
+  const rawMessages = Array.isArray(messages) ? messages : [messages];
+  const sanitizedMessages = sanitizeFlexPayload(rawMessages);
+
+  const payload = {
+    messages: sanitizedMessages
+  };
+
+  const response = await fetch('https://api.line.me/v2/bot/message/broadcast', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${token}`
+    },
+    body: JSON.stringify(payload)
+  });
+
+  const data: any = await response.json().catch(() => ({}));
+
+  if (!response.ok) {
+    console.error('❌ LINE Broadcast API Error Details:', data);
+    const details = Array.isArray(data.details) ? data.details.map((d: any) => `${d.property}: ${d.message}`).join(', ') : '';
+    throw new Error(`${data.message || response.statusText}${details ? ` (${details})` : ''}`);
+  }
+
+  return { success: true, status: response.status, data };
+};
+
+/**
+ * Trigger check for pending parts and push/broadcast notification across all workspaces
  */
 export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
   const settings = getLineSettings();
-  if (!settings.channelAccessToken || !settings.targetId) {
-    throw new Error('LINE Channel Access Token and Target ID must be configured in settings');
+  if (!settings.channelAccessToken) {
+    throw new Error('LINE Channel Access Token must be configured in settings');
   }
+
+  // Determine send method: Broadcast (all followers) vs Push (specific targetId)
+  const isBroadcast = settings.sendMode === 'BROADCAST' || !settings.targetId;
+
+  const dispatchAlert = async (msgs: any[]) => {
+    if (isBroadcast) {
+      console.log('📢 Dispatching LINE alert via BROADCAST (all followers)...');
+      return await broadcastLineMessage(settings.channelAccessToken, msgs);
+    } else {
+      console.log(`🎯 Dispatching LINE alert via PUSH to ${settings.targetId}...`);
+      return await pushLineMessage(settings.channelAccessToken, settings.targetId, msgs);
+    }
+  };
 
   // 1. If a specific projectId is requested (e.g. single workspace test)
   if (targetProjectId) {
@@ -409,11 +460,11 @@ export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
         type: 'text',
         text: `✅ แจ้งเตือนจัดซื้อ (${project.code} - ${project.name})\nขณะนี้ไม่มีรายการอะไหล่ค้างสั่งซื้อใน Workspace นี้ ทุกรายการสั่งซื้อเรียบร้อยแล้วครับ!`
       };
-      return await pushLineMessage(settings.channelAccessToken, settings.targetId, [clearMessage]);
+      return await dispatchAlert([clearMessage]);
     }
 
     const flexMessage = buildPendingPartsFlexMessage(project.name, project.code, pendingParts, project.id);
-    return await pushLineMessage(settings.channelAccessToken, settings.targetId, [flexMessage]);
+    return await dispatchAlert([flexMessage]);
   }
 
   // 2. Scan ALL Active Projects / Workspaces
@@ -449,7 +500,7 @@ export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
       type: 'text',
       text: `✅ แจ้งเตือนจัดซื้อ (ทุก Workspace)\nตรวจสอบแล้วทั้ง ${allProjects.length} Workspace ไม่มีรายการอะไหล่ค้างสั่งซื้อครับ!`
     };
-    return await pushLineMessage(settings.channelAccessToken, settings.targetId, [clearMessage]);
+    return await dispatchAlert([clearMessage]);
   }
 
   // Build Flex Message cards for each workspace that has pending items
@@ -457,15 +508,16 @@ export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
     buildPendingPartsFlexMessage(project.name, project.code, parts, project.id)
   );
 
-  // Send in batches of up to 5 messages per LINE push API call
+  // Send in batches of up to 5 messages per LINE API call
   let lastResult: any = null;
   for (let i = 0; i < flexMessages.length; i += 5) {
     const batch = flexMessages.slice(i, i + 5);
-    lastResult = await pushLineMessage(settings.channelAccessToken, settings.targetId, batch);
+    lastResult = await dispatchAlert(batch);
   }
 
   return {
     success: true,
+    mode: isBroadcast ? 'BROADCAST' : 'PUSH',
     totalWorkspacesScanned: allProjects.length,
     workspacesAlerted: workspacesWithPending.length,
     data: lastResult?.data
@@ -483,11 +535,14 @@ export const startLineScheduler = async () => {
   // Load persistent settings from database
   await loadLineSettingsFromDb();
 
-  console.log('⏰ LINE Notification Scheduler initialized. Configured times:', currentSettings.times);
+  console.log('⏰ LINE Notification Scheduler initialized. Configured times:', currentSettings.times, 'Mode:', currentSettings.sendMode);
 
   schedulerInterval = setInterval(async () => {
     try {
-      if (!currentSettings.enabled || !currentSettings.channelAccessToken || !currentSettings.targetId) {
+      if (!currentSettings.enabled || !currentSettings.channelAccessToken) {
+        return;
+      }
+      if (currentSettings.sendMode === 'PUSH' && !currentSettings.targetId) {
         return;
       }
 
@@ -509,7 +564,7 @@ export const startLineScheduler = async () => {
           return;
         }
 
-        console.log(`🚀 [LINE Cron] Triggering scheduled procurement alert at ${timeStr} (Bangkok Time)`);
+        console.log(`🚀 [LINE Cron] Triggering scheduled procurement alert (${currentSettings.sendMode}) at ${timeStr} (Bangkok Time)`);
         await triggerProcurementAlertNow();
 
         currentSettings.lastTriggeredDate = todayDateStr;

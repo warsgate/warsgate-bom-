@@ -189,10 +189,11 @@ router.get('/settings', async (_req: Request, res: Response) => {
 // ─── POST /api/line/settings ─────────────────────────────────────
 router.post('/settings', (req: Request, res: Response) => {
   try {
-    const { channelAccessToken, targetId, enabled, times } = req.body;
+    const { channelAccessToken, targetId, sendMode, enabled, times } = req.body;
     const updated = updateLineSettings({
       channelAccessToken,
       targetId,
+      sendMode: sendMode === 'PUSH' ? 'PUSH' : 'BROADCAST',
       enabled: enabled !== undefined ? Boolean(enabled) : undefined,
       times: Array.isArray(times) ? times : undefined
     });

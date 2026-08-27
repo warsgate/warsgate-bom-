@@ -55,6 +55,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
   // LINE Credentials & Settings
   const [channelToken, setChannelToken] = useState('');
   const [targetId, setTargetId] = useState('');
+  const [sendMode, setSendMode] = useState<'BROADCAST' | 'PUSH'>('BROADCAST');
   const [cronEnabled, setCronEnabled] = useState(true);
   const [cronTimes, setCronTimes] = useState<string[]>(['09:00', '14:00']);
   const [newTimeInput, setNewTimeInput] = useState('');
@@ -99,12 +100,12 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
 
   // Appointment Form interactive state
   const [appointmentForm, setAppointmentForm] = useState({
-    title: 'นัดหมายส่งมอบ & ทดสอบระบบหน้างาน',
-    date: new Date(Date.now() + 86400000 * 3).toISOString().split('T')[0],
-    time: '10:30 น.',
-    location: 'โรงงานลูกค้านิคมอุตสาหกรรมบางกะดี จ.ปทุมธานี',
-    engineerName: 'นายธีรพัฒน์ (Lead Mechanical Eng.)',
-    contactTel: '081-999-8888'
+    title: 'นัดหมายส่งมอบเครื่องจักร & ตรวจรับงาน',
+    date: '2026-08-30',
+    time: '10:30',
+    location: 'โรงงานลูกค้า นิคมอุตสาหกรรมอมตะซิตี้ ชลบุรี',
+    engineerName: 'นายประสิทธิ์ วิศวกรโครงการ',
+    contactTel: '081-999-8888',
   });
 
   const activeProject = projects.find(p => p.id === activeProjectId) || projects[0];
@@ -121,13 +122,14 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
     return pendingParts.reduce((sum, p) => sum + (p.totalAmount || (p.qty * p.unitPrice)), 0);
   }, [pendingParts]);
 
-  // ─── Load LINE Settings from Backend ───────────────────────────
+  // ─── Load Settings from Backend ────────────────────────────────
   const loadSettings = async () => {
     try {
       const res = await lineApi.getSettings();
-      if (res?.settings) {
+      if (res.success && res.settings) {
         if (res.settings.channelAccessToken) setChannelToken(res.settings.channelAccessToken);
         if (res.settings.targetId) setTargetId(res.settings.targetId);
+        if (res.settings.sendMode) setSendMode(res.settings.sendMode);
         if (res.settings.enabled !== undefined) setCronEnabled(res.settings.enabled);
         if (res.settings.times && Array.isArray(res.settings.times)) setCronTimes(res.settings.times);
       }
@@ -147,6 +149,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
       await lineApi.saveSettings({
         channelAccessToken: channelToken,
         targetId,
+        sendMode,
         enabled: cronEnabled,
         times: cronTimes
       });
@@ -661,22 +664,36 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
       return;
     }
 
-    // Real Push API Mode
-    if (!channelToken || !targetId) {
-      showToast('error', 'ข้อมูลไม่ครบถ้วน', 'กรุณาระบุ Channel Access Token และ Target ID');
+    // Real Push / Broadcast API Mode
+    if (!channelToken) {
+      showToast('error', 'ข้อมูลไม่ครบถ้วน', 'กรุณาระบุ Channel Access Token');
+      return;
+    }
+    if (sendMode === 'PUSH' && !targetId) {
+      showToast('error', 'ข้อมูลไม่ครบถ้วน', 'กรุณาระบุ Target ID ในโหมด Push');
       return;
     }
 
     try {
       setIsLoading(true);
-      const res = await lineApi.push({
-        token: channelToken,
-        to: targetId,
-        messages: currentPayload
-      });
+      const res = sendMode === 'BROADCAST'
+        ? await lineApi.broadcast({
+            token: channelToken,
+            messages: currentPayload
+          })
+        : await lineApi.push({
+            token: channelToken,
+            to: targetId,
+            messages: currentPayload
+          });
 
       if (res.success) {
-        showToast('success', 'ส่งข้อความเข้า LINE สำเร็จ (200 OK)', 'ข้อความได้ถูกส่งตรงไปยังแอป LINE บนมือถือเรียบร้อยแล้ว!', 200);
+        showToast(
+          'success', 
+          sendMode === 'BROADCAST' ? 'ส่ง Broadcast หาเพื่อนทุกคนสำเร็จ (200 OK)' : 'ส่งข้อความเข้า LINE สำเร็จ (200 OK)', 
+          sendMode === 'BROADCAST' ? 'ข้อความได้ถูกส่งกระจายไปยังเพื่อนทุกคนที่แอดบอทแล้ว!' : 'ข้อความได้ถูกส่งตรงไปยังแอป LINE บนมือถือเรียบร้อยแล้ว!', 
+          200
+        );
       } else {
         showToast('error', 'ส่งข้อความไม่สำเร็จ', res.error || 'เกิดข้อผิดพลาด', res.status || 500);
       }
@@ -1132,7 +1149,9 @@ pushMessage();`;
                     <Send className="w-4 h-4" />
                   )}
                   <span className="tracking-wide">
-                    {operatingMode === 'SIMULATOR' ? 'ทดสอบจำลองส่ง (Simulator Run)' : 'ยิงเข้า LINE จริง (Push Message)'}
+                    {operatingMode === 'SIMULATOR' 
+                      ? 'ทดสอบจำลองส่ง (Simulator Run)' 
+                      : (sendMode === 'BROADCAST' ? '📢 ยิง Broadcast หาเพื่อนทุกคน' : '🎯 ยิงเข้า LINE จริง (Push Message)')}
                   </span>
                 </button>
 
@@ -1238,6 +1257,50 @@ pushMessage();`;
                   </a>
                 </div>
 
+                {/* Send Mode Switcher: Broadcast vs Push */}
+                <div>
+                  <label className="text-slate-500 dark:text-slate-400 font-bold block mb-1.5">
+                    รูปแบบการส่งข้อความ (Delivery Method)
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setSendMode('BROADCAST')}
+                      className={`p-3 rounded-2xl border text-left flex items-center space-x-2.5 transition-all duration-200 ${
+                        sendMode === 'BROADCAST'
+                          ? 'bg-emerald-500/10 border-emerald-500 text-emerald-900 dark:text-emerald-300 ring-2 ring-emerald-500/30'
+                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className={`p-2 rounded-xl flex-shrink-0 ${sendMode === 'BROADCAST' ? 'bg-emerald-500 text-white shadow-md shadow-emerald-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                        <Sparkles className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-black text-xs">Broadcast (ทุกคน)</div>
+                        <div className="text-[10px] opacity-75 truncate">ส่งหาเพื่อนทุกคนที่แอดบอท</div>
+                      </div>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => setSendMode('PUSH')}
+                      className={`p-3 rounded-2xl border text-left flex items-center space-x-2.5 transition-all duration-200 ${
+                        sendMode === 'PUSH'
+                          ? 'bg-blue-500/10 border-blue-500 text-blue-900 dark:text-blue-300 ring-2 ring-blue-500/30'
+                          : 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:border-slate-300'
+                      }`}
+                    >
+                      <div className={`p-2 rounded-xl flex-shrink-0 ${sendMode === 'PUSH' ? 'bg-blue-500 text-white shadow-md shadow-blue-500/30' : 'bg-slate-100 dark:bg-slate-800 text-slate-400'}`}>
+                        <User className="w-4 h-4" />
+                      </div>
+                      <div className="min-w-0">
+                        <div className="font-black text-xs">Push (เฉพาะเจาะจง)</div>
+                        <div className="text-[10px] opacity-75 truncate">ส่งหา User ID หรือ Group ID</div>
+                      </div>
+                    </button>
+                  </div>
+                </div>
+
                 <div>
                   <label className="text-slate-500 dark:text-slate-400 font-bold">Channel Access Token (Long-lived)</label>
                   <input
@@ -1249,16 +1312,25 @@ pushMessage();`;
                   />
                 </div>
 
-                <div>
-                  <label className="text-slate-500 dark:text-slate-400 font-bold">Target User ID / Group ID (ขึ้นต้นด้วย U... หรือ C...)</label>
-                  <input
-                    type="text"
-                    value={targetId}
-                    onChange={e => setTargetId(e.target.value)}
-                    placeholder="U1234567890abcdef1234567890abcdef"
-                    className="w-full mt-1 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
-                  />
-                </div>
+                {sendMode === 'PUSH' ? (
+                  <div>
+                    <label className="text-slate-500 dark:text-slate-400 font-bold">Target User ID / Group ID (ขึ้นต้นด้วย U... หรือ C...)</label>
+                    <input
+                      type="text"
+                      value={targetId}
+                      onChange={e => setTargetId(e.target.value)}
+                      placeholder="U1234567890abcdef1234567890abcdef"
+                      className="w-full mt-1 px-3 py-2 bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 rounded-xl font-mono text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-emerald-500"
+                    />
+                  </div>
+                ) : (
+                  <div className="p-3 bg-emerald-50/60 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-900/50 rounded-xl flex items-center space-x-2 text-emerald-800 dark:text-emerald-300">
+                    <Sparkles className="w-4 h-4 flex-shrink-0 text-emerald-500" />
+                    <div className="text-[11px]">
+                      <strong>โหมด Broadcast ทำงานอัตโนมัติ:</strong> ข้อความแจ้งเตือนจะถูกส่งกระจายไปยังเพื่อนทุกคนที่กด Add Friend กับบอท <strong>"warsgate bom alert"</strong> พร้อมกันทุกคนโดยไม่ต้องระบุ User ID ครับ
+                    </div>
+                  </div>
+                )}
 
                 {botInfo && (
                   <div className="p-2.5 bg-emerald-50 dark:bg-emerald-950/40 border border-emerald-200 dark:border-emerald-800 rounded-xl flex items-center space-x-2">

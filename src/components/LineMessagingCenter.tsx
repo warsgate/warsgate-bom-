@@ -212,73 +212,12 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
     }
 
     if (activeTemplate === 'PROCUREMENT') {
-      const previewItems = pendingParts.slice(0, 5);
-      const itemBoxes = previewItems.map((item, idx) => ({
-        type: 'box',
-        layout: 'vertical',
-        margin: 'md',
-        spacing: 'xs',
-        contents: [
-          {
-            type: 'box',
-            layout: 'horizontal',
-            contents: [
-              {
-                type: 'text',
-                text: `${idx + 1}. ${item.partName}`,
-                size: 'sm',
-                color: '#1e293b',
-                weight: 'bold',
-                flex: 4,
-                wrap: true
-              },
-              {
-                type: 'text',
-                text: `${item.qty} ${item.unit || 'EA'}`,
-                size: 'xs',
-                color: '#64748b',
-                flex: 2
-              }
-            ]
-          },
-          {
-            type: 'box',
-            layout: 'horizontal',
-            contents: [
-              {
-                type: 'text',
-                text: item.typeSpec ? `Spec: ${item.typeSpec}` : (item.maker ? `Maker: ${item.maker}` : 'Standard Part'),
-                size: 'xxs',
-                color: '#94a3b8',
-                flex: 4,
-                wrap: true
-              },
-              {
-                type: 'text',
-                text: `฿${(item.totalAmount || (item.qty * item.unitPrice)).toLocaleString('th-TH')}`,
-                size: 'xs',
-                color: '#ef4444',
-                weight: 'bold',
-                flex: 3
-              }
-            ]
-          },
-          ...(item.purchaseLink && (item.purchaseLink.startsWith('http://') || item.purchaseLink.startsWith('https://') || item.purchaseLink.startsWith('www.')) ? [{
-            type: 'button',
-            style: 'link',
-            height: 'sm',
-            action: {
-              type: 'uri',
-              label: 'สั่งซื้อรายการนี้',
-              uri: item.purchaseLink.startsWith('www.') ? `https://${item.purchaseLink}` : item.purchaseLink
-            }
-          }] : [])
-        ]
-      }));
+      const publicUrl = getPublicAppUrl();
+      const deepLinkUri = `${publicUrl}/?tab=procurement&filter=pending${activeProjectId ? `&projectId=${activeProjectId}` : ''}`;
 
       return {
         type: 'flex',
-        altText: `⚠️ แจ้งเตือน: มีรายการอะไหล่ค้างสั่งซื้อ ${pendingParts.length} รายการ (${activeProject?.name || 'BOM'})`,
+        altText: `⚠️ แจ้งเตือนจัดซื้อ: [${activeProject?.code || '-'}] ${activeProject?.name || 'BOM'} - มีรายการยังไม่สั่งซื้อ ${pendingParts.length} รายการ`,
         contents: {
           type: 'bubble',
           size: 'mega',
@@ -294,32 +233,33 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 contents: [
                   {
                     type: 'text',
-                    text: 'PROCUREMENT ALERT',
+                    text: 'WARSGATE BOM ALERT',
                     color: '#f59e0b',
                     weight: 'bold',
-                    size: 'xs'
+                    size: 'xxs'
                   },
                   {
                     type: 'text',
-                    text: new Date().toLocaleTimeString('th-TH', { hour: '2-digit', minute: '2-digit' }) + ' น.',
+                    text: 'ระบบจัดซื้อ & สโตร์',
                     color: '#94a3b8',
-                    size: 'xxs',
+                    size: 'xxs'
                   }
                 ]
               },
               {
                 type: 'text',
-                text: 'รายการค้างสั่งซื้อ (Pending BOM)',
-                weight: 'bold',
-                size: 'lg',
-                color: '#ffffff',
-                margin: 'sm'
+                text: '📁 ชื่อโปรเจกต์:',
+                size: 'xxs',
+                color: '#64748b',
+                margin: 'md'
               },
               {
                 type: 'text',
-                text: `โปรเจกต์: ${activeProject?.code || '-'} - ${activeProject?.name || '-'}`,
-                size: 'xs',
-                color: '#94a3b8',
+                text: `[${activeProject?.code || '-'}] ${activeProject?.name || '-'}`,
+                weight: 'bold',
+                size: 'md',
+                color: '#ffffff',
+                wrap: true,
                 margin: 'xs'
               }
             ]
@@ -328,93 +268,91 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
             type: 'box',
             layout: 'vertical',
             paddingAll: 'lg',
+            backgroundColor: '#ffffff',
             contents: [
               {
                 type: 'box',
-                layout: 'horizontal',
+                layout: 'vertical',
                 backgroundColor: '#fef3c7',
-                paddingAll: 'md',
-                cornerRadius: 'md',
+                paddingAll: 'lg',
+                cornerRadius: 'xl',
+                borderColor: '#fde68a',
+                borderWidth: 'normal',
                 contents: [
                   {
+                    type: 'text',
+                    text: '📦 จำนวนรายการที่ยังไม่สั่งซื้อ:',
+                    size: 'xs',
+                    color: '#92400e',
+                    weight: 'bold'
+                  },
+                  {
                     type: 'box',
-                    layout: 'vertical',
-                    flex: 1,
+                    layout: 'horizontal',
+                    margin: 'sm',
                     contents: [
                       {
                         type: 'text',
-                        text: 'จำนวนค้างสั่ง',
-                        size: 'xxs',
-                        color: '#92400e'
+                        text: `${pendingParts.length}`,
+                        size: 'xxl',
+                        weight: 'bold',
+                        color: '#b45309',
+                        flex: 0
                       },
                       {
                         type: 'text',
-                        text: `${pendingParts.length} รายการ`,
-                        size: 'md',
+                        text: ' รายการ (Pending PO)',
+                        size: 'sm',
+                        color: '#92400e',
                         weight: 'bold',
-                        color: '#b45309'
+                        margin: 'sm'
                       }
                     ]
                   },
                   {
+                    type: 'separator',
+                    margin: 'md',
+                    color: '#fde68a'
+                  },
+                  {
                     type: 'box',
-                    layout: 'vertical',
-                    flex: 1,
+                    layout: 'horizontal',
+                    margin: 'md',
                     contents: [
                       {
                         type: 'text',
-                        text: 'ยอดงบประมาณรวม',
-                        size: 'xxs',
-                        color: '#92400e',
+                        text: 'ยอดงบประมาณรวม:',
+                        size: 'xs',
+                        color: '#78350f'
                       },
                       {
                         type: 'text',
                         text: `฿${totalPendingAmount.toLocaleString('th-TH')}`,
-                        size: 'md',
+                        size: 'xs',
                         weight: 'bold',
-                        color: '#b45309',
+                        color: '#b45309'
                       }
                     ]
                   }
                 ]
-              },
-              {
-                type: 'separator',
-                margin: 'lg'
-              },
-              {
-                type: 'text',
-                text: pendingParts.length > 0 ? 'รายการที่ต้องจัดซื้อโดยเร็ว:' : '🎉 ไม่มีรายการค้างสั่งซื้อในระบบ',
-                size: 'xs',
-                color: '#64748b',
-                weight: 'bold',
-                margin: 'md'
-              },
-              ...itemBoxes,
-              ...(pendingParts.length > 5 ? [{
-                type: 'text',
-                text: `... และอีก ${pendingParts.length - 5} รายการในระบบ`,
-                size: 'xxs',
-                color: '#64748b',
-                margin: 'md'
-              }] : [])
+              }
             ]
           },
           footer: {
             type: 'box',
             layout: 'vertical',
-            spacing: 'sm',
             paddingAll: 'md',
+            backgroundColor: '#f8fafc',
             contents: [
               {
                 type: 'button',
                 style: 'primary',
                 color: '#0284c7',
-                height: 'sm',
+                height: 'md',
                 action: {
                   type: 'uri',
-                  label: 'เปิดดูรายละเอียด',
-                  uri: `${getPublicAppUrl()}?tab=procurement&filter=pending${activeProjectId ? `&projectId=${activeProjectId}` : ''}`
+                  label: '📋 เปิดดูรายละเอียด (คลิก)',
+                  uri: deepLinkUri
                 }
               }
             ]
@@ -1563,60 +1501,25 @@ pushMessage();`;
                     {/* Body */}
                     <div className="p-3.5 space-y-2.5 text-slate-900 dark:text-white">
                       {activeTemplate === 'PROCUREMENT' && (
-                        <>
-                          <div className="bg-amber-50 dark:bg-amber-950/50 p-2 rounded-xl flex items-center justify-between text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50">
-                            <div>
-                              <div className="text-[9px] opacity-75">จำนวนค้างสั่ง</div>
-                              <div className="text-xs font-black">{pendingParts.length} รายการ</div>
-                            </div>
-                            <div className="text-right">
-                              <div className="text-[9px] opacity-75">งบประมาณรวม</div>
-                              <div className="text-xs font-black">฿{totalPendingAmount.toLocaleString('th-TH')}</div>
-                            </div>
+                        <div className="bg-amber-50 dark:bg-amber-950/50 p-3.5 rounded-2xl text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50 space-y-2">
+                          <div className="text-[11px] font-bold text-amber-800 dark:text-amber-400">
+                            📦 จำนวนรายการที่ยังไม่สั่งซื้อ:
                           </div>
-
-                          <div className="text-[10px] font-bold text-slate-500 pt-1 flex items-center justify-between">
-                            <span>รายการด่วน:</span>
-                            <button
-                              onClick={() => setIsDetailModalOpen(true)}
-                              className="text-[9px] text-blue-600 dark:text-blue-400 hover:underline flex items-center gap-0.5"
-                            >
-                              <span>ดูทั้งหมด ({pendingParts.length})</span>
-                              <ChevronRight className="w-2.5 h-2.5" />
-                            </button>
+                          <div className="flex items-baseline space-x-1.5">
+                            <span className="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">
+                              {pendingParts.length}
+                            </span>
+                            <span className="text-xs font-bold text-amber-800 dark:text-amber-300">
+                              รายการ (Pending PO)
+                            </span>
                           </div>
-                          <div className="space-y-1.5 max-h-48 overflow-y-auto divide-y divide-slate-100 dark:divide-slate-800">
-                            {pendingParts.slice(0, 4).map((item, idx) => (
-                              <div 
-                                key={item.id} 
-                                onClick={() => setIsDetailModalOpen(true)}
-                                className="pt-1.5 text-[10px] cursor-pointer hover:bg-slate-50 dark:hover:bg-slate-800/50 p-1.5 rounded-lg transition-colors group"
-                                title="คลิกเพื่อดูรายละเอียด"
-                              >
-                                <div className="flex justify-between font-bold">
-                                  <span className="truncate max-w-[140px] group-hover:text-blue-600 transition-colors">{idx + 1}. {item.partName}</span>
-                                  <span className="text-rose-600 font-mono">฿{(item.totalAmount || (item.qty * item.unitPrice)).toLocaleString('th-TH')}</span>
-                                </div>
-                                <div className="flex justify-between text-[9px] text-slate-400 mt-0.5">
-                                  <span>{item.maker || item.typeSpec || '-'}</span>
-                                  <span>{item.qty} {item.unit}</span>
-                                </div>
-                                {item.purchaseLink && (
-                                  <a
-                                    href={item.purchaseLink}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    onClick={e => e.stopPropagation()}
-                                    className="mt-1 inline-flex items-center gap-1 text-[9px] font-bold text-blue-600 bg-blue-50 dark:bg-blue-950/60 px-1.5 py-0.5 rounded border border-blue-200 dark:border-blue-900 hover:bg-blue-100 transition-colors"
-                                  >
-                                    <span>🔗 สั่งซื้อ</span>
-                                    <ExternalLink className="w-2.5 h-2.5" />
-                                  </a>
-                                )}
-                              </div>
-                            ))}
+                          <div className="border-t border-amber-200/60 dark:border-amber-900/40 pt-2 flex items-center justify-between text-[11px]">
+                            <span className="text-amber-800/80 dark:text-amber-400/80">งบประมาณค้างสั่งรวม:</span>
+                            <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
+                              ฿{totalPendingAmount.toLocaleString('th-TH')}
+                            </span>
                           </div>
-                        </>
+                        </div>
                       )}
 
                       {activeTemplate === 'RECEIPT' && (
@@ -1678,10 +1581,10 @@ pushMessage();`;
                     <div className="p-2.5 bg-slate-50 dark:bg-slate-950 border-t border-slate-100 dark:border-slate-800">
                       <button 
                         onClick={() => setIsDetailModalOpen(true)}
-                        className="w-full py-2.5 bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white font-bold rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-md transition-all active:scale-95"
+                        className="w-full py-2.5 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-500 hover:to-indigo-500 text-white font-bold rounded-xl text-xs flex items-center justify-center space-x-1.5 shadow-md transition-all active:scale-95"
                       >
                         <Eye className="w-3.5 h-3.5" />
-                        <span>เปิดดูรายละเอียด</span>
+                        <span>📋 เปิดดูรายละเอียด (คลิก)</span>
                         <ChevronRight className="w-3.5 h-3.5" />
                       </button>
                     </div>

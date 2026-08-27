@@ -85,6 +85,10 @@ export const updateLineSettings = (newSettings: Partial<LineSettings>): LineSett
 
 /**
  * Builds a rich LINE Flex Message payload for pending parts
+ * Clean, structured, and focused:
+ * 1. Project Name & Code
+ * 2. Total Pending Items Count & Total Budget
+ * 3. Open Details Action Button (Deep link to pending procurement view)
  */
 export const buildPendingPartsFlexMessage = (
   projectName: string,
@@ -106,75 +110,16 @@ export const buildPendingPartsFlexMessage = (
   const totalItems = pendingParts.length;
   const totalBudget = pendingParts.reduce((sum, p) => sum + (p.totalAmount || (p.qty * p.unitPrice)), 0);
 
-  // Take top 5 items for the card preview
-  const previewItems = pendingParts.slice(0, 5);
+  const rawPublicAppUrl = process.env.PUBLIC_APP_URL || 'https://warsgate-bom.onrender.com';
+  const cleanAppUrl = (rawPublicAppUrl.includes('localhost') || rawPublicAppUrl.includes('127.0.0.1'))
+    ? 'https://warsgate-bom.onrender.com'
+    : rawPublicAppUrl;
 
-  const itemBoxes = previewItems.map((item, idx) => ({
-    type: 'box',
-    layout: 'vertical',
-    margin: 'md',
-    spacing: 'xs',
-    contents: [
-      {
-        type: 'box',
-        layout: 'horizontal',
-        contents: [
-          {
-            type: 'text',
-            text: `${idx + 1}. ${item.partName}`,
-            size: 'sm',
-            color: '#1e293b',
-            weight: 'bold',
-            flex: 4,
-            wrap: true
-          },
-          {
-            type: 'text',
-            text: `${item.qty} ${item.unit || 'EA'}`,
-            size: 'xs',
-            color: '#64748b',
-            flex: 2
-          }
-        ]
-      },
-      {
-        type: 'box',
-        layout: 'horizontal',
-        contents: [
-          {
-            type: 'text',
-            text: item.typeSpec ? `Spec: ${item.typeSpec}` : (item.maker ? `Maker: ${item.maker}` : 'Standard Part'),
-            size: 'xxs',
-            color: '#94a3b8',
-            flex: 5,
-            wrap: true
-          },
-          {
-            type: 'text',
-            text: `฿${(item.totalAmount || (item.qty * item.unitPrice)).toLocaleString('th-TH')}`,
-            size: 'xs',
-            color: '#ef4444',
-            weight: 'bold',
-            flex: 3
-          }
-        ]
-      },
-      ...(item.purchaseLink && (item.purchaseLink.startsWith('http://') || item.purchaseLink.startsWith('https://') || item.purchaseLink.startsWith('www.')) ? [{
-        type: 'button',
-        style: 'link',
-        height: 'sm',
-        action: {
-          type: 'uri',
-          label: 'สั่งซื้อรายการนี้',
-          uri: item.purchaseLink.startsWith('www.') ? `https://${item.purchaseLink}` : item.purchaseLink
-        }
-      }] : [])
-    ]
-  }));
+  const deepLinkUri = `${cleanAppUrl}/?tab=procurement&filter=pending${projectId ? `&projectId=${projectId}` : ''}`;
 
   const flexMessage = {
     type: 'flex',
-    altText: `แจ้งเตือน: มีรายการอะไหล่ค้างสั่งซื้อ ${totalItems} รายการ (${projectName})`,
+    altText: `⚠️ แจ้งเตือนจัดซื้อ: [${projectCode}] ${projectName} - มีรายการยังไม่สั่งซื้อ ${totalItems} รายการ`,
     contents: {
       type: 'bubble',
       size: 'mega',
@@ -185,25 +130,38 @@ export const buildPendingPartsFlexMessage = (
         paddingAll: 'lg',
         contents: [
           {
-            type: 'text',
-            text: 'PROCUREMENT ALERT',
-            color: '#f59e0b',
-            weight: 'bold',
-            size: 'xs'
+            type: 'box',
+            layout: 'horizontal',
+            contents: [
+              {
+                type: 'text',
+                text: 'WARSGATE BOM ALERT',
+                color: '#f59e0b',
+                weight: 'bold',
+                size: 'xxs'
+              },
+              {
+                type: 'text',
+                text: 'ระบบจัดซื้อ & สโตร์',
+                color: '#94a3b8',
+                size: 'xxs'
+              }
+            ]
           },
           {
             type: 'text',
-            text: 'รายการค้างสั่งซื้อ (Pending BOM)',
+            text: '📁 ชื่อโปรเจกต์:',
+            size: 'xxs',
+            color: '#64748b',
+            margin: 'md'
+          },
+          {
+            type: 'text',
+            text: `[${projectCode}] ${projectName}`,
             weight: 'bold',
-            size: 'lg',
+            size: 'md',
             color: '#ffffff',
-            margin: 'sm'
-          },
-          {
-            type: 'text',
-            text: `โปรเจกต์: ${projectCode} - ${projectName}`,
-            size: 'xs',
-            color: '#94a3b8',
+            wrap: true,
             margin: 'xs'
           }
         ]
@@ -212,93 +170,91 @@ export const buildPendingPartsFlexMessage = (
         type: 'box',
         layout: 'vertical',
         paddingAll: 'lg',
+        backgroundColor: '#ffffff',
         contents: [
           {
             type: 'box',
-            layout: 'horizontal',
+            layout: 'vertical',
             backgroundColor: '#fef3c7',
-            paddingAll: 'md',
-            cornerRadius: 'md',
+            paddingAll: 'lg',
+            cornerRadius: 'xl',
+            borderColor: '#fde68a',
+            borderWidth: 'normal',
             contents: [
               {
+                type: 'text',
+                text: '📦 จำนวนรายการที่ยังไม่สั่งซื้อ:',
+                size: 'xs',
+                color: '#92400e',
+                weight: 'bold'
+              },
+              {
                 type: 'box',
-                layout: 'vertical',
-                flex: 1,
+                layout: 'horizontal',
+                margin: 'sm',
                 contents: [
                   {
                     type: 'text',
-                    text: 'จำนวนค้างสั่ง',
-                    size: 'xxs',
-                    color: '#92400e'
+                    text: `${totalItems}`,
+                    size: 'xxl',
+                    weight: 'bold',
+                    color: '#b45309',
+                    flex: 0
                   },
                   {
                     type: 'text',
-                    text: `${totalItems} รายการ`,
-                    size: 'md',
+                    text: ' รายการ (Pending PO)',
+                    size: 'sm',
+                    color: '#92400e',
                     weight: 'bold',
-                    color: '#b45309'
+                    margin: 'sm'
                   }
                 ]
               },
               {
+                type: 'separator',
+                margin: 'md',
+                color: '#fde68a'
+              },
+              {
                 type: 'box',
-                layout: 'vertical',
-                flex: 1,
+                layout: 'horizontal',
+                margin: 'md',
                 contents: [
                   {
                     type: 'text',
-                    text: 'งบประมาณรวม',
-                    size: 'xxs',
-                    color: '#92400e'
+                    text: 'ยอดงบประมาณรวม:',
+                    size: 'xs',
+                    color: '#78350f'
                   },
                   {
                     type: 'text',
                     text: `฿${totalBudget.toLocaleString('th-TH')}`,
-                    size: 'md',
+                    size: 'xs',
                     weight: 'bold',
                     color: '#b45309'
                   }
                 ]
               }
             ]
-          },
-          {
-            type: 'separator',
-            margin: 'lg'
-          },
-          {
-            type: 'text',
-            text: 'รายการที่ต้องจัดซื้อโดยเร็ว:',
-            size: 'xs',
-            color: '#64748b',
-            weight: 'bold',
-            margin: 'md'
-          },
-          ...itemBoxes,
-          ...(totalItems > 5 ? [{
-            type: 'text',
-            text: `... และอีก ${totalItems - 5} รายการในระบบ`,
-            size: 'xxs',
-            color: '#64748b',
-            margin: 'md'
-          }] : [])
+          }
         ]
       },
       footer: {
         type: 'box',
         layout: 'vertical',
-        spacing: 'sm',
         paddingAll: 'md',
+        backgroundColor: '#f8fafc',
         contents: [
           {
             type: 'button',
             style: 'primary',
             color: '#0284c7',
-            height: 'sm',
+            height: 'md',
             action: {
               type: 'uri',
-              label: 'เปิดดูรายละเอียด',
-              uri: `${(process.env.FRONTEND_URL && !process.env.FRONTEND_URL.includes('localhost')) ? process.env.FRONTEND_URL : 'https://warsgate-bom.onrender.com'}?tab=procurement&filter=pending${projectId ? `&projectId=${projectId}` : ''}`
+              label: '📋 เปิดดูรายละเอียด (คลิก)',
+              uri: deepLinkUri
             }
           }
         ]

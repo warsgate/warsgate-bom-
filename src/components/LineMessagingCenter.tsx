@@ -690,8 +690,13 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
       return;
     }
 
-    if (!channelToken || !targetId) {
-      showToast('error', 'ข้อมูลไม่ครบถ้วน', 'กรุณาระบุ Channel Access Token และ Target ID ในการตั้งค่า');
+    if (!channelToken) {
+      showToast('error', 'ข้อมูลไม่ครบถ้วน', 'กรุณาระบุ Channel Access Token ในการตั้งค่า');
+      return;
+    }
+
+    if (sendMode === 'PUSH' && !targetId) {
+      showToast('error', 'ข้อมูลไม่ครบถ้วน', 'กรุณาระบุ Target ID สำหรับโหมด Push ในการตั้งค่า');
       return;
     }
 

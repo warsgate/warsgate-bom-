@@ -227,7 +227,7 @@ router.all('/cron-ping', async (_req: Request, res: Response) => {
     let alertResult = null;
     let triggered = false;
 
-    if (settings.enabled && settings.channelAccessToken && settings.targetId && settings.times.includes(timeStr)) {
+    if (settings.enabled && settings.channelAccessToken && (settings.sendMode === 'BROADCAST' || settings.targetId) && settings.times.includes(timeStr)) {
       alertResult = await triggerProcurementAlertNow();
       triggered = true;
     }

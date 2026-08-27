@@ -406,7 +406,7 @@ export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
     const pendingParts = await prisma.part.findMany({
       where: {
         projectId: project.id,
-        status: { in: ['Planned', 'Pending', 'Waiting'] }
+        status: { notIn: ['Ordered', 'Received', 'Cancelled', 'Delivered'] }
       },
       orderBy: { totalAmount: 'desc' }
     });
@@ -425,7 +425,9 @@ export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
 
   // 2. Scan ALL Active Projects / Workspaces
   const allProjects = await prisma.project.findMany({
-    where: { status: 'Active' },
+    where: {
+      status: { not: 'Archived' }
+    },
     orderBy: { updatedAt: 'desc' }
   });
 
@@ -440,7 +442,7 @@ export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
     const parts = await prisma.part.findMany({
       where: {
         projectId: proj.id,
-        status: { in: ['Planned', 'Pending', 'Waiting'] }
+        status: { notIn: ['Ordered', 'Received', 'Cancelled', 'Delivered'] }
       },
       orderBy: { totalAmount: 'desc' }
     });

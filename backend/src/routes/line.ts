@@ -162,16 +162,28 @@ router.post('/test-connection', async (req: Request, res: Response) => {
 });
 
 // ─── GET /api/line/settings ──────────────────────────────────────
-router.get('/settings', (_req: Request, res: Response) => {
-  const settings = getLineSettings();
-  // Mask the token partially for security in UI if desired
-  res.json({
-    success: true,
-    settings: {
-      ...settings,
-      hasToken: !!settings.channelAccessToken
-    }
-  });
+router.get('/settings', async (_req: Request, res: Response) => {
+  try {
+    const { loadLineSettingsFromDb } = await import('../services/lineScheduler');
+    await loadLineSettingsFromDb();
+    const settings = getLineSettings();
+    res.json({
+      success: true,
+      settings: {
+        ...settings,
+        hasToken: !!settings.channelAccessToken
+      }
+    });
+  } catch (err: any) {
+    const settings = getLineSettings();
+    res.json({
+      success: true,
+      settings: {
+        ...settings,
+        hasToken: !!settings.channelAccessToken
+      }
+    });
+  }
 });
 
 // ─── POST /api/line/settings ─────────────────────────────────────
@@ -195,6 +207,45 @@ router.post('/settings', (req: Request, res: Response) => {
   }
 });
 
+// ─── GET & POST /api/line/cron-ping ──────────────────────────────
+// External cron / webhook ping endpoint (cron-job.org / UptimeRobot)
+router.all('/cron-ping', async (_req: Request, res: Response) => {
+  try {
+    const { loadLineSettingsFromDb } = await import('../services/lineScheduler');
+    await loadLineSettingsFromDb();
+    const settings = getLineSettings();
+
+    const now = new Date();
+    const timeStr = now.toLocaleTimeString('en-GB', {
+      timeZone: 'Asia/Bangkok',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false
+    });
+
+    let alertResult = null;
+    let triggered = false;
+
+    if (settings.enabled && settings.channelAccessToken && settings.targetId && settings.times.includes(timeStr)) {
+      alertResult = await triggerProcurementAlertNow();
+      triggered = true;
+    }
+
+    res.json({
+      status: 'ok',
+      currentTimeBangkok: timeStr,
+      scheduledTimes: settings.times,
+      hasToken: !!settings.channelAccessToken,
+      hasTargetId: !!settings.targetId,
+      schedulerEnabled: settings.enabled,
+      triggered,
+      alertResult
+    });
+  } catch (err: any) {
+    res.status(500).json({ status: 'error', error: err.message });
+  }
+});
+
 // ─── POST /api/line/trigger-procurement-alert ────────────────────
 router.post('/trigger-procurement-alert', async (req: Request, res: Response) => {
   try {
@@ -203,7 +254,7 @@ router.post('/trigger-procurement-alert', async (req: Request, res: Response) =>
     res.json({
       success: true,
       message: 'ส่งการ์ดสรุปรายการค้างสั่งซื้อเข้า LINE สำเร็จ!',
-      data: result.data
+      data: result?.data
     });
   } catch (err: any) {
     console.error('Trigger procurement alert error:', err);

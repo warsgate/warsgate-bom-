@@ -19,6 +19,50 @@ let currentSettings: LineSettings = {
   lastTriggeredTimes: []
 };
 
+/**
+ * Load LINE settings from PostgreSQL database table SystemSetting
+ */
+export const loadLineSettingsFromDb = async () => {
+  try {
+    const record = await prisma.systemSetting.findUnique({
+      where: { key: 'LINE_SETTINGS' }
+    });
+    if (record && record.value) {
+      const parsed = JSON.parse(record.value);
+      currentSettings = {
+        ...currentSettings,
+        ...parsed,
+        channelAccessToken: parsed.channelAccessToken || process.env.LINE_CHANNEL_ACCESS_TOKEN || currentSettings.channelAccessToken,
+        targetId: parsed.targetId || process.env.LINE_TARGET_ID || currentSettings.targetId
+      };
+      console.log('✅ Loaded LINE Settings from DB:', {
+        hasToken: !!currentSettings.channelAccessToken,
+        hasTargetId: !!currentSettings.targetId,
+        enabled: currentSettings.enabled,
+        times: currentSettings.times
+      });
+    }
+  } catch (err: any) {
+    console.error('⚠️ Could not load LINE settings from DB:', err.message);
+  }
+};
+
+/**
+ * Save LINE settings to PostgreSQL database table SystemSetting
+ */
+export const saveLineSettingsToDb = async (settings: LineSettings) => {
+  try {
+    await prisma.systemSetting.upsert({
+      where: { key: 'LINE_SETTINGS' },
+      update: { value: JSON.stringify(settings) },
+      create: { key: 'LINE_SETTINGS', value: JSON.stringify(settings) }
+    });
+    console.log('💾 Saved LINE Settings to Database successfully');
+  } catch (err: any) {
+    console.error('⚠️ Could not save LINE settings to DB:', err.message);
+  }
+};
+
 export const getLineSettings = (): LineSettings => {
   return { ...currentSettings };
 };
@@ -30,6 +74,10 @@ export const updateLineSettings = (newSettings: Partial<LineSettings>): LineSett
     channelAccessToken: newSettings.channelAccessToken !== undefined ? newSettings.channelAccessToken : currentSettings.channelAccessToken,
     targetId: newSettings.targetId !== undefined ? newSettings.targetId : currentSettings.targetId,
   };
+
+  // Persist to database asynchronously
+  saveLineSettingsToDb(currentSettings).catch(console.error);
+
   return { ...currentSettings };
 };
 
@@ -429,8 +477,11 @@ export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
  */
 let schedulerInterval: NodeJS.Timeout | null = null;
 
-export const startLineScheduler = () => {
+export const startLineScheduler = async () => {
   if (schedulerInterval) clearInterval(schedulerInterval);
+
+  // Load persistent settings from database
+  await loadLineSettingsFromDb();
 
   console.log('⏰ LINE Notification Scheduler initialized. Configured times:', currentSettings.times);
 

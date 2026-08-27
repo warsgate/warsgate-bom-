@@ -110,11 +110,31 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
 
   const activeProject = projects.find(p => p.id === activeProjectId) || projects[0];
 
+  // Collect all projects that have pending parts across the whole system
+  const projectsWithPending = useMemo(() => {
+    return projects.map(proj => {
+      const projParts = parts.filter(p => 
+        p.projectId === proj.id && 
+        !['Ordered', 'Received', 'Cancelled', 'Delivered'].includes(p.status as string)
+      );
+      const totalBudget = projParts.reduce((sum, p) => sum + (p.totalAmount || (p.qty * p.unitPrice)), 0);
+      return {
+        project: proj,
+        parts: projParts,
+        totalBudget
+      };
+    }).filter(item => item.parts.length > 0);
+  }, [projects, parts]);
+
+  const totalPendingAllProjects = useMemo(() => {
+    return projectsWithPending.reduce((sum, item) => sum + item.parts.length, 0);
+  }, [projectsWithPending]);
+
   // Filter pending parts for the active project
   const pendingParts = useMemo(() => {
     return parts.filter(p => 
       p.projectId === activeProjectId && 
-      (p.status === 'Planned' || (p.status as string) === 'Pending')
+      !['Ordered', 'Received', 'Cancelled', 'Delivered'].includes(p.status as string)
     );
   }, [parts, activeProjectId]);
 
@@ -213,12 +233,11 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
 
     if (activeTemplate === 'PROCUREMENT') {
       const publicUrl = getPublicAppUrl();
-      const deepLinkUri = `${publicUrl}/?tab=procurement&filter=pending${activeProjectId ? `&projectId=${activeProjectId}` : ''}`;
 
-      return {
-        type: 'flex',
-        altText: `⚠️ แจ้งเตือนจัดซื้อ: [${activeProject?.code || '-'}] ${activeProject?.name || 'BOM'} - มีรายการยังไม่สั่งซื้อ ${pendingParts.length} รายการ`,
-        contents: {
+      const buildBubble = (proj: ProjectItem, projParts: BomPartItem[], totalBudget: number) => {
+        const deepLinkUri = `${publicUrl}/?tab=procurement&filter=pending&projectId=${proj.id}`;
+
+        return {
           type: 'bubble',
           size: 'mega',
           header: {
@@ -248,14 +267,14 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
               },
               {
                 type: 'text',
-                text: '📁 ชื่อโปรเจกต์:',
+                text: '📁 1. ชื่อโปรเจกต์:',
                 size: 'xxs',
                 color: '#64748b',
                 margin: 'md'
               },
               {
                 type: 'text',
-                text: `[${activeProject?.code || '-'}] ${activeProject?.name || '-'}`,
+                text: `[${proj.code}] ${proj.name}`,
                 weight: 'bold',
                 size: 'md',
                 color: '#ffffff',
@@ -281,7 +300,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 contents: [
                   {
                     type: 'text',
-                    text: '📦 จำนวนรายการที่ยังไม่สั่งซื้อ:',
+                    text: '📦 2. จำนวนรายการที่ยังไม่สั่งซื้อ:',
                     size: 'xs',
                     color: '#92400e',
                     weight: 'bold'
@@ -293,7 +312,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                     contents: [
                       {
                         type: 'text',
-                        text: `${pendingParts.length}`,
+                        text: `${projParts.length}`,
                         size: 'xxl',
                         weight: 'bold',
                         color: '#b45309',
@@ -327,7 +346,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                       },
                       {
                         type: 'text',
-                        text: `฿${totalPendingAmount.toLocaleString('th-TH')}`,
+                        text: `฿${totalBudget.toLocaleString('th-TH')}`,
                         size: 'xs',
                         weight: 'bold',
                         color: '#b45309'
@@ -351,12 +370,32 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
                 height: 'md',
                 action: {
                   type: 'uri',
-                  label: '📋 เปิดดูรายละเอียด (คลิก)',
+                  label: '📋 3. เปิดดูรายละเอียด (คลิก)',
                   uri: deepLinkUri
                 }
               }
             ]
           }
+        };
+      };
+
+      if (projectsWithPending.length === 0) {
+        return {
+          type: 'text',
+          text: '✅ ไม่มีรายการอะไหล่ค้างสั่งซื้อในระบบ'
+        };
+      }
+
+      const bubbles = projectsWithPending.map(item =>
+        buildBubble(item.project, item.parts, item.totalBudget)
+      );
+
+      return {
+        type: 'flex',
+        altText: `⚠️ แจ้งเตือนจัดซื้อ: พบรายการค้างสั่งซื้อใน ${projectsWithPending.length} โปรเจกต์ (รวม ${totalPendingAllProjects} รายการ)`,
+        contents: bubbles.length === 1 ? bubbles[0] : {
+          type: 'carousel',
+          contents: bubbles.slice(0, 10)
         }
       };
     }
@@ -1506,24 +1545,34 @@ pushMessage();`;
                     {/* Body */}
                     <div className="p-3.5 space-y-2.5 text-slate-900 dark:text-white">
                       {activeTemplate === 'PROCUREMENT' && (
-                        <div className="bg-amber-50 dark:bg-amber-950/50 p-3.5 rounded-2xl text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50 space-y-2">
-                          <div className="text-[11px] font-bold text-amber-800 dark:text-amber-400">
-                            📦 จำนวนรายการที่ยังไม่สั่งซื้อ:
-                          </div>
-                          <div className="flex items-baseline space-x-1.5">
-                            <span className="text-2xl font-black text-amber-600 dark:text-amber-400 font-mono">
-                              {pendingParts.length}
-                            </span>
-                            <span className="text-xs font-bold text-amber-800 dark:text-amber-300">
-                              รายการ (Pending PO)
-                            </span>
-                          </div>
-                          <div className="border-t border-amber-200/60 dark:border-amber-900/40 pt-2 flex items-center justify-between text-[11px]">
-                            <span className="text-amber-800/80 dark:text-amber-400/80">งบประมาณค้างสั่งรวม:</span>
-                            <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
-                              ฿{totalPendingAmount.toLocaleString('th-TH')}
-                            </span>
-                          </div>
+                        <div className="space-y-2.5 max-h-72 overflow-y-auto no-scrollbar">
+                          {projectsWithPending.length === 0 ? (
+                            <div className="p-3 text-center text-xs text-slate-400">
+                              🎉 ไม่มีรายการค้างสั่งซื้อในระบบ
+                            </div>
+                          ) : (
+                            projectsWithPending.map(({ project, parts: projParts, totalBudget }) => (
+                              <div key={project.id} className="bg-amber-50 dark:bg-amber-950/50 p-3 rounded-2xl text-amber-900 dark:text-amber-300 border border-amber-200 dark:border-amber-900/50 space-y-1.5">
+                                <div className="text-[10px] font-black text-slate-700 dark:text-slate-300 truncate">
+                                  📁 [{project.code}] {project.name}
+                                </div>
+                                <div className="flex items-baseline space-x-1.5">
+                                  <span className="text-xl font-black text-amber-600 dark:text-amber-400 font-mono">
+                                    {projParts.length}
+                                  </span>
+                                  <span className="text-[11px] font-bold text-amber-800 dark:text-amber-300">
+                                    รายการยังไม่สั่งซื้อ
+                                  </span>
+                                </div>
+                                <div className="border-t border-amber-200/60 dark:border-amber-900/40 pt-1.5 flex items-center justify-between text-[10px]">
+                                  <span className="text-amber-800/80 dark:text-amber-400/80">งบประมาณรวม:</span>
+                                  <span className="font-black text-amber-700 dark:text-amber-300 font-mono">
+                                    ฿{totalBudget.toLocaleString('th-TH')}
+                                  </span>
+                                </div>
+                              </div>
+                            ))
+                          )}
                         </div>
                       )}
 

@@ -84,13 +84,9 @@ export const updateLineSettings = (newSettings: Partial<LineSettings>): LineSett
 };
 
 /**
- * Builds a rich LINE Flex Message payload for pending parts
- * Clean, structured, and focused:
- * 1. Project Name & Code
- * 2. Total Pending Items Count & Total Budget
- * 3. Open Details Action Button (Deep link to pending procurement view)
+ * Builds a single bubble for a project
  */
-export const buildPendingPartsFlexMessage = (
+export const buildPendingPartsBubble = (
   projectName: string,
   projectCode: string,
   pendingParts: Array<{
@@ -117,152 +113,174 @@ export const buildPendingPartsFlexMessage = (
 
   const deepLinkUri = `${cleanAppUrl}/?tab=procurement&filter=pending${projectId ? `&projectId=${projectId}` : ''}`;
 
-  const flexMessage = {
-    type: 'flex',
-    altText: `⚠️ แจ้งเตือนจัดซื้อ: [${projectCode}] ${projectName} - มีรายการยังไม่สั่งซื้อ ${totalItems} รายการ`,
-    contents: {
-      type: 'bubble',
-      size: 'mega',
-      header: {
-        type: 'box',
-        layout: 'vertical',
-        backgroundColor: '#0f172a',
-        paddingAll: 'lg',
-        contents: [
-          {
-            type: 'box',
-            layout: 'horizontal',
-            contents: [
-              {
-                type: 'text',
-                text: 'WARSGATE BOM ALERT',
-                color: '#f59e0b',
-                weight: 'bold',
-                size: 'xxs'
-              },
-              {
-                type: 'text',
-                text: 'ระบบจัดซื้อ & สโตร์',
-                color: '#94a3b8',
-                size: 'xxs'
-              }
-            ]
-          },
-          {
-            type: 'text',
-            text: '📁 ชื่อโปรเจกต์:',
-            size: 'xxs',
-            color: '#64748b',
-            margin: 'md'
-          },
-          {
-            type: 'text',
-            text: `[${projectCode}] ${projectName}`,
-            weight: 'bold',
-            size: 'md',
-            color: '#ffffff',
-            wrap: true,
-            margin: 'xs'
-          }
-        ]
-      },
-      body: {
-        type: 'box',
-        layout: 'vertical',
-        paddingAll: 'lg',
-        backgroundColor: '#ffffff',
-        contents: [
-          {
-            type: 'box',
-            layout: 'vertical',
-            backgroundColor: '#fef3c7',
-            paddingAll: 'lg',
-            cornerRadius: 'xl',
-            borderColor: '#fde68a',
-            borderWidth: 'normal',
-            contents: [
-              {
-                type: 'text',
-                text: '📦 จำนวนรายการที่ยังไม่สั่งซื้อ:',
-                size: 'xs',
-                color: '#92400e',
-                weight: 'bold'
-              },
-              {
-                type: 'box',
-                layout: 'horizontal',
-                margin: 'sm',
-                contents: [
-                  {
-                    type: 'text',
-                    text: `${totalItems}`,
-                    size: 'xxl',
-                    weight: 'bold',
-                    color: '#b45309',
-                    flex: 0
-                  },
-                  {
-                    type: 'text',
-                    text: ' รายการ (Pending PO)',
-                    size: 'sm',
-                    color: '#92400e',
-                    weight: 'bold',
-                    margin: 'sm'
-                  }
-                ]
-              },
-              {
-                type: 'separator',
-                margin: 'md',
-                color: '#fde68a'
-              },
-              {
-                type: 'box',
-                layout: 'horizontal',
-                margin: 'md',
-                contents: [
-                  {
-                    type: 'text',
-                    text: 'ยอดงบประมาณรวม:',
-                    size: 'xs',
-                    color: '#78350f'
-                  },
-                  {
-                    type: 'text',
-                    text: `฿${totalBudget.toLocaleString('th-TH')}`,
-                    size: 'xs',
-                    weight: 'bold',
-                    color: '#b45309'
-                  }
-                ]
-              }
-            ]
-          }
-        ]
-      },
-      footer: {
-        type: 'box',
-        layout: 'vertical',
-        paddingAll: 'md',
-        backgroundColor: '#f8fafc',
-        contents: [
-          {
-            type: 'button',
-            style: 'primary',
-            color: '#0284c7',
-            height: 'md',
-            action: {
-              type: 'uri',
-              label: '📋 เปิดดูรายละเอียด (คลิก)',
-              uri: deepLinkUri
+  return {
+    type: 'bubble',
+    size: 'mega',
+    header: {
+      type: 'box',
+      layout: 'vertical',
+      backgroundColor: '#0f172a',
+      paddingAll: 'lg',
+      contents: [
+        {
+          type: 'box',
+          layout: 'horizontal',
+          contents: [
+            {
+              type: 'text',
+              text: 'WARSGATE BOM ALERT',
+              color: '#f59e0b',
+              weight: 'bold',
+              size: 'xxs'
+            },
+            {
+              type: 'text',
+              text: 'ระบบจัดซื้อ & สโตร์',
+              color: '#94a3b8',
+              size: 'xxs'
             }
+          ]
+        },
+        {
+          type: 'text',
+          text: '📁 1. ชื่อโปรเจกต์:',
+          size: 'xxs',
+          color: '#64748b',
+          margin: 'md'
+        },
+        {
+          type: 'text',
+          text: `[${projectCode}] ${projectName}`,
+          weight: 'bold',
+          size: 'md',
+          color: '#ffffff',
+          wrap: true,
+          margin: 'xs'
+        }
+      ]
+    },
+    body: {
+      type: 'box',
+      layout: 'vertical',
+      paddingAll: 'lg',
+      backgroundColor: '#ffffff',
+      contents: [
+        {
+          type: 'box',
+          layout: 'vertical',
+          backgroundColor: '#fef3c7',
+          paddingAll: 'lg',
+          cornerRadius: 'xl',
+          borderColor: '#fde68a',
+          borderWidth: 'normal',
+          contents: [
+            {
+              type: 'text',
+              text: '📦 2. จำนวนรายการที่ยังไม่สั่งซื้อ:',
+              size: 'xs',
+              color: '#92400e',
+              weight: 'bold'
+            },
+            {
+              type: 'box',
+              layout: 'horizontal',
+              margin: 'sm',
+              contents: [
+                {
+                  type: 'text',
+                  text: `${totalItems}`,
+                  size: 'xxl',
+                  weight: 'bold',
+                  color: '#b45309',
+                  flex: 0
+                },
+                {
+                  type: 'text',
+                  text: ' รายการ (Pending PO)',
+                  size: 'sm',
+                  color: '#92400e',
+                  weight: 'bold',
+                  margin: 'sm'
+                }
+              ]
+            },
+            {
+              type: 'separator',
+              margin: 'md',
+              color: '#fde68a'
+            },
+            {
+              type: 'box',
+              layout: 'horizontal',
+              margin: 'md',
+              contents: [
+                {
+                  type: 'text',
+                  text: 'ยอดงบประมาณรวม:',
+                  size: 'xs',
+                  color: '#78350f'
+                },
+                {
+                  type: 'text',
+                  text: `฿${totalBudget.toLocaleString('th-TH')}`,
+                  size: 'xs',
+                  weight: 'bold',
+                  color: '#b45309'
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    footer: {
+      type: 'box',
+      layout: 'vertical',
+      paddingAll: 'md',
+      backgroundColor: '#f8fafc',
+      contents: [
+        {
+          type: 'button',
+          style: 'primary',
+          color: '#0284c7',
+          height: 'md',
+          action: {
+            type: 'uri',
+            label: '📋 3. เปิดดูรายละเอียด (คลิก)',
+            uri: deepLinkUri
           }
-        ]
-      }
+        }
+      ]
     }
   };
+};
 
-  return flexMessage;
+/**
+ * Builds a rich LINE Flex Message payload for pending parts
+ */
+export const buildPendingPartsFlexMessage = (
+  projectName: string,
+  projectCode: string,
+  pendingParts: Array<{
+    id: string;
+    partName: string;
+    typeSpec?: string;
+    maker?: string;
+    supplier?: string;
+    qty: number;
+    unit: string;
+    unitPrice: number;
+    totalAmount: number;
+    purchaseLink?: string;
+  }>,
+  projectId?: string
+) => {
+  const bubble = buildPendingPartsBubble(projectName, projectCode, pendingParts, projectId);
+  return {
+    type: 'flex',
+    altText: `⚠️ แจ้งเตือนจัดซื้อ: [${projectCode}] ${projectName} - มีรายการยังไม่สั่งซื้อ ${pendingParts.length} รายการ`,
+    contents: bubble
+  };
 };
 
 /**
@@ -327,6 +345,7 @@ export const pushLineMessage = async (
   const data = await response.json().catch(() => ({}));
 
   if (!response.ok) {
+    console.error('❌ LINE Push API Error Details:', data);
     let errorMsg = (data as any).message || `LINE API Error (${response.status}: ${response.statusText})`;
     if ((data as any).details && Array.isArray((data as any).details)) {
       const detailStrs = (data as any).details.map((d: any) => d.message ? `${d.property ? d.property + ': ' : ''}${d.message}` : JSON.stringify(d)).join(', ');
@@ -461,23 +480,32 @@ export const triggerProcurementAlertNow = async (targetProjectId?: string) => {
     return await dispatchAlert([clearMessage]);
   }
 
-  // Build Flex Message cards for each workspace that has pending items
-  const flexMessages = workspacesWithPending.map(({ project, parts }) =>
-    buildPendingPartsFlexMessage(project.name, project.code, parts, project.id)
+  // Build Carousel containing all projects that have pending items
+  const bubbles = workspacesWithPending.map(({ project, parts }) =>
+    buildPendingPartsBubble(project.name, project.code, parts, project.id)
   );
 
-  // Send in batches of up to 5 messages per LINE API call
-  let lastResult: any = null;
-  for (let i = 0; i < flexMessages.length; i += 5) {
-    const batch = flexMessages.slice(i, i + 5);
-    lastResult = await dispatchAlert(batch);
-  }
+  const totalPendingAll = workspacesWithPending.reduce((sum, w) => sum + w.parts.length, 0);
+
+  const flexMessage = {
+    type: 'flex',
+    altText: `⚠️ แจ้งเตือนจัดซื้อ: พบรายการค้างสั่งซื้อใน ${workspacesWithPending.length} โปรเจกต์ (รวม ${totalPendingAll} รายการ)`,
+    contents: bubbles.length === 1 
+      ? bubbles[0] 
+      : {
+          type: 'carousel',
+          contents: bubbles.slice(0, 10) // LINE carousel supports up to 10 bubbles
+        }
+  };
+
+  const lastResult = await dispatchAlert([flexMessage]);
 
   return {
     success: true,
     mode: isBroadcast ? 'BROADCAST' : 'PUSH',
     totalWorkspacesScanned: allProjects.length,
     workspacesAlerted: workspacesWithPending.length,
+    totalPendingPartsAlerted: totalPendingAll,
     data: lastResult?.data
   };
 };

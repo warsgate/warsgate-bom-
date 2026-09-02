@@ -48,6 +48,8 @@ export const PartModal: React.FC<PartModalProps> = ({
   const [unitPrice, setUnitPrice] = useState(0);
   const [poNumber, setPoNumber] = useState('');
   const [storeLocation, setStoreLocation] = useState('');
+  const [orderDate, setOrderDate] = useState('');
+  const [receiveDate, setReceiveDate] = useState('');
   const [quotationId, setQuotationId] = useState('');
   const [purchaseLink, setPurchaseLink] = useState('');
   const [status, setStatus] = useState<PartStatus>('Planned');
@@ -105,6 +107,8 @@ export const PartModal: React.FC<PartModalProps> = ({
         setPoNumber(initialPart.poNumber || '');
         setQuotationId(initialPart.quotationId || '');
         setStoreLocation(initialPart.storeLocation || '');
+        setOrderDate(initialPart.orderDate || '');
+        setReceiveDate(initialPart.receiveDate || '');
         setPurchaseLink(initialPart.purchaseLink || '');
         setStatus(initialPart.status || 'Planned');
         setWorkflowStage(initialPart.workflowStage || '2. BOM Part List');
@@ -126,6 +130,8 @@ export const PartModal: React.FC<PartModalProps> = ({
         setPoNumber('');
         setQuotationId('');
         setStoreLocation('');
+        setOrderDate('');
+        setReceiveDate('');
         setPurchaseLink('');
         setStatus('Planned');
         setWorkflowStage('2. BOM Part List');
@@ -169,6 +175,8 @@ export const PartModal: React.FC<PartModalProps> = ({
       poNumber,
       quotationId: quotationId || undefined,
       storeLocation,
+      orderDate: orderDate || undefined,
+      receiveDate: receiveDate || undefined,
       purchaseLink,
       status,
       workflowStage,
@@ -504,6 +512,29 @@ export const PartModal: React.FC<PartModalProps> = ({
                 onChange={(e) => setPurchaseLink(e.target.value)}
                 placeholder="https://shopee.co.th/... หรืออื่นๆ"
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+
+          {/* Order Date & Delivery Date */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">วันสั่งสินค้า (Order Date)</label>
+              <input
+                type="date"
+                value={orderDate}
+                onChange={(e) => setOrderDate(e.target.value)}
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
+              />
+            </div>
+
+            <div>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">กำหนดส่งสินค้าเข้า / วันรับเข้า (Delivery Date)</label>
+              <input
+                type="date"
+                value={receiveDate}
+                onChange={(e) => setReceiveDate(e.target.value)}
+                className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-mono"
               />
             </div>
           </div>

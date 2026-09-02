@@ -180,8 +180,14 @@ export function App() {
   };
 
   const handleUpdatePartStatus = async (id: string, status: PartStatus, extra?: any) => {
-    const updated = await partsApi.update(id, { status, ...extra });
-    setAllParts(prev => prev.map(p => p.id === updated.id ? updated : p));
+    // Optimistic update so changes to status, orderDate, receiveDate appear instantly
+    setAllParts(prev => prev.map(p => p.id === id ? { ...p, status, ...extra } : p));
+    try {
+      const updated = await partsApi.update(id, { status, ...extra });
+      setAllParts(prev => prev.map(p => p.id === updated.id ? updated : p));
+    } catch (err) {
+      console.error('Failed to update part status:', err);
+    }
   };
 
   const handleDeletePart = async (id: string) => {
@@ -619,6 +625,7 @@ export function App() {
               onDeletePart={handleDeletePart}
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
+              onUpdatePartStatus={handleUpdatePartStatus}
             />
           )}
 

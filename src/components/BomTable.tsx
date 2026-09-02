@@ -6,9 +6,14 @@ import {
   Trash2, 
   ArrowUpDown,
   Printer,
-  ExternalLink
+  ExternalLink,
+  Calendar,
+  Truck,
+  AlertTriangle,
+  Check,
+  Clock
 } from 'lucide-react';
-import { BomPartItem, ModuleItem } from '../types/bom';
+import { BomPartItem, ModuleItem, PartStatus } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
 import { formatShortUrl } from '../utils/urlFormatter';
 
@@ -20,7 +25,19 @@ interface BomTableProps {
   onDeletePart: (partId: string) => void;
   searchQuery: string;
   setSearchQuery: (q: string) => void;
+  onUpdatePartStatus?: (
+    partId: string, 
+    status: PartStatus, 
+    extraData?: { 
+      orderDate?: string; 
+      receiveDate?: string; 
+      poNumber?: string; 
+      [key: string]: any; 
+    }
+  ) => void;
 }
+
+const getTodayIso = () => new Date().toISOString().split('T')[0];
 
 export const BomTable: React.FC<BomTableProps> = ({
   parts,
@@ -30,12 +47,48 @@ export const BomTable: React.FC<BomTableProps> = ({
   onDeletePart,
   searchQuery,
   setSearchQuery,
+  onUpdatePartStatus,
 }) => {
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>('ALL');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('ALL');
   const [selectedPartTypeFilter, setSelectedPartTypeFilter] = useState<string>('ALL');
   const [sortField, setSortField] = useState<keyof BomPartItem>('itemNo');
   const [sortDirection, setSortDirection] = useState<'asc' | 'desc'>('asc');
+
+  const getDeliveryBadge = (receiveDateStr?: string, status?: PartStatus) => {
+    if (!receiveDateStr) return null;
+    if (status === 'Received' || status === 'Completed' || status === 'In Assembly') {
+      return (
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-emerald-100 dark:bg-emerald-950/60 text-emerald-800 dark:text-emerald-300 border border-emerald-300 dark:border-emerald-800">
+          <Check className="w-2.5 h-2.5 mr-0.5" /> รับเข้าแล้ว
+        </span>
+      );
+    }
+    const today = getTodayIso();
+    if (receiveDateStr < today) {
+      const diffTime = Math.abs(new Date(today).getTime() - new Date(receiveDateStr).getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return (
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black bg-rose-100 dark:bg-rose-950/60 text-rose-800 dark:text-rose-300 border border-rose-300 dark:border-rose-800">
+          <AlertTriangle className="w-2.5 h-2.5 mr-0.5 text-rose-600" /> เลยกำหนด {diffDays} วัน
+        </span>
+      );
+    } else if (receiveDateStr === today) {
+      return (
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-black bg-amber-100 dark:bg-amber-950/60 text-amber-900 dark:text-amber-300 border border-amber-300 dark:border-amber-800 animate-pulse">
+          <Truck className="w-2.5 h-2.5 mr-0.5 text-amber-700" /> ส่งวันนี้
+        </span>
+      );
+    } else {
+      const diffTime = Math.abs(new Date(receiveDateStr).getTime() - new Date(today).getTime());
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+      return (
+        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-sky-100 dark:bg-sky-950/60 text-sky-800 dark:text-sky-300 border border-sky-300 dark:border-sky-800">
+          <Clock className="w-2.5 h-2.5 mr-0.5" /> อีก {diffDays} วัน
+        </span>
+      );
+    }
+  };
 
   // Filtered Parts logic
   const filteredParts = useMemo(() => {
@@ -197,6 +250,19 @@ export const BomTable: React.FC<BomTableProps> = ({
                 </th>
                 <th className="p-2.5 print:hidden">SUPPLIER</th>
                 <th className="p-2.5 text-center print:hidden">LINK</th>
+                <th className="p-2.5 font-mono whitespace-nowrap print:hidden">PO NUMBER</th>
+                <th className="p-2.5 whitespace-nowrap min-w-[130px] bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200 print:hidden">
+                  <div className="flex items-center space-x-1">
+                    <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                    <span>วันสั่งสินค้า</span>
+                  </div>
+                </th>
+                <th className="p-2.5 whitespace-nowrap min-w-[160px] bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200 print:hidden">
+                  <div className="flex items-center space-x-1">
+                    <Truck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <span>กำหนดส่งสินค้าเข้า</span>
+                  </div>
+                </th>
                 <th className="p-2.5 text-center print:hidden">STATUS</th>
                 <th className="p-2.5 text-center print:hidden">ACTION</th>
               </tr>
@@ -204,7 +270,7 @@ export const BomTable: React.FC<BomTableProps> = ({
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {filteredParts.length === 0 ? (
                 <tr>
-                  <td colSpan={13} className="p-8 text-center text-slate-400 font-medium">
+                  <td colSpan={16} className="p-8 text-center text-slate-400 font-medium">
                     ไม่พบรายการ Part List ตามเงื่อนไขที่เลือก
                   </td>
                 </tr>
@@ -273,6 +339,49 @@ export const BomTable: React.FC<BomTableProps> = ({
                           <span className="text-slate-300 dark:text-slate-600">-</span>
                         )}
                       </td>
+
+                      {/* PO Number */}
+                      <td className="p-2.5 font-mono font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap print:hidden">
+                        {part.poNumber ? (
+                          <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700">
+                            {part.poNumber}
+                          </span>
+                        ) : (
+                          <span className="text-slate-400 italic text-[11px]">-</span>
+                        )}
+                      </td>
+
+                      {/* วันสั่งสินค้า (Order Date) */}
+                      <td className="p-2.5 bg-blue-50/20 dark:bg-blue-950/10 whitespace-nowrap print:hidden">
+                        <div className="flex items-center space-x-1.5">
+                          <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
+                          <input
+                            type="date"
+                            value={part.orderDate ? String(part.orderDate).split('T')[0] : ''}
+                            onChange={(e) => onUpdatePartStatus && onUpdatePartStatus(part.id, part.status, { orderDate: e.target.value })}
+                            className="w-32 px-1.5 py-0.5 text-xs font-mono font-bold rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-blue-500 cursor-pointer"
+                            title="เลือกวันสั่งสินค้า"
+                          />
+                        </div>
+                      </td>
+
+                      {/* กำหนดส่งสินค้าเข้า (Receive / Expected Delivery Date) */}
+                      <td className="p-2.5 bg-indigo-50/20 dark:bg-indigo-950/10 whitespace-nowrap print:hidden">
+                        <div className="flex flex-col space-y-1">
+                          <div className="flex items-center space-x-1.5">
+                            <Truck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
+                            <input
+                              type="date"
+                              value={part.receiveDate ? String(part.receiveDate).split('T')[0] : ''}
+                              onChange={(e) => onUpdatePartStatus && onUpdatePartStatus(part.id, part.status, { receiveDate: e.target.value })}
+                              className="w-32 px-1.5 py-0.5 text-xs font-mono font-bold rounded border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-900 text-slate-800 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-indigo-500 cursor-pointer"
+                              title="เลือกกำหนดส่งสินค้าเข้า"
+                            />
+                          </div>
+                          {getDeliveryBadge(part.receiveDate, part.status)}
+                        </div>
+                      </td>
+
                       <td className="p-2.5 text-center print:hidden">
                         <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                           part.status === 'Received' || part.status === 'Completed' || part.status === 'In Assembly'

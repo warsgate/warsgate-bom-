@@ -277,7 +277,7 @@ export const MasterPartLibrary: React.FC = () => {
         <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
-              <tr>
+              <tr className="divide-x divide-slate-200 dark:divide-slate-700">
                 <th className="px-3 py-3 w-10 text-center">
                   <input 
                     type="checkbox" 
@@ -311,7 +311,7 @@ export const MasterPartLibrary: React.FC = () => {
                 </tr>
               ) : (
                 filteredParts.map((part, index) => (
-                  <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                  <tr key={part.id} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                     <td className="px-3 py-3 text-center">
                       <input 
                         type="checkbox" 
@@ -496,7 +496,7 @@ export const MasterPartLibrary: React.FC = () => {
             <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50 dark:bg-slate-950">
               <table className="w-full text-left border-collapse text-xs bg-white dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800">
                 <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200">
-                  <tr>
+                  <tr className="divide-x divide-slate-200 dark:divide-slate-700">
                     <th className="px-3 py-3 w-10 text-center">NO.</th>
                     <th className="px-3 py-3">PART NAME & SPEC</th>
                     <th className="px-3 py-3 w-20 text-center">UNIT</th>
@@ -506,7 +506,7 @@ export const MasterPartLibrary: React.FC = () => {
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredParts.filter(p => selectedParts.has(p.id)).map((part, index) => (
-                    <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                    <tr key={part.id} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                       <td className="px-3 py-3 text-center text-slate-500 font-mono">{index + 1}</td>
                       <td className="px-3 py-3">
                         <div className="font-bold text-slate-900 dark:text-white">{part.partName}</div>

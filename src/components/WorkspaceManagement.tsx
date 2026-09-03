@@ -85,7 +85,7 @@ export const WorkspaceManagement: React.FC<WorkspaceManagementProps> = ({
         <div className="overflow-x-auto flex-1">
           <table className="w-full text-left whitespace-nowrap text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/60 sticky top-0 z-10 border-b-2 border-slate-200 dark:border-slate-700">
-              <tr>
+              <tr className="divide-x divide-slate-200 dark:divide-slate-700">
                 <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">โปรเจกต์</th>
                 <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">บริษัทลูกค้า</th>
                 <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">ยอดเงิน (Budget)</th>
@@ -104,7 +104,7 @@ export const WorkspaceManagement: React.FC<WorkspaceManagementProps> = ({
                 </tr>
               ) : (
                 projects.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                  <tr key={p.id} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                     <td className="px-4 py-3">
                       <div className="font-black text-slate-900 dark:text-white">{p.code}</div>
                       <div className="text-xs font-bold text-slate-500 dark:text-slate-400">{p.name}</div>

@@ -223,7 +223,7 @@ export const BomTable: React.FC<BomTableProps> = ({
         <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
-              <tr>
+              <tr className="divide-x divide-slate-200 dark:divide-slate-700">
                 <th onClick={() => handleSort('itemNo')} className="px-3 py-3 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900">
                   <div className="flex items-center space-x-1">
                     <span>ITEM #</span>
@@ -278,7 +278,7 @@ export const BomTable: React.FC<BomTableProps> = ({
                 filteredParts.map((part) => {
                   const amount = part.totalAmount || (part.qty * part.unitPrice);
                   return (
-                    <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                    <tr key={part.id} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                       <td className="px-3 py-3 font-mono font-bold text-slate-500">{part.itemNo}</td>
                       <td className="px-3 py-3 font-mono font-bold text-slate-700 dark:text-slate-300 text-[11px]">
                         {part.dwgNo || '-'}

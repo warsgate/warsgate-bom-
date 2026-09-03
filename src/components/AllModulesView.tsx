@@ -204,8 +204,8 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
         <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
           <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
             <table className="w-full text-left border-collapse text-xs">
-              <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-black border-b border-slate-200 dark:border-slate-800">
-                <tr>
+              <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
+                <tr className="divide-x divide-slate-200 dark:divide-slate-700">
                   <th className="px-3 py-3">CODE & SCOPE</th>
                   <th className="px-3 py-3">MODULE NAME & DWG</th>
                   <th className="px-3 py-3">ENGINEER</th>
@@ -217,7 +217,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                   <th className="px-3 py-3 text-center">ACTIONS</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                 {filteredModules.length === 0 ? (
                   <tr>
                     <td colSpan={9} className="p-8 text-center text-slate-400 font-medium">
@@ -238,7 +238,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                     const isOver = pctUsed > 100;
 
                     return (
-                      <tr key={mod.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors">
+                      <tr key={mod.id} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                         
                         {/* Module Code & Scope */}
                         <td className="px-3 py-3">

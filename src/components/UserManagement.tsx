@@ -166,7 +166,7 @@ export const UserManagement: React.FC = () => {
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
               <thead className="bg-slate-50 dark:bg-slate-800/60 border-b-2 border-slate-200 dark:border-slate-700 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
-                <tr>
+                <tr className="divide-x divide-slate-200 dark:divide-slate-700">
                   <th className="px-4 py-3">Username</th>
                   <th className="px-4 py-3">ชื่อ - นามสกุล</th>
                   <th className="px-4 py-3">ระดับสิทธิ์ (Role)</th>
@@ -175,7 +175,7 @@ export const UserManagement: React.FC = () => {
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium text-slate-700 dark:text-slate-300">
                 {users.map(u => (
-                  <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                  <tr key={u.id} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                     <td className="px-4 py-3 font-bold text-slate-900 dark:text-white flex items-center">
                       <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mr-3">
                         {u.username.charAt(0).toUpperCase()}

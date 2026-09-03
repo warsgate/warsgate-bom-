@@ -58,7 +58,7 @@ export const CostSummaryReport: React.FC<CostSummaryReportProps> = ({
         <div className="overflow-x-auto max-h-[calc(100vh-280px)] overflow-y-auto">
           <table className="w-full text-left border-collapse text-xs">
             <thead>
-              <tr className="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-black">
+              <tr className="divide-x divide-slate-200 dark:divide-slate-700 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
                 <th className="px-3 py-3">CODE</th>
                 <th className="px-3 py-3">MODULE NAME</th>
                 <th className="px-3 py-3 text-right font-mono">TARGET BUDGET (฿)</th>
@@ -71,9 +71,9 @@ export const CostSummaryReport: React.FC<CostSummaryReportProps> = ({
                 <th className="px-3 py-3 text-right font-black bg-slate-200 dark:bg-slate-800">GRAND TOTAL (฿)</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {moduleSummaries.map((mod) => (
-                <tr key={mod.moduleId} className="hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors">
+                <tr key={mod.moduleId} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
                   <td className="px-3 py-3 font-mono font-bold text-slate-800 dark:text-slate-200">{mod.moduleCode}</td>
                   <td className="px-3 py-3 font-extrabold text-slate-900 dark:text-white">{mod.moduleName}</td>
                   <td className="px-3 py-3 text-right font-mono font-bold text-slate-600 dark:text-slate-400">
@@ -105,7 +105,7 @@ export const CostSummaryReport: React.FC<CostSummaryReportProps> = ({
             </tbody>
             {/* Grand Total Row */}
             <tfoot className="bg-slate-900 text-white font-black text-xs border-t-2 border-slate-700">
-              <tr>
+              <tr className="divide-x divide-slate-700">
                 <td colSpan={2} className="px-3 py-3 text-right uppercase tracking-wider">PROJECT GRAND TOTAL:</td>
                 <td className="px-3 py-3 text-right font-mono">{formatCurrency(totalTargetBudget)}</td>
                 <td className="px-3 py-3 text-right font-mono text-blue-300">

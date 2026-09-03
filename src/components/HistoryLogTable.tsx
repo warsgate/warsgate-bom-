@@ -52,7 +52,7 @@ export const HistoryLogTable: React.FC = () => {
       <div className="flex-1 overflow-auto rounded-xl border border-slate-200 dark:border-slate-700">
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10 backdrop-blur-sm border-b-2 border-slate-200 dark:border-slate-700">
-            <tr>
+            <tr className="divide-x divide-slate-200 dark:divide-slate-700">
               <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">วัน / เวลา</th>
               <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">ผู้ใช้งาน</th>
               <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">กิจกรรม</th>
@@ -74,7 +74,7 @@ export const HistoryLogTable: React.FC = () => {
               </tr>
             ) : (
               logs.map((log) => (
-                <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
+                <tr key={log.id} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
                   <td className="px-4 py-3 font-bold text-slate-700 dark:text-slate-300">
                     {new Date(log.createdAt).toLocaleString('th-TH')}
                   </td>

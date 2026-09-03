@@ -86,13 +86,13 @@ export const WorkspaceManagement: React.FC<WorkspaceManagementProps> = ({
           <table className="w-full text-left whitespace-nowrap text-sm">
             <thead className="bg-slate-50 dark:bg-slate-800/60 sticky top-0 z-10 border-b-2 border-slate-200 dark:border-slate-700">
               <tr className="divide-x divide-slate-200 dark:divide-slate-700">
-                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">โปรเจกต์</th>
-                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">บริษัทลูกค้า</th>
-                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">ยอดเงิน (Budget)</th>
-                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">วันรับ PO</th>
-                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">ข้อมูลผู้ติดต่อ</th>
-                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">สถานะ</th>
-                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">จัดการ</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[150px]">โปรเจกต์</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[180px]">บริษัทลูกค้า</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right whitespace-nowrap min-w-[130px]">ยอดเงิน (Budget)</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center whitespace-nowrap min-w-[120px]">วันรับ PO</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider min-w-[140px]">ข้อมูลผู้ติดต่อ</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center whitespace-nowrap min-w-[110px]">สถานะ</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-center whitespace-nowrap w-24">จัดการ</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
@@ -115,12 +115,12 @@ export const WorkspaceManagement: React.FC<WorkspaceManagementProps> = ({
                         <span className="font-bold text-slate-700 dark:text-slate-300">{p.customer}</span>
                       </div>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-right whitespace-nowrap">
                       <span className="font-bold text-emerald-600 dark:text-emerald-400">
                         ฿{(p.targetBudget || 0).toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-center whitespace-nowrap">
                       {p.poDate ? (
                         <div className="flex items-center text-slate-600 dark:text-slate-300">
                           <Calendar className="w-4 h-4 mr-2 text-slate-400" />
@@ -149,8 +149,8 @@ export const WorkspaceManagement: React.FC<WorkspaceManagementProps> = ({
                         {p.status}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-right">
-                      <div className="flex items-center justify-end space-x-2">
+                    <td className="px-4 py-3 text-center whitespace-nowrap">
+                      <div className="flex items-center justify-center space-x-2">
                         <button
                           onClick={() => onEditProject(p)}
                           className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"

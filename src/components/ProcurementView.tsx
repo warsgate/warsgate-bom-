@@ -453,29 +453,29 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
           <table className="w-full text-left border-collapse text-xs">
             <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
               <tr className="divide-x divide-slate-200 dark:divide-slate-700">
-                <th className="px-3 py-3 whitespace-nowrap">ITEM #</th>
-                <th className="px-3 py-3 min-w-[180px]">PART NAME & TYPE SPEC</th>
-                <th className="px-3 py-3 whitespace-nowrap">SUPPLIER</th>
-                <th className="px-3 py-3 text-center whitespace-nowrap">LINK</th>
-                <th className="px-3 py-3 font-mono whitespace-nowrap">PO NUMBER</th>
-                <th className="px-3 py-3 whitespace-nowrap min-w-[130px] bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200">
+                <th className="px-3 py-3 w-16 text-center whitespace-nowrap">ITEM #</th>
+                <th className="px-3 py-3 min-w-[220px]">PART NAME & TYPE SPEC</th>
+                <th className="px-3 py-3 whitespace-nowrap min-w-[130px]">SUPPLIER</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap w-20">LINK</th>
+                <th className="px-3 py-3 text-center font-mono whitespace-nowrap min-w-[120px]">PO NUMBER</th>
+                <th className="px-3 py-3 whitespace-nowrap min-w-[145px] bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200">
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     <span>วันสั่งสินค้า</span>
                   </div>
                 </th>
-                <th className="px-3 py-3 whitespace-nowrap min-w-[160px] bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200">
+                <th className="px-3 py-3 whitespace-nowrap min-w-[170px] bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200">
                   <div className="flex items-center space-x-1">
                     <Truck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                     <span>กำหนดส่งสินค้าเข้า</span>
                   </div>
                 </th>
-                <th className="px-3 py-3 text-right whitespace-nowrap">TARGET COST (฿)</th>
-                <th className="px-3 py-3 text-right whitespace-nowrap">ACTUAL PO COST (฿)</th>
-                <th className="px-3 py-3 text-center whitespace-nowrap">VARIANCE</th>
-                <th className="px-3 py-3 whitespace-nowrap">STORE LOCATION</th>
-                <th className="px-3 py-3 text-center whitespace-nowrap">STATUS</th>
-                <th className="px-3 py-3 text-center whitespace-nowrap">ACTION</th>
+                <th className="px-3 py-3 text-right whitespace-nowrap min-w-[120px]">TARGET COST (฿)</th>
+                <th className="px-3 py-3 text-right whitespace-nowrap min-w-[120px]">ACTUAL PO COST (฿)</th>
+                <th className="px-3 py-3 text-right whitespace-nowrap min-w-[100px]">VARIANCE</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap min-w-[130px]">STORE LOCATION</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap min-w-[110px]">STATUS</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap min-w-[120px]">ACTION</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -487,7 +487,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
 
                 return (
                   <tr key={part.id} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                    <td className="px-3 py-3 font-mono font-bold text-slate-500">{part.itemNo}</td>
+                    <td className="px-3 py-3 font-mono font-bold text-slate-500 text-center whitespace-nowrap">{part.itemNo}</td>
                     
                     <td className="px-3 py-3">
                       <div className="font-extrabold text-slate-900 dark:text-white flex items-center justify-between group">
@@ -523,7 +523,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       )}
                     </td>
 
-                    <td className="px-3 py-3 font-mono font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                    <td className="px-3 py-3 font-mono font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap text-center">
                       {part.poNumber ? (
                         <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700">
                           {part.poNumber}
@@ -578,7 +578,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       {formatCurrency(actualAmt)}
                     </td>
 
-                    <td className="px-3 py-3 text-center whitespace-nowrap">
+                    <td className="px-3 py-3 text-right whitespace-nowrap">
                       {isSavingsItem ? (
                         <span className="text-emerald-700 dark:text-emerald-400 font-bold text-[11px]">
                           +{formatCurrency(diff)}
@@ -590,7 +590,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       )}
                     </td>
 
-                    <td className="px-3 py-3 text-slate-800 dark:text-slate-200 font-mono text-[11px] whitespace-nowrap">
+                    <td className="px-3 py-3 text-slate-800 dark:text-slate-200 font-mono text-[11px] whitespace-nowrap text-center">
                       {part.storeLocation ? (
                         <span className="inline-flex items-center text-emerald-700 dark:text-emerald-400 font-bold">
                           <Warehouse className="w-3 h-3 mr-1" /> {part.storeLocation}

@@ -59,16 +59,16 @@ export const CostSummaryReport: React.FC<CostSummaryReportProps> = ({
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="divide-x divide-slate-200 dark:divide-slate-700 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
-                <th className="px-3 py-3">CODE</th>
-                <th className="px-3 py-3">MODULE NAME</th>
-                <th className="px-3 py-3 text-right font-mono">TARGET BUDGET (฿)</th>
-                <th className="px-3 py-3 text-right text-blue-700 dark:text-blue-400">1. MC STANDARD</th>
-                <th className="px-3 py-3 text-right text-blue-700 dark:text-blue-400">2. MC FEB</th>
-                <th className="px-3 py-3 text-right bg-blue-50/60 dark:bg-blue-950/30 text-blue-900 dark:text-blue-300 font-black">TOTAL MC</th>
-                <th className="px-3 py-3 text-right text-amber-700 dark:text-amber-400">3. EE STANDARD</th>
-                <th className="px-3 py-3 text-right text-amber-700 dark:text-amber-400">4. EE FEB</th>
-                <th className="px-3 py-3 text-right bg-amber-50/60 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 font-black">TOTAL EE</th>
-                <th className="px-3 py-3 text-right font-black bg-slate-200 dark:bg-slate-800">GRAND TOTAL (฿)</th>
+                <th className="px-3 py-3 whitespace-nowrap min-w-[120px]">CODE</th>
+                <th className="px-3 py-3 min-w-[200px]">MODULE NAME</th>
+                <th className="px-3 py-3 text-right font-mono whitespace-nowrap min-w-[130px]">TARGET BUDGET (฿)</th>
+                <th className="px-3 py-3 text-right text-blue-700 dark:text-blue-400 whitespace-nowrap min-w-[110px]">1. MC STANDARD</th>
+                <th className="px-3 py-3 text-right text-blue-700 dark:text-blue-400 whitespace-nowrap min-w-[110px]">2. MC FEB</th>
+                <th className="px-3 py-3 text-right bg-blue-50/60 dark:bg-blue-950/30 text-blue-900 dark:text-blue-300 font-black whitespace-nowrap min-w-[110px]">TOTAL MC</th>
+                <th className="px-3 py-3 text-right text-amber-700 dark:text-amber-400 whitespace-nowrap min-w-[110px]">3. EE STANDARD</th>
+                <th className="px-3 py-3 text-right text-amber-700 dark:text-amber-400 whitespace-nowrap min-w-[110px]">4. EE FEB</th>
+                <th className="px-3 py-3 text-right bg-amber-50/60 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 font-black whitespace-nowrap min-w-[110px]">TOTAL EE</th>
+                <th className="px-3 py-3 text-right font-black bg-slate-200 dark:bg-slate-800 whitespace-nowrap min-w-[120px]">GRAND TOTAL (฿)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">

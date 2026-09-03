@@ -53,9 +53,9 @@ export const HistoryLogTable: React.FC = () => {
         <table className="w-full text-left text-sm whitespace-nowrap">
           <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10 backdrop-blur-sm border-b-2 border-slate-200 dark:border-slate-700">
             <tr className="divide-x divide-slate-200 dark:divide-slate-700">
-              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">วัน / เวลา</th>
-              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">ผู้ใช้งาน</th>
-              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">กิจกรรม</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300 min-w-[170px] whitespace-nowrap">วัน / เวลา</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300 min-w-[160px]">ผู้ใช้งาน</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300 text-center whitespace-nowrap w-32">กิจกรรม</th>
               <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300 w-full">รายละเอียด</th>
             </tr>
           </thead>
@@ -89,7 +89,7 @@ export const HistoryLogTable: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-4 py-3">
+                  <td className="px-4 py-3 text-center whitespace-nowrap">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                       {log.action}
                     </span>

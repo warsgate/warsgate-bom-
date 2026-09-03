@@ -206,15 +206,15 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
             <table className="w-full text-left border-collapse text-xs">
               <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
                 <tr className="divide-x divide-slate-200 dark:divide-slate-700">
-                  <th className="px-3 py-3">CODE & SCOPE</th>
-                  <th className="px-3 py-3">MODULE NAME & DWG</th>
-                  <th className="px-3 py-3">ENGINEER</th>
-                  <th className="px-3 py-3 text-right">MC PARTS (กลไก)</th>
-                  <th className="px-3 py-3 text-right">EE PARTS (ไฟฟ้า)</th>
-                  <th className="px-3 py-3 text-right">TOTAL COST</th>
-                  <th className="px-3 py-3 text-right">TARGET BUDGET</th>
-                  <th className="px-3 py-3 text-center">PROGRESS (% USED)</th>
-                  <th className="px-3 py-3 text-center">ACTIONS</th>
+                  <th className="px-3 py-3 whitespace-nowrap min-w-[130px]">CODE & SCOPE</th>
+                  <th className="px-3 py-3 min-w-[200px]">MODULE NAME & DWG</th>
+                  <th className="px-3 py-3 whitespace-nowrap min-w-[130px]">ENGINEER</th>
+                  <th className="px-3 py-3 text-right whitespace-nowrap min-w-[110px]">MC PARTS (กลไก)</th>
+                  <th className="px-3 py-3 text-right whitespace-nowrap min-w-[110px]">EE PARTS (ไฟฟ้า)</th>
+                  <th className="px-3 py-3 text-right whitespace-nowrap min-w-[110px]">TOTAL COST</th>
+                  <th className="px-3 py-3 text-right whitespace-nowrap min-w-[120px]">TARGET BUDGET</th>
+                  <th className="px-3 py-3 text-center whitespace-nowrap min-w-[130px]">PROGRESS (% USED)</th>
+                  <th className="px-3 py-3 text-center whitespace-nowrap w-24">ACTIONS</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800">

@@ -286,15 +286,15 @@ export const MasterPartLibrary: React.FC = () => {
                     onChange={handleSelectAll}
                   />
                 </th>
-                <th className="px-3 py-3 w-10 text-center">NO.</th>
-                <th className="px-3 py-3">PART NAME & TYPE SPEC</th>
-                <th className="px-3 py-3 text-center">CAT</th>
-                <th className="px-3 py-3 text-center">PART TYPE</th>
-                <th className="px-3 py-3">MAKER</th>
-                <th className="px-3 py-3">SUPPLIER</th>
-                <th className="px-3 py-3 text-center">LINK</th>
-                <th className="px-3 py-3 text-right">STANDARD PRICE</th>
-                <th className="px-3 py-3 text-center">ACTION</th>
+                <th className="px-3 py-3 w-12 text-center whitespace-nowrap">NO.</th>
+                <th className="px-3 py-3 min-w-[220px]">PART NAME & TYPE SPEC</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap w-16">CAT</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap w-28">PART TYPE</th>
+                <th className="px-3 py-3 whitespace-nowrap min-w-[120px]">MAKER</th>
+                <th className="px-3 py-3 whitespace-nowrap min-w-[130px]">SUPPLIER</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap w-20">LINK</th>
+                <th className="px-3 py-3 text-right whitespace-nowrap min-w-[120px]">STANDARD PRICE</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap w-20">ACTION</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">

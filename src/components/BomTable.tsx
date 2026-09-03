@@ -224,47 +224,47 @@ export const BomTable: React.FC<BomTableProps> = ({
           <table className="w-full text-left border-collapse text-xs">
             <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
               <tr className="divide-x divide-slate-200 dark:divide-slate-700">
-                <th onClick={() => handleSort('itemNo')} className="px-3 py-3 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900">
-                  <div className="flex items-center space-x-1">
+                <th onClick={() => handleSort('itemNo')} className="px-3 py-3 w-16 text-center whitespace-nowrap cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900">
+                  <div className="flex items-center justify-center space-x-1">
                     <span>ITEM #</span>
                     <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
-                <th className="px-3 py-3">DWG. NO.</th>
-                <th onClick={() => handleSort('partName')} className="px-3 py-3 cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900">
+                <th className="px-3 py-3 whitespace-nowrap min-w-[130px]">DWG. NO.</th>
+                <th onClick={() => handleSort('partName')} className="px-3 py-3 min-w-[220px] cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900">
                   <div className="flex items-center space-x-1">
                     <span>PART NAME & TYPE SPEC</span>
                     <ArrowUpDown className="w-3 h-3 text-slate-400" />
                   </div>
                 </th>
-                <th className="px-3 py-3">MODULE</th>
-                <th className="px-3 py-3 text-center">CAT</th>
-                <th className="px-3 py-3 text-center">PART TYPE</th>
-                <th className="px-3 py-3 text-right">Q'TY</th>
-                <th className="px-3 py-3 text-right print:hidden">UNIT PRICE</th>
-                <th onClick={() => handleSort('totalAmount')} className="px-3 py-3 text-right cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900 print:hidden">
+                <th className="px-3 py-3 text-center whitespace-nowrap min-w-[100px]">MODULE</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap w-16">CAT</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap min-w-[110px]">PART TYPE</th>
+                <th className="px-3 py-3 text-right whitespace-nowrap min-w-[80px]">Q'TY</th>
+                <th className="px-3 py-3 text-right whitespace-nowrap min-w-[110px] print:hidden">UNIT PRICE</th>
+                <th onClick={() => handleSort('totalAmount')} className="px-3 py-3 text-right whitespace-nowrap min-w-[120px] cursor-pointer hover:bg-slate-200 dark:hover:bg-slate-900 print:hidden">
                   <div className="flex items-center justify-end space-x-1">
                     <span>TOTAL (฿)</span>
                     <ArrowUpDown className="w-3 h-3 text-slate-400 print:hidden" />
                   </div>
                 </th>
-                <th className="px-3 py-3 print:hidden">SUPPLIER</th>
-                <th className="px-3 py-3 text-center print:hidden">LINK</th>
-                <th className="px-3 py-3 font-mono whitespace-nowrap print:hidden">PO NUMBER</th>
-                <th className="px-3 py-3 whitespace-nowrap min-w-[130px] bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200 print:hidden">
+                <th className="px-3 py-3 whitespace-nowrap min-w-[130px] print:hidden">SUPPLIER</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap w-20 print:hidden">LINK</th>
+                <th className="px-3 py-3 text-center font-mono whitespace-nowrap min-w-[120px] print:hidden">PO NUMBER</th>
+                <th className="px-3 py-3 whitespace-nowrap min-w-[145px] bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200 print:hidden">
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     <span>วันสั่งสินค้า</span>
                   </div>
                 </th>
-                <th className="px-3 py-3 whitespace-nowrap min-w-[160px] bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200 print:hidden">
+                <th className="px-3 py-3 whitespace-nowrap min-w-[170px] bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200 print:hidden">
                   <div className="flex items-center space-x-1">
                     <Truck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                     <span>กำหนดส่งสินค้าเข้า</span>
                   </div>
                 </th>
-                <th className="px-3 py-3 text-center print:hidden">STATUS</th>
-                <th className="px-3 py-3 text-center print:hidden">ACTION</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap min-w-[100px] print:hidden">STATUS</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap w-20 print:hidden">ACTION</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
@@ -279,15 +279,15 @@ export const BomTable: React.FC<BomTableProps> = ({
                   const amount = part.totalAmount || (part.qty * part.unitPrice);
                   return (
                     <tr key={part.id} className="divide-x divide-slate-100 dark:divide-slate-800 hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
-                      <td className="px-3 py-3 font-mono font-bold text-slate-500">{part.itemNo}</td>
-                      <td className="px-3 py-3 font-mono font-bold text-slate-700 dark:text-slate-300 text-[11px]">
+                      <td className="px-3 py-3 font-mono font-bold text-slate-500 text-center whitespace-nowrap">{part.itemNo}</td>
+                      <td className="px-3 py-3 font-mono font-bold text-slate-700 dark:text-slate-300 text-[11px] whitespace-nowrap">
                         {part.dwgNo || '-'}
                       </td>
                       <td className="px-3 py-3">
                         <div className="font-extrabold text-slate-900 dark:text-white">{part.partName}</div>
                         <div className="text-[10px] font-mono text-slate-500">{part.typeSpec || '-'}</div>
                       </td>
-                      <td className="px-3 py-3">
+                      <td className="px-3 py-3 text-center">
                         <span className="px-1.5 py-0.5 rounded text-[10px] font-mono font-bold bg-slate-100 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-200 dark:border-slate-700">
                           {getModuleCode(part.moduleId)}
                         </span>
@@ -341,7 +341,7 @@ export const BomTable: React.FC<BomTableProps> = ({
                       </td>
 
                       {/* PO Number */}
-                      <td className="px-3 py-3 font-mono font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap print:hidden">
+                      <td className="px-3 py-3 font-mono font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap text-center print:hidden">
                         {part.poNumber ? (
                           <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700">
                             {part.poNumber}

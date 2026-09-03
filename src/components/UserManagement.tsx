@@ -167,10 +167,10 @@ export const UserManagement: React.FC = () => {
             <table className="w-full text-sm text-left">
               <thead className="bg-slate-50 dark:bg-slate-800/60 border-b-2 border-slate-200 dark:border-slate-700 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                 <tr className="divide-x divide-slate-200 dark:divide-slate-700">
-                  <th className="px-4 py-3">Username</th>
-                  <th className="px-4 py-3">ชื่อ - นามสกุล</th>
-                  <th className="px-4 py-3">ระดับสิทธิ์ (Role)</th>
-                  <th className="px-4 py-3 text-center">จัดการ</th>
+                  <th className="px-4 py-3 min-w-[160px] whitespace-nowrap">Username</th>
+                  <th className="px-4 py-3 min-w-[180px]">ชื่อ - นามสกุล</th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap min-w-[140px]">ระดับสิทธิ์ (Role)</th>
+                  <th className="px-4 py-3 text-center whitespace-nowrap w-28">จัดการ</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium text-slate-700 dark:text-slate-300">
@@ -188,7 +188,7 @@ export const UserManagement: React.FC = () => {
                       )}
                     </td>
                     <td className="px-4 py-3">{u.name}</td>
-                    <td className="px-4 py-3">
+                    <td className="px-4 py-3 text-center whitespace-nowrap">
                       {u.role === 'LEVEL_2' ? (
                         <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-black bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
                           <Key className="w-3 h-3 mr-1" />

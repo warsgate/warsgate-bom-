@@ -276,9 +276,9 @@ export const MasterPartLibrary: React.FC = () => {
       <div className="rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 overflow-hidden shadow-sm">
         <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
-            <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-black">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
               <tr>
-                <th className="p-2.5 w-10 text-center">
+                <th className="px-3 py-3 w-10 text-center">
                   <input 
                     type="checkbox" 
                     className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
@@ -286,18 +286,18 @@ export const MasterPartLibrary: React.FC = () => {
                     onChange={handleSelectAll}
                   />
                 </th>
-                <th className="p-2.5 w-10 text-center">NO.</th>
-                <th className="p-2.5">PART NAME & TYPE SPEC</th>
-                <th className="p-2.5 text-center">CAT</th>
-                <th className="p-2.5 text-center">PART TYPE</th>
-                <th className="p-2.5">MAKER</th>
-                <th className="p-2.5">SUPPLIER</th>
-                <th className="p-2.5 text-center">LINK</th>
-                <th className="p-2.5 text-right">STANDARD PRICE</th>
-                <th className="p-2.5 text-center">ACTION</th>
+                <th className="px-3 py-3 w-10 text-center">NO.</th>
+                <th className="px-3 py-3">PART NAME & TYPE SPEC</th>
+                <th className="px-3 py-3 text-center">CAT</th>
+                <th className="px-3 py-3 text-center">PART TYPE</th>
+                <th className="px-3 py-3">MAKER</th>
+                <th className="px-3 py-3">SUPPLIER</th>
+                <th className="px-3 py-3 text-center">LINK</th>
+                <th className="px-3 py-3 text-right">STANDARD PRICE</th>
+                <th className="px-3 py-3 text-center">ACTION</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800 bg-white dark:bg-slate-900">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {isLoading ? (
                 <tr>
                   <td colSpan={9} className="p-8 text-center text-slate-400 font-medium">Loading...</td>
@@ -311,8 +311,8 @@ export const MasterPartLibrary: React.FC = () => {
                 </tr>
               ) : (
                 filteredParts.map((part, index) => (
-                  <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors">
-                    <td className="p-2.5 text-center">
+                  <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="px-3 py-3 text-center">
                       <input 
                         type="checkbox" 
                         className="rounded border-slate-300 text-indigo-600 focus:ring-indigo-500 cursor-pointer"
@@ -320,12 +320,12 @@ export const MasterPartLibrary: React.FC = () => {
                         onChange={() => handleSelect(part.id)}
                       />
                     </td>
-                    <td className="p-2.5 font-mono font-bold text-slate-500 text-center">{index + 1}</td>
-                    <td className="p-2.5">
+                    <td className="px-3 py-3 font-mono font-bold text-slate-500 text-center">{index + 1}</td>
+                    <td className="px-3 py-3">
                       <div className="font-extrabold text-slate-900 dark:text-white">{part.partName}</div>
                       <div className="text-[10px] font-mono text-slate-500">{part.typeSpec || '-'}</div>
                     </td>
-                    <td className="p-2.5 text-center">
+                    <td className="px-3 py-3 text-center">
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-black ${
                         part.category === 'MC' 
                           ? 'bg-blue-100 text-blue-800 dark:bg-blue-950 dark:text-blue-300' 
@@ -334,7 +334,7 @@ export const MasterPartLibrary: React.FC = () => {
                         {part.category}
                       </span>
                     </td>
-                    <td className="p-2.5 text-center">
+                    <td className="px-3 py-3 text-center">
                       <span className={`px-1.5 py-0.5 rounded text-[10px] font-bold ${
                         part.partType === 'Standard Part'
                           ? 'bg-sky-50 text-sky-800 dark:bg-sky-950 dark:text-sky-300'
@@ -343,9 +343,9 @@ export const MasterPartLibrary: React.FC = () => {
                         {part.partType}
                       </span>
                     </td>
-                    <td className="p-2.5 text-slate-600 dark:text-slate-400">{part.maker || '-'}</td>
-                    <td className="p-2.5 text-slate-600 dark:text-slate-400">{part.supplier || '-'}</td>
-                    <td className="p-2.5 text-center">
+                    <td className="px-3 py-3 text-slate-600 dark:text-slate-400">{part.maker || '-'}</td>
+                    <td className="px-3 py-3 text-slate-600 dark:text-slate-400">{part.supplier || '-'}</td>
+                    <td className="px-3 py-3 text-center">
                       {part.purchaseLink ? (
                         <a
                           href={part.purchaseLink}
@@ -360,10 +360,10 @@ export const MasterPartLibrary: React.FC = () => {
                         <span className="text-slate-300 dark:text-slate-600">-</span>
                       )}
                     </td>
-                    <td className="p-2.5 text-right font-mono font-black text-slate-900 dark:text-white">
+                    <td className="px-3 py-3 text-right font-mono font-black text-slate-900 dark:text-white">
                       {formatCurrency(part.unitPrice)}
                     </td>
-                    <td className="p-2.5">
+                    <td className="px-3 py-3">
                       <div className="flex items-center justify-center space-x-2">
                         <button onClick={() => openEditModal(part)} className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors" title="แก้ไข">
                           <Edit3 className="w-3.5 h-3.5" />
@@ -495,25 +495,25 @@ export const MasterPartLibrary: React.FC = () => {
             
             <div className="flex-1 overflow-y-auto p-4 custom-scrollbar bg-slate-50 dark:bg-slate-950">
               <table className="w-full text-left border-collapse text-xs bg-white dark:bg-slate-900 rounded-lg overflow-hidden border border-slate-200 dark:border-slate-800">
-                <thead className="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-700 dark:text-slate-300">
+                <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200">
                   <tr>
-                    <th className="p-2 w-10 text-center">NO.</th>
-                    <th className="p-2">PART NAME & SPEC</th>
-                    <th className="p-2 w-20 text-center">UNIT</th>
-                    <th className="p-2 w-32">QUANTITY</th>
-                    <th className="p-2 w-48">REMARK</th>
+                    <th className="px-3 py-3 w-10 text-center">NO.</th>
+                    <th className="px-3 py-3">PART NAME & SPEC</th>
+                    <th className="px-3 py-3 w-20 text-center">UNIT</th>
+                    <th className="px-3 py-3 w-32">QUANTITY</th>
+                    <th className="px-3 py-3 w-48">REMARK</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
                   {filteredParts.filter(p => selectedParts.has(p.id)).map((part, index) => (
-                    <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50">
-                      <td className="p-2 text-center text-slate-500 font-mono">{index + 1}</td>
-                      <td className="p-2">
+                    <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                      <td className="px-3 py-3 text-center text-slate-500 font-mono">{index + 1}</td>
+                      <td className="px-3 py-3">
                         <div className="font-bold text-slate-900 dark:text-white">{part.partName}</div>
                         <div className="text-[10px] text-slate-500 truncate max-w-[250px]">{part.typeSpec || '-'}</div>
                       </td>
-                      <td className="p-2 text-center text-slate-600 font-medium">{part.unit}</td>
-                      <td className="p-2">
+                      <td className="px-3 py-3 text-center text-slate-600 font-medium">{part.unit}</td>
+                      <td className="px-3 py-3">
                         <input 
                           type="number" 
                           min="1"
@@ -523,7 +523,7 @@ export const MasterPartLibrary: React.FC = () => {
                           onChange={(e) => setRfqQuantities({...rfqQuantities, [part.id]: e.target.value})}
                         />
                       </td>
-                      <td className="p-2">
+                      <td className="px-3 py-3">
                         <input 
                           type="text" 
                           placeholder="หมายเหตุเพิ่มเติม..."

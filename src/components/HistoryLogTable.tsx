@@ -51,34 +51,34 @@ export const HistoryLogTable: React.FC = () => {
 
       <div className="flex-1 overflow-auto rounded-xl border border-slate-200 dark:border-slate-700">
         <table className="w-full text-left text-sm whitespace-nowrap">
-          <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10 backdrop-blur-sm border-b border-slate-200 dark:border-slate-700">
+          <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10 backdrop-blur-sm border-b-2 border-slate-200 dark:border-slate-700">
             <tr>
-              <th className="px-6 py-4 font-black text-slate-600 dark:text-slate-300">วัน / เวลา</th>
-              <th className="px-6 py-4 font-black text-slate-600 dark:text-slate-300">ผู้ใช้งาน</th>
-              <th className="px-6 py-4 font-black text-slate-600 dark:text-slate-300">กิจกรรม</th>
-              <th className="px-6 py-4 font-black text-slate-600 dark:text-slate-300 w-full">รายละเอียด</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">วัน / เวลา</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">ผู้ใช้งาน</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">กิจกรรม</th>
+              <th className="px-4 py-3 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300 w-full">รายละเอียด</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
             {isLoading ? (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-slate-500 font-bold">
+                <td colSpan={4} className="px-4 py-3 text-center text-slate-500 font-bold">
                   กำลังโหลดข้อมูล...
                 </td>
               </tr>
             ) : logs.length === 0 ? (
               <tr>
-                <td colSpan={4} className="px-6 py-12 text-center text-slate-500 font-bold">
+                <td colSpan={4} className="px-4 py-3 text-center text-slate-500 font-bold">
                   ยังไม่มีประวัติการใช้งาน
                 </td>
               </tr>
             ) : (
               logs.map((log) => (
                 <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                  <td className="px-6 py-4 font-bold text-slate-700 dark:text-slate-300">
+                  <td className="px-4 py-3 font-bold text-slate-700 dark:text-slate-300">
                     {new Date(log.createdAt).toLocaleString('th-TH')}
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3">
                     <div className="flex items-center gap-2">
                       <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center">
                         <UserIcon className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
@@ -89,12 +89,12 @@ export const HistoryLogTable: React.FC = () => {
                       </div>
                     </div>
                   </td>
-                  <td className="px-6 py-4">
+                  <td className="px-4 py-3">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-black bg-emerald-100 text-emerald-800 dark:bg-emerald-900/30 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800">
                       {log.action}
                     </span>
                   </td>
-                  <td className="px-6 py-4 text-slate-600 dark:text-slate-400 font-medium whitespace-normal">
+                  <td className="px-4 py-3 text-slate-600 dark:text-slate-400 font-medium whitespace-normal">
                     {log.details}
                   </td>
                 </tr>

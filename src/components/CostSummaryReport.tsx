@@ -59,45 +59,45 @@ export const CostSummaryReport: React.FC<CostSummaryReportProps> = ({
           <table className="w-full text-left border-collapse text-xs">
             <thead>
               <tr className="bg-slate-100 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 text-slate-900 dark:text-slate-100 font-black">
-                <th className="p-2.5">CODE</th>
-                <th className="p-2.5">MODULE NAME</th>
-                <th className="p-2.5 text-right font-mono">TARGET BUDGET (฿)</th>
-                <th className="p-2.5 text-right text-blue-700 dark:text-blue-400">1. MC STANDARD</th>
-                <th className="p-2.5 text-right text-blue-700 dark:text-blue-400">2. MC FEB</th>
-                <th className="p-2.5 text-right bg-blue-50/60 dark:bg-blue-950/30 text-blue-900 dark:text-blue-300 font-black">TOTAL MC</th>
-                <th className="p-2.5 text-right text-amber-700 dark:text-amber-400">3. EE STANDARD</th>
-                <th className="p-2.5 text-right text-amber-700 dark:text-amber-400">4. EE FEB</th>
-                <th className="p-2.5 text-right bg-amber-50/60 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 font-black">TOTAL EE</th>
-                <th className="p-2.5 text-right font-black bg-slate-200 dark:bg-slate-800">GRAND TOTAL (฿)</th>
+                <th className="px-3 py-3">CODE</th>
+                <th className="px-3 py-3">MODULE NAME</th>
+                <th className="px-3 py-3 text-right font-mono">TARGET BUDGET (฿)</th>
+                <th className="px-3 py-3 text-right text-blue-700 dark:text-blue-400">1. MC STANDARD</th>
+                <th className="px-3 py-3 text-right text-blue-700 dark:text-blue-400">2. MC FEB</th>
+                <th className="px-3 py-3 text-right bg-blue-50/60 dark:bg-blue-950/30 text-blue-900 dark:text-blue-300 font-black">TOTAL MC</th>
+                <th className="px-3 py-3 text-right text-amber-700 dark:text-amber-400">3. EE STANDARD</th>
+                <th className="px-3 py-3 text-right text-amber-700 dark:text-amber-400">4. EE FEB</th>
+                <th className="px-3 py-3 text-right bg-amber-50/60 dark:bg-amber-950/30 text-amber-900 dark:text-amber-300 font-black">TOTAL EE</th>
+                <th className="px-3 py-3 text-right font-black bg-slate-200 dark:bg-slate-800">GRAND TOTAL (฿)</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
               {moduleSummaries.map((mod) => (
                 <tr key={mod.moduleId} className="hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors">
-                  <td className="p-2.5 font-mono font-bold text-slate-800 dark:text-slate-200">{mod.moduleCode}</td>
-                  <td className="p-2.5 font-extrabold text-slate-900 dark:text-white">{mod.moduleName}</td>
-                  <td className="p-2.5 text-right font-mono font-bold text-slate-600 dark:text-slate-400">
+                  <td className="px-3 py-3 font-mono font-bold text-slate-800 dark:text-slate-200">{mod.moduleCode}</td>
+                  <td className="px-3 py-3 font-extrabold text-slate-900 dark:text-white">{mod.moduleName}</td>
+                  <td className="px-3 py-3 text-right font-mono font-bold text-slate-600 dark:text-slate-400">
                     {formatCurrency(mod.targetBudget)}
                   </td>
-                  <td className="p-2.5 text-right font-mono text-slate-800 dark:text-slate-200">
+                  <td className="px-3 py-3 text-right font-mono text-slate-800 dark:text-slate-200">
                     {formatCurrency(mod.mcStandardCost)}
                   </td>
-                  <td className="p-2.5 text-right font-mono text-slate-800 dark:text-slate-200">
+                  <td className="px-3 py-3 text-right font-mono text-slate-800 dark:text-slate-200">
                     {formatCurrency(mod.mcFebCost)}
                   </td>
-                  <td className="p-2.5 text-right font-mono font-black text-blue-900 dark:text-blue-300 bg-blue-50/40 dark:bg-blue-950/20">
+                  <td className="px-3 py-3 text-right font-mono font-black text-blue-900 dark:text-blue-300 bg-blue-50/40 dark:bg-blue-950/20">
                     {formatCurrency(mod.totalMcCost)}
                   </td>
-                  <td className="p-2.5 text-right font-mono text-slate-800 dark:text-slate-200">
+                  <td className="px-3 py-3 text-right font-mono text-slate-800 dark:text-slate-200">
                     {formatCurrency(mod.eeStandardCost)}
                   </td>
-                  <td className="p-2.5 text-right font-mono text-slate-800 dark:text-slate-200">
+                  <td className="px-3 py-3 text-right font-mono text-slate-800 dark:text-slate-200">
                     {formatCurrency(mod.eeFebCost)}
                   </td>
-                  <td className="p-2.5 text-right font-mono font-black text-amber-900 dark:text-amber-300 bg-amber-50/40 dark:bg-amber-950/20">
+                  <td className="px-3 py-3 text-right font-mono font-black text-amber-900 dark:text-amber-300 bg-amber-50/40 dark:bg-amber-950/20">
                     {formatCurrency(mod.totalEeCost)}
                   </td>
-                  <td className="p-2.5 text-right font-mono font-black text-slate-900 dark:text-white bg-slate-100/60 dark:bg-slate-800/40">
+                  <td className="px-3 py-3 text-right font-mono font-black text-slate-900 dark:text-white bg-slate-100/60 dark:bg-slate-800/40">
                     {formatCurrency(mod.totalModuleCost)}
                   </td>
                 </tr>
@@ -106,27 +106,27 @@ export const CostSummaryReport: React.FC<CostSummaryReportProps> = ({
             {/* Grand Total Row */}
             <tfoot className="bg-slate-900 text-white font-black text-xs border-t-2 border-slate-700">
               <tr>
-                <td colSpan={2} className="p-2.5 text-right uppercase tracking-wider">PROJECT GRAND TOTAL:</td>
-                <td className="p-2.5 text-right font-mono">{formatCurrency(totalTargetBudget)}</td>
-                <td className="p-2.5 text-right font-mono text-blue-300">
+                <td colSpan={2} className="px-3 py-3 text-right uppercase tracking-wider">PROJECT GRAND TOTAL:</td>
+                <td className="px-3 py-3 text-right font-mono">{formatCurrency(totalTargetBudget)}</td>
+                <td className="px-3 py-3 text-right font-mono text-blue-300">
                   {formatCurrency(moduleSummaries.reduce((acc, m) => acc + m.mcStandardCost, 0))}
                 </td>
-                <td className="p-2.5 text-right font-mono text-blue-300">
+                <td className="px-3 py-3 text-right font-mono text-blue-300">
                   {formatCurrency(moduleSummaries.reduce((acc, m) => acc + m.mcFebCost, 0))}
                 </td>
-                <td className="p-2.5 text-right font-mono text-blue-400 bg-blue-950/60">
+                <td className="px-3 py-3 text-right font-mono text-blue-400 bg-blue-950/60">
                   {formatCurrency(totalMcCost)}
                 </td>
-                <td className="p-2.5 text-right font-mono text-amber-300">
+                <td className="px-3 py-3 text-right font-mono text-amber-300">
                   {formatCurrency(moduleSummaries.reduce((acc, m) => acc + m.eeStandardCost, 0))}
                 </td>
-                <td className="p-2.5 text-right font-mono text-amber-300">
+                <td className="px-3 py-3 text-right font-mono text-amber-300">
                   {formatCurrency(moduleSummaries.reduce((acc, m) => acc + m.eeFebCost, 0))}
                 </td>
-                <td className="p-2.5 text-right font-mono text-amber-400 bg-amber-950/60">
+                <td className="px-3 py-3 text-right font-mono text-amber-400 bg-amber-950/60">
                   {formatCurrency(totalEeCost)}
                 </td>
-                <td className="p-2.5 text-right font-mono font-black text-white bg-slate-800">
+                <td className="px-3 py-3 text-right font-mono font-black text-white bg-slate-800">
                   {formatCurrency(totalProjectCost)}
                 </td>
               </tr>

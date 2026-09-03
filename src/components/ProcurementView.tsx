@@ -451,34 +451,34 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
         {/* Data Table */}
         <div className="max-h-[calc(100vh-280px)] overflow-y-auto overflow-x-auto">
           <table className="w-full text-left border-collapse text-xs">
-            <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-black border-b border-slate-200 dark:border-slate-800">
+            <thead className="sticky top-0 z-10 bg-slate-50 dark:bg-slate-900/80 border-b-2 border-slate-200 dark:border-slate-700 text-slate-700 dark:text-slate-200 font-black">
               <tr>
-                <th className="p-2.5 whitespace-nowrap">ITEM #</th>
-                <th className="p-2.5 min-w-[180px]">PART NAME & TYPE SPEC</th>
-                <th className="p-2.5 whitespace-nowrap">SUPPLIER</th>
-                <th className="p-2.5 text-center whitespace-nowrap">LINK</th>
-                <th className="p-2.5 font-mono whitespace-nowrap">PO NUMBER</th>
-                <th className="p-2.5 whitespace-nowrap min-w-[130px] bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200">
+                <th className="px-3 py-3 whitespace-nowrap">ITEM #</th>
+                <th className="px-3 py-3 min-w-[180px]">PART NAME & TYPE SPEC</th>
+                <th className="px-3 py-3 whitespace-nowrap">SUPPLIER</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap">LINK</th>
+                <th className="px-3 py-3 font-mono whitespace-nowrap">PO NUMBER</th>
+                <th className="px-3 py-3 whitespace-nowrap min-w-[130px] bg-blue-50/70 dark:bg-blue-950/30 text-blue-900 dark:text-blue-200">
                   <div className="flex items-center space-x-1">
                     <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                     <span>วันสั่งสินค้า</span>
                   </div>
                 </th>
-                <th className="p-2.5 whitespace-nowrap min-w-[160px] bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200">
+                <th className="px-3 py-3 whitespace-nowrap min-w-[160px] bg-indigo-50/70 dark:bg-indigo-950/30 text-indigo-900 dark:text-indigo-200">
                   <div className="flex items-center space-x-1">
                     <Truck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
                     <span>กำหนดส่งสินค้าเข้า</span>
                   </div>
                 </th>
-                <th className="p-2.5 text-right whitespace-nowrap">TARGET COST (฿)</th>
-                <th className="p-2.5 text-right whitespace-nowrap">ACTUAL PO COST (฿)</th>
-                <th className="p-2.5 text-center whitespace-nowrap">VARIANCE</th>
-                <th className="p-2.5 whitespace-nowrap">STORE LOCATION</th>
-                <th className="p-2.5 text-center whitespace-nowrap">STATUS</th>
-                <th className="p-2.5 text-center whitespace-nowrap">ACTION</th>
+                <th className="px-3 py-3 text-right whitespace-nowrap">TARGET COST (฿)</th>
+                <th className="px-3 py-3 text-right whitespace-nowrap">ACTUAL PO COST (฿)</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap">VARIANCE</th>
+                <th className="px-3 py-3 whitespace-nowrap">STORE LOCATION</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap">STATUS</th>
+                <th className="px-3 py-3 text-center whitespace-nowrap">ACTION</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800">
               {filteredParts.map(part => {
                 const targetAmt = part.targetTotalAmount || (part.qty * (part.targetUnitPrice || part.unitPrice));
                 const actualAmt = part.totalAmount || (part.qty * part.unitPrice);
@@ -486,10 +486,10 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                 const isSavingsItem = diff >= 0;
 
                 return (
-                  <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors">
-                    <td className="p-2.5 font-mono font-bold text-slate-500">{part.itemNo}</td>
+                  <tr key={part.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="px-3 py-3 font-mono font-bold text-slate-500">{part.itemNo}</td>
                     
-                    <td className="p-2.5">
+                    <td className="px-3 py-3">
                       <div className="font-extrabold text-slate-900 dark:text-white flex items-center justify-between group">
                         <span>{part.partName}</span>
                         <button
@@ -503,11 +503,11 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       <div className="text-[10px] font-mono text-slate-500">{part.typeSpec || '-'}</div>
                     </td>
 
-                    <td className="p-2.5 font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                    <td className="px-3 py-3 font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
                       {part.supplier || <span className="text-slate-400 font-normal italic">-</span>}
                     </td>
 
-                    <td className="p-2.5 text-center whitespace-nowrap">
+                    <td className="px-3 py-3 text-center whitespace-nowrap">
                       {part.purchaseLink ? (
                         <a
                           href={part.purchaseLink}
@@ -523,7 +523,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       )}
                     </td>
 
-                    <td className="p-2.5 font-mono font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
+                    <td className="px-3 py-3 font-mono font-bold text-slate-800 dark:text-slate-200 whitespace-nowrap">
                       {part.poNumber ? (
                         <span className="px-1.5 py-0.5 rounded bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-200 dark:border-slate-700">
                           {part.poNumber}
@@ -534,7 +534,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                     </td>
 
                     {/* วันสั่งสินค้า (Order Date) */}
-                    <td className="p-2.5 bg-blue-50/30 dark:bg-blue-950/10 whitespace-nowrap">
+                    <td className="px-3 py-3 bg-blue-50/30 dark:bg-blue-950/10 whitespace-nowrap">
                       <div className="flex items-center space-x-1.5">
                         <Calendar className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 shrink-0" />
                         <input
@@ -551,7 +551,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                     </td>
 
                     {/* กำหนดส่งสินค้าเข้า (Receive / Expected Delivery Date) */}
-                    <td className="p-2.5 bg-indigo-50/30 dark:bg-indigo-950/10 whitespace-nowrap">
+                    <td className="px-3 py-3 bg-indigo-50/30 dark:bg-indigo-950/10 whitespace-nowrap">
                       <div className="flex flex-col space-y-1">
                         <div className="flex items-center space-x-1.5">
                           <Truck className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
@@ -570,15 +570,15 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       </div>
                     </td>
 
-                    <td className="p-2.5 text-right font-mono text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">
+                    <td className="px-3 py-3 text-right font-mono text-slate-600 dark:text-slate-400 font-medium whitespace-nowrap">
                       {formatCurrency(targetAmt)}
                     </td>
 
-                    <td className="p-2.5 text-right font-mono font-black text-slate-900 dark:text-white whitespace-nowrap">
+                    <td className="px-3 py-3 text-right font-mono font-black text-slate-900 dark:text-white whitespace-nowrap">
                       {formatCurrency(actualAmt)}
                     </td>
 
-                    <td className="p-2.5 text-center whitespace-nowrap">
+                    <td className="px-3 py-3 text-center whitespace-nowrap">
                       {isSavingsItem ? (
                         <span className="text-emerald-700 dark:text-emerald-400 font-bold text-[11px]">
                           +{formatCurrency(diff)}
@@ -590,7 +590,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       )}
                     </td>
 
-                    <td className="p-2.5 text-slate-800 dark:text-slate-200 font-mono text-[11px] whitespace-nowrap">
+                    <td className="px-3 py-3 text-slate-800 dark:text-slate-200 font-mono text-[11px] whitespace-nowrap">
                       {part.storeLocation ? (
                         <span className="inline-flex items-center text-emerald-700 dark:text-emerald-400 font-bold">
                           <Warehouse className="w-3 h-3 mr-1" /> {part.storeLocation}
@@ -600,7 +600,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       )}
                     </td>
 
-                    <td className="p-2.5 text-center whitespace-nowrap">
+                    <td className="px-3 py-3 text-center whitespace-nowrap">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
                         part.status === 'Received' || part.status === 'Completed' || part.status === 'In Assembly'
                           ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-950 dark:text-emerald-300'
@@ -612,7 +612,7 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
                       </span>
                     </td>
 
-                    <td className="p-2.5 text-center whitespace-nowrap">
+                    <td className="px-3 py-3 text-center whitespace-nowrap">
                       <div className="flex items-center justify-center space-x-1.5">
                         {part.status === 'Planned' && (
                           <button

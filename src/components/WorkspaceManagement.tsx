@@ -83,64 +83,64 @@ export const WorkspaceManagement: React.FC<WorkspaceManagementProps> = ({
       {/* Projects Table */}
       <div className="flex-1 bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden flex flex-col">
         <div className="overflow-x-auto flex-1">
-          <table className="w-full text-left whitespace-nowrap">
-            <thead className="bg-slate-50 dark:bg-slate-800/50 sticky top-0 z-10 border-b border-slate-200 dark:border-slate-700">
+          <table className="w-full text-left whitespace-nowrap text-sm">
+            <thead className="bg-slate-50 dark:bg-slate-800/60 sticky top-0 z-10 border-b-2 border-slate-200 dark:border-slate-700">
               <tr>
-                <th className="px-6 py-4 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">โปรเจกต์</th>
-                <th className="px-6 py-4 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">บริษัทลูกค้า</th>
-                <th className="px-6 py-4 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">ยอดเงิน (Budget)</th>
-                <th className="px-6 py-4 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">วันรับ PO</th>
-                <th className="px-6 py-4 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">ข้อมูลผู้ติดต่อ</th>
-                <th className="px-6 py-4 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">สถานะ</th>
-                <th className="px-6 py-4 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">จัดการ</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">โปรเจกต์</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">บริษัทลูกค้า</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">ยอดเงิน (Budget)</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">วันรับ PO</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">ข้อมูลผู้ติดต่อ</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider">สถานะ</th>
+                <th className="px-4 py-3 font-black text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wider text-right">จัดการ</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-slate-100 dark:divide-slate-800/50">
               {projects.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-slate-500 font-bold">
+                  <td colSpan={7} className="px-4 py-12 text-center text-slate-500 font-bold">
                     ยังไม่มีข้อมูลโปรเจกต์
                   </td>
                 </tr>
               ) : (
                 projects.map((p) => (
-                  <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/50 transition-colors">
-                    <td className="px-6 py-4">
+                  <tr key={p.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="px-4 py-3">
                       <div className="font-black text-slate-900 dark:text-white">{p.code}</div>
-                      <div className="text-sm font-bold text-slate-500 dark:text-slate-400">{p.name}</div>
+                      <div className="text-xs font-bold text-slate-500 dark:text-slate-400">{p.name}</div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <div className="flex items-center">
                         <Building2 className="w-4 h-4 mr-2 text-slate-400" />
                         <span className="font-bold text-slate-700 dark:text-slate-300">{p.customer}</span>
                       </div>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <span className="font-bold text-emerald-600 dark:text-emerald-400">
                         ฿{(p.targetBudget || 0).toLocaleString()}
                       </span>
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       {p.poDate ? (
                         <div className="flex items-center text-slate-600 dark:text-slate-300">
                           <Calendar className="w-4 h-4 mr-2 text-slate-400" />
                           <span className="font-semibold">{new Date(p.poDate).toLocaleDateString('th-TH')}</span>
                         </div>
                       ) : (
-                        <span className="text-slate-400 italic text-sm">ยังไม่ระบุ</span>
+                        <span className="text-slate-400 italic text-xs">ยังไม่ระบุ</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       {p.contactPerson ? (
                         <div className="flex items-center text-slate-600 dark:text-slate-300">
                           <Phone className="w-4 h-4 mr-2 text-slate-400" />
                           <span className="font-semibold">{p.contactPerson}</span>
                         </div>
                       ) : (
-                        <span className="text-slate-400 italic text-sm">ยังไม่ระบุ</span>
+                        <span className="text-slate-400 italic text-xs">ยังไม่ระบุ</span>
                       )}
                     </td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">
                       <span className={`inline-flex items-center px-2.5 py-1 rounded-md text-xs font-black ${
                         p.status === 'Completed' ? 'bg-emerald-100 text-emerald-700 dark:bg-emerald-900/30 dark:text-emerald-400' :
                         p.status === 'On Hold' ? 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400' :
@@ -149,11 +149,11 @@ export const WorkspaceManagement: React.FC<WorkspaceManagementProps> = ({
                         {p.status}
                       </span>
                     </td>
-                    <td className="px-6 py-4 text-right">
+                    <td className="px-4 py-3 text-right">
                       <div className="flex items-center justify-end space-x-2">
                         <button
                           onClick={() => onEditProject(p)}
-                          className="p-2 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+                          className="p-1.5 text-slate-400 hover:text-blue-600 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
                           title="แก้ไขโปรเจกต์"
                         >
                           <Edit2 className="w-4 h-4" />

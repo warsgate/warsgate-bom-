@@ -130,7 +130,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
       </div>
 
       {/* Filter Bar & Controls */}
-      <div className="p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-2 text-xs">
+      <div className="px-3 py-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-2 text-xs">
         
         {/* Module Scope Filter */}
         <div className="flex flex-wrap items-center gap-1.5">
@@ -206,15 +206,15 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
             <table className="w-full text-left border-collapse text-xs">
               <thead className="sticky top-0 z-10 bg-slate-100 dark:bg-slate-950 text-slate-900 dark:text-slate-100 font-black border-b border-slate-200 dark:border-slate-800">
                 <tr>
-                  <th className="p-3">CODE & SCOPE</th>
-                  <th className="p-3">MODULE NAME & DWG</th>
-                  <th className="p-3">ENGINEER</th>
-                  <th className="p-3 text-right">MC PARTS (กลไก)</th>
-                  <th className="p-3 text-right">EE PARTS (ไฟฟ้า)</th>
-                  <th className="p-3 text-right">TOTAL COST</th>
-                  <th className="p-3 text-right">TARGET BUDGET</th>
-                  <th className="p-3 text-center">PROGRESS (% USED)</th>
-                  <th className="p-3 text-center">ACTIONS</th>
+                  <th className="px-3 py-3">CODE & SCOPE</th>
+                  <th className="px-3 py-3">MODULE NAME & DWG</th>
+                  <th className="px-3 py-3">ENGINEER</th>
+                  <th className="px-3 py-3 text-right">MC PARTS (กลไก)</th>
+                  <th className="px-3 py-3 text-right">EE PARTS (ไฟฟ้า)</th>
+                  <th className="px-3 py-3 text-right">TOTAL COST</th>
+                  <th className="px-3 py-3 text-right">TARGET BUDGET</th>
+                  <th className="px-3 py-3 text-center">PROGRESS (% USED)</th>
+                  <th className="px-3 py-3 text-center">ACTIONS</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-200 dark:divide-slate-800">
@@ -241,7 +241,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                       <tr key={mod.id} className="hover:bg-slate-50 dark:hover:bg-slate-900/60 transition-colors">
                         
                         {/* Module Code & Scope */}
-                        <td className="p-3">
+                        <td className="px-3 py-3">
                           <div className="flex items-center space-x-1.5">
                             <span className="px-2 py-0.5 rounded text-xs font-mono font-black bg-slate-100 dark:bg-slate-800 text-slate-900 dark:text-slate-100 border border-slate-300 dark:border-slate-700">
                               {mod.code}
@@ -261,7 +261,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                         </td>
 
                         {/* Module Name & DWG */}
-                        <td className="p-3">
+                        <td className="px-3 py-3">
                           <div className="font-extrabold text-slate-900 dark:text-white text-xs">{mod.name}</div>
                           {mod.dwgNo && (
                             <div className="text-[10px] font-mono text-slate-500 font-bold">
@@ -271,7 +271,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                         </td>
 
                         {/* Responsible Engineer */}
-                        <td className="p-3 text-slate-700 dark:text-slate-300 font-bold text-xs">
+                        <td className="px-3 py-3 text-slate-700 dark:text-slate-300 font-bold text-xs">
                           <div className="flex items-center">
                             <User className="w-3 h-3 mr-1 text-slate-400" />
                             {mod.responsibleEngineer || 'Jeerawat'}
@@ -279,7 +279,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                         </td>
 
                         {/* MC Cost & Count */}
-                        <td className="p-3 text-right">
+                        <td className="px-3 py-3 text-right">
                           <div className="font-mono font-black text-blue-700 dark:text-blue-400 text-xs">
                             {formatCurrency(mcCost)}
                           </div>
@@ -289,7 +289,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                         </td>
 
                         {/* EE Cost & Count */}
-                        <td className="p-3 text-right">
+                        <td className="px-3 py-3 text-right">
                           <div className="font-mono font-black text-amber-700 dark:text-amber-400 text-xs">
                             {formatCurrency(eeCost)}
                           </div>
@@ -299,17 +299,17 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                         </td>
 
                         {/* Total Cost */}
-                        <td className="p-3 text-right font-mono font-black text-slate-900 dark:text-white text-sm bg-slate-50/50 dark:bg-slate-950/50">
+                        <td className="px-3 py-3 text-right font-mono font-black text-slate-900 dark:text-white text-sm bg-slate-50/50 dark:bg-slate-950/50">
                           {formatCurrency(totalCost)}
                         </td>
 
                         {/* Target Budget */}
-                        <td className="p-3 text-right font-mono font-bold text-slate-600 dark:text-slate-400 text-xs">
+                        <td className="px-3 py-3 text-right font-mono font-bold text-slate-600 dark:text-slate-400 text-xs">
                           {formatCurrency(targetBudget)}
                         </td>
 
                         {/* Budget Utilization Progress Bar */}
-                        <td className="p-3 text-center w-36">
+                        <td className="px-3 py-3 text-center w-36">
                           <div className="space-y-1">
                             <div className="flex justify-between items-center text-[10px] font-black">
                               <span className={isOver ? 'text-rose-600' : 'text-emerald-700 dark:text-emerald-400'}>
@@ -331,7 +331,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
                         </td>
 
                         {/* Actions */}
-                        <td className="p-3 text-center">
+                        <td className="px-3 py-3 text-center">
                           <div className="flex items-center justify-center space-x-1">
                             <button
                               onClick={() => onOpenAddPartToModule(mod.id)}
@@ -372,12 +372,12 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
               {/* Summary Footer */}
               <tfoot className="bg-slate-100 dark:bg-slate-950 font-black text-xs border-t-2 border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white">
                 <tr>
-                  <td colSpan={3} className="p-3 text-right uppercase tracking-wider">TOTAL FILTERED SUMMARY:</td>
-                  <td className="p-3 text-right font-mono text-blue-700 dark:text-blue-400">{formatCurrency(grandTotalMcCost)}</td>
-                  <td className="p-3 text-right font-mono text-amber-700 dark:text-amber-400">{formatCurrency(grandTotalEeCost)}</td>
-                  <td className="p-3 text-right font-mono text-slate-900 dark:text-white text-sm bg-slate-200 dark:bg-slate-800">{formatCurrency(grandTotalCost)}</td>
-                  <td className="p-3 text-right font-mono text-slate-700 dark:text-slate-300">{formatCurrency(grandTotalBudget)}</td>
-                  <td colSpan={2} className="p-3 text-center">
+                  <td colSpan={3} className="px-3 py-3 text-right uppercase tracking-wider">TOTAL FILTERED SUMMARY:</td>
+                  <td className="px-3 py-3 text-right font-mono text-blue-700 dark:text-blue-400">{formatCurrency(grandTotalMcCost)}</td>
+                  <td className="px-3 py-3 text-right font-mono text-amber-700 dark:text-amber-400">{formatCurrency(grandTotalEeCost)}</td>
+                  <td className="px-3 py-3 text-right font-mono text-slate-900 dark:text-white text-sm bg-slate-200 dark:bg-slate-800">{formatCurrency(grandTotalCost)}</td>
+                  <td className="px-3 py-3 text-right font-mono text-slate-700 dark:text-slate-300">{formatCurrency(grandTotalBudget)}</td>
+                  <td colSpan={2} className="px-3 py-3 text-center">
                     <span className="text-[11px] font-black text-slate-700 dark:text-slate-300">
                       แสดง {filteredModules.length} Modules
                     </span>

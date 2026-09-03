@@ -165,18 +165,18 @@ export const UserManagement: React.FC = () => {
         <div className="bg-white dark:bg-slate-900 rounded-2xl shadow-sm border border-slate-200 dark:border-slate-800 overflow-hidden">
           <div className="overflow-x-auto">
             <table className="w-full text-sm text-left">
-              <thead className="bg-slate-50 dark:bg-slate-800/50 text-slate-500 dark:text-slate-400 font-bold uppercase text-[11px] tracking-wider border-b border-slate-200 dark:border-slate-800">
+              <thead className="bg-slate-50 dark:bg-slate-800/60 border-b-2 border-slate-200 dark:border-slate-700 text-xs font-bold uppercase tracking-wide text-slate-600 dark:text-slate-300">
                 <tr>
-                  <th className="px-6 py-4">Username</th>
-                  <th className="px-6 py-4">ชื่อ - นามสกุล</th>
-                  <th className="px-6 py-4">ระดับสิทธิ์ (Role)</th>
-                  <th className="px-6 py-4 text-center">จัดการ</th>
+                  <th className="px-4 py-3">Username</th>
+                  <th className="px-4 py-3">ชื่อ - นามสกุล</th>
+                  <th className="px-4 py-3">ระดับสิทธิ์ (Role)</th>
+                  <th className="px-4 py-3 text-center">จัดการ</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-medium text-slate-700 dark:text-slate-300">
+              <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium text-slate-700 dark:text-slate-300">
                 {users.map(u => (
-                  <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/30 transition-colors">
-                    <td className="px-6 py-4 font-bold text-slate-900 dark:text-white flex items-center">
+                  <tr key={u.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition-colors">
+                    <td className="px-4 py-3 font-bold text-slate-900 dark:text-white flex items-center">
                       <div className="w-8 h-8 rounded-full bg-indigo-100 dark:bg-indigo-900/50 flex items-center justify-center text-indigo-600 dark:text-indigo-400 mr-3">
                         {u.username.charAt(0).toUpperCase()}
                       </div>
@@ -187,8 +187,8 @@ export const UserManagement: React.FC = () => {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4">{u.name}</td>
-                    <td className="px-6 py-4">
+                    <td className="px-4 py-3">{u.name}</td>
+                    <td className="px-4 py-3">
                       {u.role === 'LEVEL_2' ? (
                         <span className="inline-flex items-center px-2.5 py-1 rounded-md text-[11px] font-black bg-amber-100 text-amber-800 dark:bg-amber-900/40 dark:text-amber-300 border border-amber-200 dark:border-amber-800/50">
                           <Key className="w-3 h-3 mr-1" />
@@ -201,7 +201,7 @@ export const UserManagement: React.FC = () => {
                         </span>
                       )}
                     </td>
-                    <td className="px-6 py-4 text-center">
+                    <td className="px-4 py-3 text-center">
                       <div className="flex justify-center items-center space-x-2">
                         <button
                           onClick={() => handleOpenModal(u)}

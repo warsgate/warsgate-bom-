@@ -66,7 +66,7 @@ router.delete('/:id', async (req: Request, res: Response) => {
 router.post('/bulk', async (req: Request, res: Response) => {
   try {
     const { parts } = req.body;
-    const created = await prisma.part.createMany({ data: parts, skipDuplicates: true });
+    const created = await (prisma.part as any).createMany({ data: parts });
     res.status(201).json({ count: created.count });
   } catch (err) {
     res.status(500).json({ error: 'Failed to bulk import parts' });

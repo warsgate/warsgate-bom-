@@ -1,7 +1,35 @@
 import prisma from './prisma';
+import bcrypt from 'bcryptjs';
 
 async function seed() {
   console.log('🌱 Seeding database...');
+
+  // 0. Create default users
+  const adminHash = await bcrypt.hash('admin', 10);
+  const engineerHash = await bcrypt.hash('admin123', 10);
+
+  await prisma.user.upsert({
+    where: { username: 'admin' },
+    update: { password: adminHash },
+    create: {
+      username: 'admin',
+      password: adminHash,
+      role: 'LEVEL_2',
+      name: 'Executive Admin',
+    },
+  });
+
+  await prisma.user.upsert({
+    where: { username: 'engineer' },
+    update: { password: engineerHash },
+    create: {
+      username: 'engineer',
+      password: engineerHash,
+      role: 'LEVEL_1',
+      name: 'Lead Engineer',
+    },
+  });
+  console.log('✅ Users seeded (admin / engineer)');
 
   // 1. Create default project
   const project = await prisma.project.upsert({

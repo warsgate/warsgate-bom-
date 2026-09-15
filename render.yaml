@@ -9,16 +9,14 @@ services:
     runtime: node
     rootDir: backend
     buildCommand: npm install && npm run db:generate && npm run build
-    startCommand: npx prisma db push --accept-data-loss && npm run start
+    startCommand: npx prisma db push --accept-data-loss && npx ts-node src/seed.ts && npm run start
     envVars:
       - key: NODE_VERSION
         value: 20
       - key: DATABASE_URL
-        fromDatabase:
-          name: warsgate-bom-db
-          property: connectionString
+        value: file:./prisma/dev.db
       - key: FRONTEND_URL
-        value: https://warsgate-bom.onrender.com   # <-- change to your frontend URL
+        value: https://warsgate-bom.onrender.com
 
   # ─── Frontend React App (Static Site) ───────────────────────
   - type: web
@@ -31,11 +29,4 @@ services:
       - key: NODE_VERSION
         value: 20
       - key: VITE_API_URL
-        value: https://warsgate-bom-api.onrender.com/api  # <-- your backend URL
-
-# ─── PostgreSQL Database ─────────────────────────────────────
-databases:
-  - name: warsgate-bom-db
-    plan: free
-    databaseName: warsgate_bom
-    user: warsgate
+        value: https://warsgate-bom-api.onrender.com/api

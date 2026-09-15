@@ -21,3 +21,6 @@ project-*.json
 
 # Prisma
 backend/prisma/migrations/
+*.db
+backend/prisma/*.prisma.pg
+backend/prisma/*.sqlite.prisma

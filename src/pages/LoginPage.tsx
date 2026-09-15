@@ -112,8 +112,21 @@ export const LoginPage: React.FC = () => {
             </div>
           </form>
           
-          <div className="mt-6 text-center text-xs text-slate-500 dark:text-slate-500">
-            * การเข้าสู่ระบบครั้งแรกหากยังไม่มีผู้ใช้ในระบบ ระบบจะสร้างบัญชี Admin ให้โดยอัตโนมัติ
+          <div className="mt-6 p-3.5 rounded-2xl bg-indigo-50/70 dark:bg-indigo-950/40 border border-indigo-200 dark:border-indigo-800/60 text-xs text-slate-700 dark:text-slate-300">
+            <div className="font-bold text-indigo-900 dark:text-indigo-200 mb-1.5 flex items-center justify-between">
+              <span>บัญชีเข้าใช้งานระบบ (Default Login):</span>
+              <button
+                type="button"
+                onClick={() => { setUsername('admin'); setPassword('admin'); }}
+                className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 hover:text-indigo-800 dark:hover:text-indigo-300 bg-white dark:bg-slate-900 px-2 py-0.5 rounded-lg border border-indigo-200 dark:border-indigo-700 shadow-sm cursor-pointer transition-colors"
+              >
+                กดเพื่อกรอก Admin ทันที
+              </button>
+            </div>
+            <div className="flex flex-col sm:flex-row sm:justify-between font-mono text-[11px] gap-1 text-slate-600 dark:text-slate-400">
+              <span>• Admin: <strong className="text-slate-800 dark:text-slate-200">admin</strong> / รหัส: <strong className="text-slate-800 dark:text-slate-200">admin</strong></span>
+              <span>• Engineer: <strong className="text-slate-800 dark:text-slate-200">engineer</strong> / รหัส: <strong className="text-slate-800 dark:text-slate-200">admin123</strong></span>
+            </div>
           </div>
         </div>
       </div>

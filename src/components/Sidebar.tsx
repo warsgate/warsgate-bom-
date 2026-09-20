@@ -31,8 +31,8 @@ import {
 import { ProjectItem } from '../types/bom';
 
 interface SidebarProps {
-  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify';
-  onTabChange: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify') => void;
+  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify' | 'production-workflow';
+  onTabChange: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify' | 'production-workflow') => void;
   projects: ProjectItem[];
   activeProjectId: string;
   setActiveProjectId: (id: string) => void;
@@ -151,6 +151,13 @@ export const Sidebar: React.FC<SidebarProps> = ({
           subLabel: 'ตารางอะไหล่ชิ้นส่วน',
           icon: TableIcon,
           badge: totalItems > 0 ? totalItems : undefined,
+        },
+        {
+          id: 'production-workflow',
+          label: 'Production Workflow',
+          subLabel: '9 ขั้นตอนผลิตเครื่องจักร',
+          icon: Cpu,
+          badge: 'Kanban',
         },
       ]
     },

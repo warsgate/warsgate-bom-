@@ -1,10 +1,10 @@
 import prisma from './prisma';
 import bcrypt from 'bcryptjs';
 
-async function seed() {
-  console.log('🌱 Seeding database...');
+async function seedExactProjects() {
+  console.log('Seeding 2 requested projects: PRJ-527 & PRJ-107...');
 
-  // ── 0. Users ─────────────────────────────────────────────────
+  // 0. Ensure users exist
   const adminHash = await bcrypt.hash('admin', 10);
   const engineerHash = await bcrypt.hash('admin123', 10);
 
@@ -18,224 +18,449 @@ async function seed() {
     update: { password: engineerHash },
     create: { username: 'engineer', password: engineerHash, role: 'LEVEL_1', name: 'Lead Engineer' },
   });
-  console.log('✅ Users seeded');
 
-  // ── 1. Projects (ข้อมูลจริงจากเอกสาร) ───────────────────────
-  const projectsData = [
-    {
-      id: 'proj-1',
-      code: 'PRJ-001',
-      name: 'Camera Vision Box Control System',
-      customer: 'Maxwell ( Camera Vision 1 ) Keyence',
-      dwgNo: '073007-000-000-A',
-      targetBudget: 122000,
-      description: 'Control Box, Power Supply & Keyence Camera Vision 1 Assembly (DWG: 073007)',
-      status: 'Active',
-    },
-    {
-      id: 'proj-2',
-      code: 'PRJ-002',
-      name: 'Automated Pick & Place Gantry Robot',
-      customer: 'Western Digital (Thailand)',
-      dwgNo: '084012-000-000-B',
-      targetBudget: 250000,
-      description: 'High-speed 3-Axis Servo Gantry Robot & Safety Fencing Unit',
-      status: 'Active',
-    },
-    {
-      id: 'proj-3',
-      code: 'B0007',
-      name: 'EE AUTO PACK Control System',
-      customer: 'Auto Pack Automation',
-      dwgNo: 'B0007-000-000-A',
-      targetBudget: 350000,
-      description: 'Electrical & Automation Packaging Line Control System',
-      status: 'Active',
-    },
-  ];
+  // 1. Delete all other projects and their data
+  await prisma.part.deleteMany({});
+  await prisma.masterTask.deleteMany({});
+  await prisma.module.deleteMany({});
+  await prisma.quotation.deleteMany({});
+  await prisma.project.deleteMany({});
 
-  for (const proj of projectsData) {
-    const existing = await prisma.project.findFirst({
-      where: { OR: [{ id: proj.id }, { code: proj.code }] },
-    });
-    if (existing) {
-      await prisma.project.update({ where: { id: existing.id }, data: proj });
-    } else {
-      await prisma.project.create({ data: proj });
+  // 2. Create PRJ-527: Tracking ability Line ADC
+  const prj527 = await prisma.project.create({
+    data: {
+      id: 'proj-527',
+      code: 'PRJ-527',
+      runningNumber: 527,
+      name: 'Tracking ability Line ADC',
+      customer: 'บริษัท พีเอ็นพี เทคโนโลยี เกรท จำกัด',
+      customerId: '001',
+      dwgNo: 'ADC-2608-001',
+      targetBudget: 1244713.60,
+      description: 'โครงการ PLC Control Board (Ethernet IP) & Tracking ability Line ADC (PO: 2607001 / QT-2607-001)',
+      status: 'Active',
+      startDate: '2026-08-01',
+      targetDeliveryDate: '2026-09-30',
+      poDate: '2026-07-20',
+      contactPerson: 'Mr. Patama (คุณปัทมะ จินดาพงษ์)',
     }
-  }
-  console.log('✅ Projects seeded: PRJ-001, PRJ-002, B0007');
+  });
 
-  // ── 2. Modules (ข้อมูลจริงจาก Excel) ───────────────────────
-  const modulesData = [
-    // PRJ-001 modules
-    {
-      id: 'mod-1',
-      projectId: 'proj-1',
-      code: 'MOD-BOX-CTRL',
-      name: 'Main Box Control Unit',
-      dwgNo: '073007-000-000-A',
-      description: 'Main Control Enclosure Panel, PLC & Power Management',
-      targetBudget: 45000,
-      responsibleEngineer: 'Jeerawat',
-      moduleType: 'BOTH',
-      status: 'Active',
-    },
-    {
-      id: 'mod-2',
-      projectId: 'proj-1',
-      code: 'MOD-KEYENCE-VIS',
-      name: 'Vision & Controller Interface',
-      dwgNo: '073007-900-000-A',
-      description: 'Keyence Vision Camera, Monitor, Mini PC & Safety Interface',
-      targetBudget: 30000,
-      responsibleEngineer: 'Jeerawat',
-      moduleType: 'BOTH',
-      status: 'Active',
-    },
-    // PRJ-002 modules
-    {
-      id: 'mod-201',
-      projectId: 'proj-2',
-      code: 'MOD-GANTRY-ROBOT',
-      name: '3-Axis Gantry Linear Servo Unit',
-      dwgNo: '084012-010-000-B',
-      description: 'Linear Servo Actuators, Gripper Mechanism & Cable Carriers',
-      targetBudget: 160000,
-      responsibleEngineer: 'Wichai (Robot Lead)',
-      moduleType: 'BOTH',
-      status: 'Active',
-    },
-    {
-      id: 'mod-202',
-      projectId: 'proj-2',
-      code: 'MOD-SAFETY-FENCE',
-      name: 'Safety Interlock Guard Fence',
-      dwgNo: '084012-020-000-B',
-      description: 'Acrylic Guarding, Aluminum Frames & Safety Door Interlocks',
-      targetBudget: 90000,
-      responsibleEngineer: 'Jeerawat',
-      moduleType: 'MC_ONLY',
-      status: 'Active',
-    },
-    // B0007 modules
-    {
-      id: 'mod-301',
-      projectId: 'proj-3',
-      code: 'MOD-AUTO-PACK-EE',
-      name: 'EE Auto Pack Electrical Station',
-      dwgNo: 'B0007-010-000-A',
-      description: 'Packaging Line Sensors, PLC & Electrical Distribution',
-      targetBudget: 180000,
+  // Modules for PRJ-527
+  const mod527_1 = await prisma.module.create({
+    data: {
+      id: 'mod-527-1',
+      projectId: prj527.id,
+      code: 'MOD-ADC-PLC',
+      name: 'PLC Control Board & Ethernet IP',
+      dwgNo: 'ADC-MOD-001',
+      description: 'Main PLC Control Board CJ1W-EIP21 & Ethernet Communication',
+      targetBudget: 750000,
       responsibleEngineer: 'Jeerawat',
       moduleType: 'EE_ONLY',
       status: 'Active',
-    },
-    {
-      id: 'mod-302',
-      projectId: 'proj-3',
-      code: 'MOD-AUTO-PACK-MC',
-      name: 'Auto Pack Conveyor & Sealing Mechanism',
-      dwgNo: 'B0007-020-000-A',
-      description: 'Belt Drive, Pneumatics & Sealing Jaws',
-      targetBudget: 170000,
+    }
+  });
+
+  const mod527_2 = await prisma.module.create({
+    data: {
+      id: 'mod-527-2',
+      projectId: prj527.id,
+      code: 'MOD-ADC-SUBBOX',
+      name: 'Sub PLC Box & Accessories',
+      dwgNo: 'ADC-MOD-002',
+      description: 'Sub PLC Box 6 Set, Power Supply, Module Link & Cable Link',
+      targetBudget: 160000,
+      responsibleEngineer: 'Jeerawat',
+      moduleType: 'EE_ONLY',
+      status: 'Active',
+    }
+  });
+
+  const mod527_3 = await prisma.module.create({
+    data: {
+      id: 'mod-527-3',
+      projectId: prj527.id,
+      code: 'MOD-ADC-SERVER',
+      name: 'Rack PC Center & Data Center',
+      dwgNo: 'ADC-MOD-003',
+      description: 'Cisco Hub, 12U Rack Server, Control Box & Industrial PC',
+      targetBudget: 285000,
+      responsibleEngineer: 'Jeerawat',
+      moduleType: 'BOTH',
+      status: 'Active',
+    }
+  });
+
+  const mod527_4 = await prisma.module.create({
+    data: {
+      id: 'mod-527-4',
+      projectId: prj527.id,
+      code: 'MOD-ADC-STRUCT',
+      name: 'Structure Support & Profiles',
+      dwgNo: 'ADC-MOD-004',
+      description: 'Aluminum Profile Structures and Mounting Supports',
+      targetBudget: 49713.60,
       responsibleEngineer: 'Jeerawat',
       moduleType: 'MC_ONLY',
       status: 'Active',
+    }
+  });
+
+  // 6 Parts for PRJ-527 (Exact from Delivery Note / Line ADC PDF)
+  const parts527 = [
+    {
+      id: 'part-527-1',
+      projectId: prj527.id,
+      moduleId: mod527_1.id,
+      itemNo: 1,
+      dwgNo: 'ADC-2608-001-01',
+      partName: 'PLC Control Board (Ethernet IP)',
+      typeSpec: 'Part: CJ1W-EIP21 | Brand: OMRON (Line ADC)',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 21,
+      unit: 'EA',
+      maker: 'OMRON',
+      supplier: 'Omron Dealer',
+      targetUnitPrice: 35040,
+      targetTotalAmount: 735840,
+      unitPrice: 35040,
+      totalAmount: 735840,
+      poNumber: 'PO-2607001',
+      orderDate: '2026-08-05',
+      receiveDate: '',
+      storeLocation: 'Line ADC Area',
+      status: 'Ordered',
+      workflowStage: '3. Procurement (STD,FEB)',
+      remarks: '21 Boards for Line ADC Tracking'
     },
+    {
+      id: 'part-527-2',
+      projectId: prj527.id,
+      moduleId: mod527_2.id,
+      itemNo: 2,
+      dwgNo: 'ADC-2608-001-02',
+      partName: 'Sub PLC Box + Accessories (6 SET)',
+      typeSpec: 'CJ1W-PA202, CJ1W-IC101, CJ1W-II101, CS1W-CN223 2M (OMRON)',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 6,
+      unit: 'SET',
+      maker: 'OMRON',
+      supplier: 'Omron Dealer',
+      targetUnitPrice: 26000,
+      targetTotalAmount: 156000,
+      unitPrice: 26000,
+      totalAmount: 156000,
+      poNumber: 'PO-2607001',
+      orderDate: '',
+      receiveDate: '',
+      storeLocation: 'Line ADC Sub Station',
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'Sub PLC Boxes 6 sets'
+    },
+    {
+      id: 'part-527-3',
+      projectId: prj527.id,
+      moduleId: mod527_3.id,
+      itemNo: 3,
+      dwgNo: 'ADC-2608-001-03',
+      partName: 'Rack PC Center',
+      typeSpec: 'Cisco CBS110-24T-EU Hub + Server Rack 12U ACR-12U-W APOLLO',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 1,
+      unit: 'EA',
+      maker: 'CISCO / APOLLO',
+      supplier: 'IT Network Supply',
+      targetUnitPrice: 12000,
+      targetTotalAmount: 12000,
+      unitPrice: 12000,
+      totalAmount: 12000,
+      poNumber: 'PO-2607001',
+      orderDate: '',
+      receiveDate: '',
+      storeLocation: 'IT Server Room',
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'Network & Rack Center'
+    },
+    {
+      id: 'part-527-4',
+      projectId: prj527.id,
+      moduleId: mod527_3.id,
+      itemNo: 4,
+      dwgNo: 'ADC-2608-001-04',
+      partName: 'PLC Data Center Line (1 SET)',
+      typeSpec: 'BOX CE-01 TEMCO, CJ1W-PA202, CJ1W-CPU12, CJ1W-211, CP30-B 5A',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 1,
+      unit: 'SET',
+      maker: 'OMRON / FUJI / TEMCO',
+      supplier: 'Omron Dealer',
+      targetUnitPrice: 150000,
+      targetTotalAmount: 150000,
+      unitPrice: 150000,
+      totalAmount: 150000,
+      poNumber: 'PO-2607001',
+      orderDate: '',
+      receiveDate: '',
+      storeLocation: 'Central PLC Cabinet',
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'Main Data Center PLC Unit'
+    },
+    {
+      id: 'part-527-5',
+      projectId: prj527.id,
+      moduleId: mod527_4.id,
+      itemNo: 5,
+      dwgNo: 'ADC-2608-001-05',
+      partName: 'Structure Support',
+      typeSpec: 'Aluminium Profile (LOCAL)',
+      category: 'MC',
+      partType: 'Feb Part',
+      qty: 1,
+      unit: 'SET',
+      maker: 'LOCAL',
+      supplier: 'Aluminium Fab Shop',
+      targetUnitPrice: 20000,
+      targetTotalAmount: 20000,
+      unitPrice: 20000,
+      totalAmount: 20000,
+      poNumber: 'PO-2607001',
+      orderDate: '',
+      receiveDate: '',
+      storeLocation: 'Line ADC Assembly Zone',
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'Mounting & Stand Structure'
+    },
+    {
+      id: 'part-527-6',
+      projectId: prj527.id,
+      moduleId: mod527_3.id,
+      itemNo: 6,
+      dwgNo: 'ADC-2608-001-06',
+      partName: 'PC Center Industrial Workstation',
+      typeSpec: 'PC WG-93342286-SO26008123 + UPS ZIRCON AX 1000VA + Keyboard MK120',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 1,
+      unit: 'SET',
+      maker: 'WARSGATE / ZIRCON / LOGITECH',
+      supplier: 'IT Network Supply',
+      targetUnitPrice: 123000,
+      targetTotalAmount: 123000,
+      unitPrice: 123000,
+      totalAmount: 123000,
+      poNumber: 'PO-2607001',
+      orderDate: '',
+      receiveDate: '',
+      storeLocation: 'Control Room Line ADC',
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'Line ADC Tracking Master PC'
+    }
   ];
 
-  for (const mod of modulesData) {
-    await prisma.module.upsert({
-      where: { id: mod.id },
-      update: mod,
-      create: mod,
-    });
+  for (const part of parts527) {
+    await prisma.part.create({ data: part as any });
   }
-  console.log('✅ Modules seeded');
 
-  // ── 3. Parts จริงจาก WARSGATE_BOM_PartList_2026-07-30.xlsx ──
-  const partsData = [
-    // ── MOD-BOX-CTRL (mod-1) : EE Box items ──────────────────
-    { id: 'p-001', itemNo: 1,  projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Box Control Enclosure',           typeSpec: 'Denco DA-09',                 category: 'MC', partType: 'Feb Part',      qty: 1,   unit: 'EA',   maker: 'Denco',     supplier: 'Denco Direct',     targetUnitPrice: 1466,    targetTotalAmount: 1466,    unitPrice: 3500,   totalAmount: 3500,   poNumber: 'PO-2026-001', storeLocation: 'Rack A-01',          status: 'Ordered',     workflowStage: '3. Procurement (STD,FEB)', remarks: 'EST Target: 1,466.00 | PO Actual: 3,500.00' },
-    { id: 'p-002', itemNo: 2,  projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'CP30 Circuit Breaker 2P 3A',       typeSpec: 'CP30 2P 3A',                  category: 'EE', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Mitsubishi', supplier: 'Mizumi',           targetUnitPrice: 1871,    targetTotalAmount: 1871,    unitPrice: 1000,   totalAmount: 1000,   poNumber: 'PO-2026-002', storeLocation: 'Store Shelf E-04',   status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: 'EST Target: 1,871.00 (Savings 871.00)' },
-    { id: 'p-003', itemNo: 3,  projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'CP30 Circuit Breaker 1P 1A',       typeSpec: 'CP30 1P 1A',                  category: 'EE', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Mitsubishi', supplier: 'Mizumi',           targetUnitPrice: 703,     targetTotalAmount: 703,     unitPrice: 1000,   totalAmount: 1000,   poNumber: 'PO-2026-002', storeLocation: 'Store Shelf E-04',   status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: 'EST Target: 703.00' },
-    { id: 'p-004', itemNo: 4,  projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Lapp Cable 0.25 Blue',             typeSpec: 'Lapp 0.25 Bu',                category: 'EE', partType: 'Standard Part', qty: 100, unit: 'M',    maker: 'Lapp',      supplier: 'Lapp Thailand',    targetUnitPrice: 10,      targetTotalAmount: 1000,    unitPrice: 10,     totalAmount: 1000,   poNumber: 'PO-2026-003', storeLocation: 'Wire Rack W-01',     status: 'Completed',   workflowStage: '3. Procurement (STD,FEB)', remarks: 'Control wiring blue' },
-    { id: 'p-005', itemNo: 5,  projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Lapp Cable 0.25 White',            typeSpec: 'Lapp 0.25 Wh',                category: 'EE', partType: 'Standard Part', qty: 100, unit: 'M',    maker: 'Lapp',      supplier: 'Lapp Thailand',    targetUnitPrice: 10,      targetTotalAmount: 1000,    unitPrice: 10,     totalAmount: 1000,   poNumber: 'PO-2026-003', storeLocation: 'Wire Rack W-02',     status: 'Completed',   workflowStage: '3. Procurement (STD,FEB)', remarks: 'Control wiring white' },
-    { id: 'p-006', itemNo: 6,  projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Double Terminal Block tw30',       typeSpec: 'tw30',                        category: 'EE', partType: 'Standard Part', qty: 30,  unit: 'PACK', maker: 'Toki',      supplier: 'Mizumi',           targetUnitPrice: 35,      targetTotalAmount: 1050,    unitPrice: 35,     totalAmount: 1050,   poNumber: 'PO-2026-004', storeLocation: 'Shelf E-01',         status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: '' },
-    { id: 'p-007', itemNo: 7,  projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Terminal Cover Tw30',             typeSpec: 'Cover Tw30',                  category: 'MC', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Toki',      supplier: 'Mizumi',           targetUnitPrice: 300,     targetTotalAmount: 300,     unitPrice: 300,    totalAmount: 300,    poNumber: 'PO-2026-004', storeLocation: 'Shelf E-01',         status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: '' },
-    { id: 'p-008', itemNo: 8,  projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Lapp Power Cable 2.5 Black',      typeSpec: 'Lapp 2.5 BL',                 category: 'EE', partType: 'Standard Part', qty: 100, unit: 'M',    maker: 'Lapp',      supplier: 'Lapp Thailand',    targetUnitPrice: 20,      targetTotalAmount: 2000,    unitPrice: 20,     totalAmount: 2000,   poNumber: 'PO-2026-003', storeLocation: 'Wire Rack W-03',     status: 'Completed',   workflowStage: '3. Procurement (STD,FEB)', remarks: 'Main power supply wire' },
-    { id: 'p-009', itemNo: 9,  projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Terminal Jumper Bar Tw30',        typeSpec: 'Tw30',                        category: 'EE', partType: 'Standard Part', qty: 2,   unit: 'EA',   maker: 'Toki',      supplier: 'Mizumi',           targetUnitPrice: 150,     targetTotalAmount: 300,     unitPrice: 150,    totalAmount: 300,    poNumber: 'PO-2026-004', storeLocation: 'Shelf E-01',         status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: '' },
-    { id: 'p-010', itemNo: 10, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Fork Terminal (หางปลาแฉก)',       typeSpec: 'Fork Lugs Set',               category: 'EE', partType: 'Standard Part', qty: 3,   unit: 'PACK', maker: 'Generic',   supplier: 'Local Store',      targetUnitPrice: 100,     targetTotalAmount: 300,     unitPrice: 100,    totalAmount: 300,    poNumber: 'PO-2026-005', storeLocation: 'Bins B-02',          status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: '' },
-    { id: 'p-011', itemNo: 11, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Assembly Screw Set M4/M5',        typeSpec: 'Screw Pack',                  category: 'MC', partType: 'Standard Part', qty: 50,  unit: 'EA',   maker: 'Generic',   supplier: 'Mizumi',           targetUnitPrice: 2,       targetTotalAmount: 100,     unitPrice: 2,      totalAmount: 100,    poNumber: 'PO-2026-004', storeLocation: 'Fastener Bin F-12', status: 'Completed',   workflowStage: '3. Procurement (STD,FEB)', remarks: '' },
-    { id: 'p-012', itemNo: 12, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Stand Steel Profile Frame',       typeSpec: 'Order Custom Profile',        category: 'MC', partType: 'Feb Part',      qty: 1,   unit: 'EA',   maker: 'Custom Fab', supplier: 'Local Machine Shop', targetUnitPrice: 1600,   targetTotalAmount: 1600,    unitPrice: 2000,   totalAmount: 2000,   poNumber: 'PO-2026-006', storeLocation: 'Assembly Floor',     status: 'In Assembly', workflowStage: '4. Assembly',              remarks: 'EST Target: 1,600.00' },
-    { id: 'p-013', itemNo: 13, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'PLC Omron CP1L-E',               typeSpec: 'CP1L-E 30IO',                 category: 'EE', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Omron',     supplier: 'Omron Direct',     targetUnitPrice: 14000,   targetTotalAmount: 14000,   unitPrice: 15000,  totalAmount: 15000,  poNumber: 'PO-2026-007', storeLocation: 'Secure Store S-01',  status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: 'Main Programmable Controller (EST: 14,000.00)' },
-    { id: 'p-014', itemNo: 14, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'DC Power Supply 24V 4.2A',        typeSpec: 'MDR-100-24',                  category: 'EE', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Mean Well', supplier: 'Misumi',           targetUnitPrice: 2051.61, targetTotalAmount: 2051.61, unitPrice: 2500,   totalAmount: 2500,   poNumber: 'PO-2026-008', storeLocation: 'Shelf E-02',         status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: 'EST Target: 2,051.61' },
-    { id: 'p-015', itemNo: 15, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Cooling Fan 4 inch 220V',         typeSpec: 'Fan 4"',                      category: 'MC', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Glink',     supplier: 'Shoppe',           targetUnitPrice: 139,     targetTotalAmount: 139,     unitPrice: 250,    totalAmount: 250,    poNumber: 'PO-2026-009', storeLocation: 'Shelf M-03',         status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: 'EST Target: 139.00' },
-    { id: 'p-016', itemNo: 16, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Dust Filter Mesh 4 inch',         typeSpec: 'Filter Fan 4"',               category: 'MC', partType: 'Standard Part', qty: 2,   unit: 'EA',   maker: 'Generic',   supplier: 'Shoppe',           targetUnitPrice: 200,     targetTotalAmount: 400,     unitPrice: 200,    totalAmount: 400,    poNumber: 'PO-2026-009', storeLocation: 'Shelf M-03',         status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: '' },
-    { id: 'p-017', itemNo: 17, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Cable Gland / Closing Seal',      typeSpec: 'KSG-150',                     category: 'MC', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Misumi',    supplier: 'Misumi',           targetUnitPrice: 760.16,  targetTotalAmount: 760.16,  unitPrice: 1000,   totalAmount: 1000,   poNumber: 'PO-2026-008', storeLocation: 'Shelf M-01',         status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: 'EST Target: 760.16' },
-    { id: 'p-018', itemNo: 18, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Main Power Plug & Socket',        typeSpec: 'Power Plug 3P',               category: 'EE', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Generic',   supplier: 'Local Store',      targetUnitPrice: 500,     targetTotalAmount: 500,     unitPrice: 500,    totalAmount: 500,    poNumber: 'PO-2026-005', storeLocation: 'Bins B-05',          status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: '' },
-    { id: 'p-019', itemNo: 19, projectId: 'proj-1', moduleId: 'mod-1', dwgNo: '073007-000-000-A', partName: 'Enclosure Mounting Accessory Kit', typeSpec: 'Accessory',                  category: 'MC', partType: 'Feb Part',      qty: 1,   unit: 'EA',   maker: 'Denco',     supplier: 'Denco Direct',     targetUnitPrice: 5000,    targetTotalAmount: 5000,    unitPrice: 5000,   totalAmount: 5000,   poNumber: '',            storeLocation: '',                   status: 'Planned',     workflowStage: '2. BOM Part List',         remarks: 'รอออกใบสั่งซื้อ (Pending PO)' },
-    // ── MOD-KEYENCE-VIS (mod-2) : Common / Keyence items ─────
-    { id: 'p-020', itemNo: 20, projectId: 'proj-1', moduleId: 'mod-2', dwgNo: '073007-900-000-A', partName: 'Industrial LCD Monitor 17"',      typeSpec: 'E1415SC',                     category: 'EE', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Dell',      supplier: 'Dell Direct',      targetUnitPrice: 605,     targetTotalAmount: 605,     unitPrice: 1000,   totalAmount: 1000,   poNumber: 'PO-2026-010', storeLocation: 'IT Store Rack 2',    status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: 'EST Target: 605.00' },
-    { id: 'p-021', itemNo: 21, projectId: 'proj-1', moduleId: 'mod-2', dwgNo: '073007-900-000-A', partName: 'Industrial Keyboard USB',         typeSpec: 'NKB-107',                     category: 'EE', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Nubwo',     supplier: 'Local Store',      targetUnitPrice: 369,     targetTotalAmount: 369,     unitPrice: 700,    totalAmount: 700,    poNumber: 'PO-2026-005', storeLocation: 'IT Store Rack 1',    status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: 'EST Target: 369.00' },
-    { id: 'p-022', itemNo: 22, projectId: 'proj-1', moduleId: 'mod-2', dwgNo: '073007-900-000-A', partName: 'Mini Industrial PC Controller',   typeSpec: 'Optiplex 3080 mini RAM16GB 1TB', category: 'EE', partType: 'Standard Part', qty: 1, unit: 'EA', maker: 'Dell',      supplier: 'Dell Direct',      targetUnitPrice: 11430,   targetTotalAmount: 11430,   unitPrice: 17000,  totalAmount: 17000,  poNumber: 'PO-2026-010', storeLocation: '',                   status: 'Ordered',     workflowStage: '3. Procurement (STD,FEB)', remarks: 'Keyence Vision Processing Unit (EST: 11,430.00)' },
-    { id: 'p-023', itemNo: 23, projectId: 'proj-1', moduleId: 'mod-2', dwgNo: '073007-900-000-A', partName: 'Safety Limit Switch',             typeSpec: 'AZ8107',                      category: 'EE', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Panasonic', supplier: 'Mizumi',           targetUnitPrice: 690,     targetTotalAmount: 690,     unitPrice: 1000,   totalAmount: 1000,   poNumber: 'PO-2026-004', storeLocation: 'Shelf S-04',         status: 'Received',    workflowStage: '3. Procurement (STD,FEB)', remarks: 'EST Target: 690.00' },
-    { id: 'p-024', itemNo: 24, projectId: 'proj-1', moduleId: 'mod-2', dwgNo: '073007-900-000-A', partName: 'Bracket Nakara Switch & Accessories', typeSpec: 'Bracket Set Custom',       category: 'MC', partType: 'Feb Part',      qty: 1,   unit: 'SET',  maker: 'Custom Order', supplier: 'Local Shop',      targetUnitPrice: 1200,    targetTotalAmount: 1200,    unitPrice: 1200,   totalAmount: 1200,   poNumber: 'PO-2026-011', storeLocation: 'Assembly Floor',     status: 'In Assembly', workflowStage: '4. Assembly',              remarks: 'Custom Bracket for Switch' },
-    { id: 'p-025', itemNo: 25, projectId: 'proj-1', moduleId: 'mod-2', dwgNo: '073007-900-000-A', partName: 'Keyence Vision Sensor Head',      typeSpec: 'Camera Vision Sensor Unit',   category: 'EE', partType: 'Standard Part', qty: 1,   unit: 'EA',   maker: 'Keyence',   supplier: 'Keyence Thailand', targetUnitPrice: 5000,    targetTotalAmount: 5000,    unitPrice: 5000,   totalAmount: 5000,   poNumber: 'PO-2026-012', storeLocation: 'Secure Store Keyence-01', status: 'Received', workflowStage: '3. Procurement (STD,FEB)', remarks: 'High speed inspection sensor' },
+  // 3. Create PRJ-107: Auto Packing LM1
+  const prj107 = await prisma.project.create({
+    data: {
+      id: 'proj-107',
+      code: 'PRJ-107',
+      runningNumber: 107,
+      name: 'Auto Packing LM1',
+      customer: 'Thai Sekisui Foam Company Limited.',
+      customerId: '002',
+      dwgNo: 'LM1-TSF-001',
+      targetBudget: 3545600,
+      description: 'TSF1-LM1_Auto pack machine: Stacker Foam, Open Bag & Palletizer (QT-25690709 / CAP250095)',
+      status: 'Active',
+      startDate: '2026-06-25',
+      targetDeliveryDate: '2026-10-31',
+      poDate: '2026-07-09',
+      contactPerson: 'Alongkorn@thaisekisui.co.th (Phone: 088-223-308)',
+    }
+  });
+
+  // Modules for PRJ-107
+  const mod107_1 = await prisma.module.create({
+    data: {
+      id: 'mod-107-1',
+      projectId: prj107.id,
+      code: 'MOD-LM1-STK',
+      name: 'Station Stacker Foam (STF-10P)',
+      dwgNo: 'LM1-MOD-001',
+      description: 'Load work and stack foam sheets automatically (STF-10P)',
+      targetBudget: 765394,
+      responsibleEngineer: 'Jeerawat',
+      moduleType: 'BOTH',
+      status: 'Active',
+    }
+  });
+
+  const mod107_2 = await prisma.module.create({
+    data: {
+      id: 'mod-107-2',
+      projectId: prj107.id,
+      code: 'MOD-LM1-OPB',
+      name: 'Station Open Bag & Insert Foam (OPB-10P)',
+      dwgNo: 'LM1-MOD-002',
+      description: 'Open bag to push stacked foam into bag and load out (OPB-10P)',
+      targetBudget: 650215,
+      responsibleEngineer: 'Jeerawat',
+      moduleType: 'BOTH',
+      status: 'Active',
+    }
+  });
+
+  const mod107_3 = await prisma.module.create({
+    data: {
+      id: 'mod-107-3',
+      projectId: prj107.id,
+      code: 'MOD-LM1-PLK',
+      name: 'Station Pallet Stacker Foam (PLK-04P)',
+      dwgNo: 'LM1-MOD-003',
+      description: 'Palletizer stacker foam one pack at a time onto pallet (PLK-04P)',
+      targetBudget: 690391,
+      responsibleEngineer: 'Jeerawat',
+      moduleType: 'BOTH',
+      status: 'Active',
+    }
+  });
+
+  const mod107_4 = await prisma.module.create({
+    data: {
+      id: 'mod-107-4',
+      projectId: prj107.id,
+      code: 'MOD-LM1-CTRL',
+      name: 'Control Box System & Automation',
+      dwgNo: 'LM1-MOD-004',
+      description: 'Main PLC, Inverters, Servo Drivers and Electrical Control Cabinet',
+      targetBudget: 312000,
+      responsibleEngineer: 'Jeerawat',
+      moduleType: 'EE_ONLY',
+      status: 'Active',
+    }
+  });
+
+  // 2 Parts for PRJ-107 (Exact matching 2 pending parts)
+  const parts107 = [
+    {
+      id: 'part-107-1',
+      projectId: prj107.id,
+      moduleId: mod107_1.id,
+      itemNo: 1,
+      dwgNo: 'LM1-STF-001-A',
+      partName: 'Standard & Fabrication Part - Station Stacker Foam',
+      typeSpec: 'STF-10P Mechanical & Pneumatic Components',
+      category: 'MC',
+      partType: 'Standard Part',
+      qty: 1,
+      unit: 'SET',
+      maker: 'Warsgate / Standard',
+      supplier: 'Standard Supply',
+      targetUnitPrice: 475394,
+      targetTotalAmount: 475394,
+      unitPrice: 475394,
+      totalAmount: 475394,
+      poNumber: '',
+      orderDate: '',
+      receiveDate: '',
+      storeLocation: '',
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'Station 1 Stacker Foam Parts (Pending Order)'
+    },
+    {
+      id: 'part-107-2',
+      projectId: prj107.id,
+      moduleId: mod107_2.id,
+      itemNo: 2,
+      dwgNo: 'LM1-OPB-001-A',
+      partName: 'Standard & Fabrication Part - Station Open Bag & Insert',
+      typeSpec: 'OPB-10P Inserter Cylinder & Suction Cup Unit',
+      category: 'MC',
+      partType: 'Standard Part',
+      qty: 1,
+      unit: 'SET',
+      maker: 'Warsgate / Standard',
+      supplier: 'Standard Supply',
+      targetUnitPrice: 400215,
+      targetTotalAmount: 400215,
+      unitPrice: 400215,
+      totalAmount: 400215,
+      poNumber: '',
+      orderDate: '',
+      receiveDate: '',
+      storeLocation: '',
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'Station 2 Open Bag & Insert Foam Parts (Pending Order)'
+    }
   ];
 
-  for (const part of partsData) {
-    await prisma.part.upsert({
-      where: { id: part.id },
-      update: part as any,
-      create: part as any,
-    });
+  for (const part of parts107) {
+    await prisma.part.create({ data: part as any });
   }
-  console.log(`✅ Parts seeded (${partsData.length} items)`);
 
-  // ── 4. Master Tasks (9 stages per project) ───────────────────
+  // 4. Master tasks for both projects (9 stages)
   const taskTemplates = [
-    { wbs: '1.0', stageName: '1. Design (DS,EE,PG)',       title: '1. ออกแบบกลไก ไฟฟ้า และโปรแกรม (DS/EE/PG)',              responsible: 'Jeerawat & Team',         planStart: '2026-02-01', planEnd: '2026-02-14', actualStart: '2026-02-01', actualEnd: '2026-02-13', progress: 100, status: 'Completed',   color: 'bg-blue-600'    },
-    { wbs: '2.0', stageName: '2. BOM Part List',            title: '2. ถอดแบบ & สรุปรายการชิ้นส่วน BOM Part List',           responsible: 'BOM Engineer',             planStart: '2026-02-15', planEnd: '2026-02-21', actualStart: '2026-02-14', actualEnd: '2026-02-20', progress: 100, status: 'Completed',   color: 'bg-indigo-600'  },
-    { wbs: '3.0', stageName: '3. Procurement (STD,FEB)',    title: '3. สั่งซื้อชิ้นส่วนมาตรฐาน (STD) & สั่งแปรรูป (FEB)',  responsible: 'Purchasing & Mizumi/Omron',planStart: '2026-02-22', planEnd: '2026-03-15', actualStart: '2026-02-21', actualEnd: '2026-03-18', progress: 85,  status: 'In Progress', color: 'bg-amber-600'   },
-    { wbs: '4.0', stageName: '4. Assembly',                 title: '4. ประกอบโครงสร้างกลไก & เดินสายไฟตู้คอนโทรล',          responsible: 'Assembly Technicians',     planStart: '2026-03-16', planEnd: '2026-03-28', actualStart: '2026-03-19', actualEnd: '2026-03-30', progress: 40,  status: 'In Progress', color: 'bg-sky-600'     },
-    { wbs: '5.0', stageName: '5. Testing',                  title: '5. ปรับตั้ง & ทดสอบระบบกล้อง Keyence Vision',            responsible: 'Anusorn (Vision Engineer)', planStart: '2026-03-29', planEnd: '2026-04-05', actualStart: '',           actualEnd: '',           progress: 0,   status: 'Pending',     color: 'bg-purple-600'  },
-    { wbs: '6.0', stageName: '6. BuyOff',                   title: '6. ตรวจสอบและตรวจรับเครื่องจักรกับลูกค้า (BuyOff)',      responsible: 'Project Lead & Team',      planStart: '2026-04-06', planEnd: '2026-04-08', actualStart: '',           actualEnd: '',           progress: 0,   status: 'Pending',     color: 'bg-emerald-600' },
-    { wbs: '7.0', stageName: '7. Packing',                  title: '7. แพ็คเกจจิ้ง & จัดเตรียมขนส่ง (Packing)',              responsible: 'Logistics',                planStart: '2026-04-09', planEnd: '2026-04-10', actualStart: '',           actualEnd: '',           progress: 0,   status: 'Pending',     color: 'bg-teal-600'    },
-    { wbs: '8.0', stageName: '8. Install & Service',        title: '8. ติดตั้ง & ส่งมอบ ณ โรงงานลูกค้า (On-Site Install)',  responsible: 'Field Engineers',          planStart: '2026-04-11', planEnd: '2026-04-17', actualStart: '',           actualEnd: '',           progress: 0,   status: 'Pending',     color: 'bg-rose-600'    },
-    { wbs: '9.0', stageName: '9. Others',                   title: '9. สรุปเอกสารส่งมอบ & ปิดโครงการ (Handover)',            responsible: 'Project Manager',          planStart: '2026-04-18', planEnd: '2026-04-20', actualStart: '',           actualEnd: '',           progress: 0,   status: 'Pending',     color: 'bg-slate-600'   },
+    { wbs: '1.0', stageName: '1. Design (DS,EE,PG)', title: '1. ออกแบบกลไก ไฟฟ้า และโปรแกรม (DS/EE/PG)', responsible: 'Jeerawat & Team', planStart: '2026-07-01', planEnd: '2026-07-20', actualStart: '2026-07-01', actualEnd: '2026-07-18', progress: 100, status: 'Completed', color: 'bg-blue-600' },
+    { wbs: '2.0', stageName: '2. BOM Part List', title: '2. ถอดแบบ & สรุปรายการชิ้นส่วน BOM Part List', responsible: 'BOM Engineer', planStart: '2026-07-21', planEnd: '2026-07-31', actualStart: '2026-07-20', actualEnd: '2026-07-30', progress: 100, status: 'Completed', color: 'bg-indigo-600' },
+    { wbs: '3.0', stageName: '3. Procurement (STD,FEB)', title: '3. สั่งซื้อชิ้นส่วนมาตรฐาน (STD) & สั่งแปรรูป (FEB)', responsible: 'Purchasing & Vendor', planStart: '2026-08-01', planEnd: '2026-08-25', actualStart: '2026-08-01', actualEnd: '', progress: 60, status: 'In Progress', color: 'bg-amber-600' },
+    { wbs: '4.0', stageName: '4. Assembly', title: '4. ประกอบโครงสร้างกลไก & เดินสายไฟตู้คอนโทรล', responsible: 'Assembly Technicians', planStart: '2026-08-26', planEnd: '2026-09-15', actualStart: '', actualEnd: '', progress: 0, status: 'Pending', color: 'bg-sky-600' },
+    { wbs: '5.0', stageName: '5. Testing', title: '5. ปรับตั้ง & ทดสอบระบบ (Testing & Commissioning)', responsible: 'Jeerawat (Lead Engineer)', planStart: '2026-09-16', planEnd: '2026-09-25', actualStart: '', actualEnd: '', progress: 0, status: 'Pending', color: 'bg-purple-600' },
+    { wbs: '6.0', stageName: '6. BuyOff', title: '6. ตรวจสอบและตรวจรับเครื่องจักรกับลูกค้า (BuyOff)', responsible: 'Project Lead & Customer', planStart: '2026-09-26', planEnd: '2026-09-28', actualStart: '', actualEnd: '', progress: 0, status: 'Pending', color: 'bg-emerald-600' },
+    { wbs: '7.0', stageName: '7. Packing', title: '7. แพ็คเกจจิ้ง & จัดเตรียมขนส่ง (Packing)', responsible: 'Logistics Team', planStart: '2026-09-29', planEnd: '2026-09-30', actualStart: '', actualEnd: '', progress: 0, status: 'Pending', color: 'bg-teal-600' },
+    { wbs: '8.0', stageName: '8. Install & Service', title: '8. ติดตั้ง & ส่งมอบ ณ โรงงานลูกค้า (On-Site Install)', responsible: 'Field Engineers', planStart: '2026-10-01', planEnd: '2026-10-15', actualStart: '', actualEnd: '', progress: 0, status: 'Pending', color: 'bg-rose-600' },
+    { wbs: '9.0', stageName: '9. Others', title: '9. สรุปเอกสารส่งมอบ & ปิดโครงการ (Handover)', responsible: 'Project Manager', planStart: '2026-10-16', planEnd: '2026-10-20', actualStart: '', actualEnd: '', progress: 0, status: 'Pending', color: 'bg-slate-600' },
   ];
 
-  for (const proj of projectsData) {
+  for (const proj of [prj527, prj107]) {
     for (const t of taskTemplates) {
       const taskId = `mt-${proj.id}-${t.wbs.replace('.', '_')}`;
-      await prisma.masterTask.upsert({
-        where: { id: taskId },
-        update: {
-          projectId: proj.id, wbs: t.wbs, stageName: t.stageName, title: t.title,
-          responsible: t.responsible, planStartDate: t.planStart, planEndDate: t.planEnd,
-          actualStartDate: t.actualStart, actualEndDate: t.actualEnd,
-          progressPct: t.progress, status: t.status, color: t.color,
-        },
-        create: {
-          id: taskId, projectId: proj.id, wbs: t.wbs, stageName: t.stageName, title: t.title,
-          responsible: t.responsible, planStartDate: t.planStart, planEndDate: t.planEnd,
-          actualStartDate: t.actualStart, actualEndDate: t.actualEnd,
-          actualDates: '[]', dailyNotes: '{}',
-          progressPct: t.progress, status: t.status, color: t.color,
-        },
+      await prisma.masterTask.create({
+        data: {
+          id: taskId,
+          projectId: proj.id,
+          wbs: t.wbs,
+          stageName: t.stageName as any,
+          title: t.title,
+          responsible: t.responsible,
+          planStartDate: t.planStart,
+          planEndDate: t.planEnd,
+          actualStartDate: t.actualStart,
+          actualEndDate: t.actualEnd,
+          actualDates: '[]',
+          dailyNotes: '{}',
+          progressPct: t.progress,
+          status: t.status,
+          color: t.color,
+        }
       });
     }
   }
-  console.log('✅ Master tasks seeded for all 3 projects');
 
-  console.log('\n🎉 Database seeded successfully!');
+  console.log('Done! Verified projects:');
+  const projs = await prisma.project.findMany({ include: { parts: true, modules: true } });
+  for (const p of projs) {
+    console.log(`- [${p.code}] ${p.name}: ${p.modules.length} modules, ${p.parts.length} parts (pending: ${p.parts.filter((x: any) => x.status === 'Planned').length})`);
+  }
+
   await prisma.$disconnect();
 }
 
-seed().catch(async (e) => {
-  console.error('❌ Seed failed:', e);
+seedExactProjects().catch(async (e) => {
+  console.error('Error seeding:', e);
   await prisma.$disconnect();
   process.exit(1);
 });

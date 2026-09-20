@@ -18,7 +18,7 @@ import { ActualCompletionModal } from './components/ActualCompletionModal';
 import { ExportImportModal } from './components/ExportImportModal';
 import { MasterPartLibrary } from './components/MasterPartLibrary';
 import { QuotationsView } from './components/QuotationsView';
-import { BomPartItem, MasterPlanTaskItem, ModuleItem, ProjectItem, PartStatus } from './types/bom';
+import { BomPartItem, MachineWorkflowStage, MasterPlanTaskItem, ModuleItem, ProjectItem, PartStatus } from './types/bom';
 import { calculateProjectCostSummary } from './utils/costCalculator';
 import { LoginPage } from './pages/LoginPage';
 import { useAuth } from './contexts/AuthContext';
@@ -26,12 +26,13 @@ import { HistoryLogTable } from './components/HistoryLogTable';
 import { WorkspaceManagement } from './components/WorkspaceManagement';
 import { UserManagement } from './components/UserManagement';
 import { LineMessagingCenter } from './components/LineMessagingCenter';
+import { ProductionWorkflowView } from './components/ProductionWorkflowView';
 import { SwitchUserModal } from './components/SwitchUserModal';
 
 export function App() {
   const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
   
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify'>('master-plan');
+  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify' | 'production-workflow'>('master-plan');
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -114,7 +115,7 @@ export function App() {
     const tabParam = params.get('tab');
     const projectParam = params.get('projectId');
     
-    if (tabParam && ['dashboard', 'master-plan', 'all-modules', 'modules', 'bom', 'procurement', 'report', 'master-library', 'quotations', 'history', 'workspaces', 'users', 'line-notify'].includes(tabParam)) {
+    if (tabParam && ['dashboard', 'master-plan', 'all-modules', 'modules', 'bom', 'procurement', 'report', 'master-library', 'quotations', 'history', 'workspaces', 'users', 'line-notify', 'production-workflow'].includes(tabParam)) {
       setActiveTab(tabParam as any);
     }
     if (projectParam) {
@@ -445,6 +446,16 @@ export function App() {
     setAllMasterTasks(prev => prev.filter(t => t.id !== id));
   };
 
+  const handleUpdatePartStage = async (partId: string, stage: MachineWorkflowStage) => {
+    setAllParts(prev => prev.map(p => p.id === partId ? { ...p, workflowStage: stage } : p));
+    try {
+      const updated = await partsApi.update(partId, { workflowStage: stage });
+      setAllParts(prev => prev.map(p => p.id === updated.id ? updated : p));
+    } catch (err) {
+      console.error('Failed to update part stage:', err);
+    }
+  };
+
   // ─── Reset ────────────────────────────────────────────────
   const handleResetData = async () => {
     if (confirm('คืนค่าข้อมูลเป็นตัวอย่างเดิม? (ต้องรัน seed ที่ backend)')) {
@@ -665,6 +676,16 @@ export function App() {
 
           {activeTab === 'master-library' && (
             <MasterPartLibrary />
+          )}
+
+          {activeTab === 'production-workflow' && (
+            <ProductionWorkflowView
+              project={activeProject}
+              modules={projectModules}
+              parts={projectParts}
+              onUpdatePartStage={handleUpdatePartStage}
+              onEditPart={(p) => { setEditingPart(p); setIsPartModalOpen(true); }}
+            />
           )}
 
           {activeTab === 'line-notify' && (

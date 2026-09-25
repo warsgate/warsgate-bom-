@@ -36,8 +36,36 @@ export function App() {
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState<boolean>(() => {
+    try {
+      return localStorage.getItem('wg_sidebar_collapsed') === 'true';
+    } catch {
+      return false;
+    }
+  });
   const [activeProjectId, setActiveProjectId] = useState<string>('proj-1');
   const [isLoading, setIsLoading] = useState(true);
+
+  // Sync sidebar collapsed state with localStorage
+  useEffect(() => {
+    try {
+      localStorage.setItem('wg_sidebar_collapsed', String(isSidebarCollapsed));
+    } catch (e) {
+      console.warn('Could not save sidebar state to localStorage', e);
+    }
+  }, [isSidebarCollapsed]);
+
+  // Global Keyboard Shortcut: Ctrl+B or Cmd+B to toggle sidebar collapse
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'b' || e.key === 'B')) {
+        e.preventDefault();
+        setIsSidebarCollapsed(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Data state (replaces Dexie useLiveQuery)
   const [projects, setProjects] = useState<ProjectItem[]>([]);
@@ -551,6 +579,8 @@ export function App() {
         setIsDarkMode={setIsDarkMode}
         isMobileOpen={isMobileSidebarOpen}
         onCloseMobile={() => setIsMobileSidebarOpen(false)}
+        isCollapsed={isSidebarCollapsed}
+        onToggleCollapse={() => setIsSidebarCollapsed(prev => !prev)}
         userRole={user?.role === 'LEVEL_2' ? 'OWNER' : 'ENGINEER'}
         setUserRole={() => {}} // No longer manually toggleable
         onEditProject={handleEditProject}
@@ -559,17 +589,34 @@ export function App() {
         onOpenSwitchUser={() => setIsSwitchUserModalOpen(true)}
       />
 
-      <div className="flex-1 flex flex-col h-screen print:h-auto overflow-y-auto print:overflow-visible">
+      <div className="flex-1 flex flex-col h-screen print:h-auto overflow-y-auto print:overflow-visible transition-all duration-300">
         <TopNavbar
+          activeTab={activeTab}
+          onTabChange={setActiveTab}
+          projects={projects}
+          activeProjectId={activeProjectId}
+          setActiveProjectId={setActiveProjectId}
           activeProject={activeProject}
           searchQuery={searchQuery}
           setSearchQuery={setSearchQuery}
           totalCost={costSummary.totalProjectCost}
           totalItems={projectParts.length}
+          totalModules={projectModules.length}
+          isSidebarCollapsed={isSidebarCollapsed}
+          onToggleSidebarCollapse={() => setIsSidebarCollapsed(prev => !prev)}
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
+          onOpenAddPart={() => { setEditingPart(null); setIsPartModalOpen(true); }}
+          onOpenExportImport={() => setIsExportImportOpen(true)}
+          isDarkMode={isDarkMode}
+          setIsDarkMode={setIsDarkMode}
+          userRole={user?.role === 'LEVEL_2' ? 'OWNER' : 'ENGINEER'}
+          user={user}
+          onOpenSwitchUser={() => setIsSwitchUserModalOpen(true)}
         />
 
-        <main className="flex-1 p-4 sm:p-6 max-w-7xl w-full mx-auto">
+        <main className={`flex-1 p-3 sm:p-5 w-full mx-auto transition-all duration-300 ${
+          isSidebarCollapsed ? 'max-w-[98%]' : 'max-w-7xl'
+        }`}>
           {activeTab === 'dashboard' && (
             (user?.role === 'LEVEL_2' ? 'OWNER' : 'ENGINEER') === 'OWNER' ? (
               <Dashboard summary={costSummary} modules={projectModules} onSelectModuleTab={() => setActiveTab('modules')} onSelectBomTab={() => setActiveTab('bom')} isDarkMode={isDarkMode} />

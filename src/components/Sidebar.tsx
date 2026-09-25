@@ -26,7 +26,8 @@ import {
   Sparkles,
   ChevronDown,
   Database,
-  Cpu
+  Cpu,
+  PanelLeftClose
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 
@@ -47,6 +48,8 @@ interface SidebarProps {
   setIsDarkMode: (val: boolean) => void;
   isMobileOpen?: boolean;
   onCloseMobile?: () => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
   userRole: 'OWNER' | 'ENGINEER';
   setUserRole: (role: 'OWNER' | 'ENGINEER') => void;
   onEditProject: (project: ProjectItem) => void;
@@ -86,6 +89,8 @@ export const Sidebar: React.FC<SidebarProps> = ({
   setIsDarkMode,
   isMobileOpen = false,
   onCloseMobile,
+  isCollapsed = false,
+  onToggleCollapse,
   userRole,
   setUserRole,
   onEditProject,
@@ -241,6 +246,17 @@ export const Sidebar: React.FC<SidebarProps> = ({
             Enterprise BOM Intelligence
           </p>
         </div>
+
+        {/* Desktop Collapse Button */}
+        {onToggleCollapse && (
+          <button
+            onClick={onToggleCollapse}
+            className="hidden lg:flex p-1.5 rounded-xl text-slate-400 hover:text-slate-700 dark:hover:text-white bg-slate-100 dark:bg-slate-900 hover:bg-slate-200 dark:hover:bg-slate-800 border border-slate-200 dark:border-slate-800 flex-shrink-0 transition-colors"
+            title="ซ่อนแถบเมนูด้านซ้าย (Ctrl+B)"
+          >
+            <PanelLeftClose className="w-4 h-4" />
+          </button>
+        )}
 
         {/* Mobile Close Button */}
         {onCloseMobile && (
@@ -526,7 +542,9 @@ export const Sidebar: React.FC<SidebarProps> = ({
   return (
     <>
       {/* Desktop Sidebar (Pinned Left) */}
-      <aside className="hidden lg:flex h-screen sticky top-0 z-30 flex-shrink-0 print:hidden">
+      <aside className={`hidden lg:flex h-screen sticky top-0 z-30 flex-shrink-0 print:hidden transition-all duration-300 ease-in-out overflow-hidden ${
+        isCollapsed ? 'w-0 opacity-0 -translate-x-full pointer-events-none' : 'w-[290px] opacity-100 translate-x-0'
+      }`}>
         {sidebarContent}
       </aside>
 

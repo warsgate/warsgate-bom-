@@ -156,4 +156,104 @@ router.post('/sync-po', async (req: Request, res: Response) => {
   }
 });
 
+// POST sync goods receipt back to BOM (Mark parts as received into warehouse)
+router.post('/sync-goods-receipt', async (req: Request, res: Response) => {
+  try {
+    const { partIds, receiveDate, storeLocation, deliveryNoteNo } = req.body;
+    
+    if (!partIds || !Array.isArray(partIds) || partIds.length === 0) {
+      return res.status(400).json({ error: 'partIds array is required' });
+    }
+
+    const dateStr = receiveDate || new Date().toISOString().split('T')[0];
+    const location = storeLocation || 'Warsgate Workshop / Onsite';
+
+    const updatedParts = await prisma.part.updateMany({
+      where: {
+        id: { in: partIds }
+      },
+      data: {
+        receiveDate: dateStr,
+        storeLocation: location,
+        status: 'Received',
+        workflowStage: '4. Assembly & Inspection'
+      }
+    });
+
+    res.json({
+      success: true,
+      message: `Marked ${updatedParts.count} parts as Received (DO: ${deliveryNoteNo || '-'})`,
+      count: updatedParts.count
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to sync goods receipt to BOM', details: err.message });
+  }
+});
+
+// GET Project Cost & Procurement Analysis
+router.get('/cost-analysis/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const project = await prisma.project.findFirst({
+      where: {
+        OR: [
+          { id },
+          { code: id }
+        ]
+      },
+      include: {
+        parts: {
+          orderBy: { itemNo: 'asc' }
+        },
+        modules: true
+      }
+    });
+
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' });
+    }
+
+    const totalParts = project.parts.length;
+    const plannedParts = project.parts.filter(p => !p.status || p.status === 'Planned');
+    const orderedParts = project.parts.filter(p => p.status === 'Ordered');
+    const receivedParts = project.parts.filter(p => p.status === 'Received');
+
+    const totalTargetBudget = project.targetBudget || 0;
+    const estimatedCost = project.parts.reduce((sum, p) => sum + (p.targetUnitPrice * p.qty), 0);
+    const actualPurchasedCost = project.parts.reduce((sum, p) => {
+      const price = p.status === 'Ordered' || p.status === 'Received' ? (p.unitPrice || p.targetUnitPrice) : p.targetUnitPrice;
+      return sum + (price * p.qty);
+    }, 0);
+
+    const costVariance = actualPurchasedCost - estimatedCost;
+
+    res.json({
+      project: {
+        id: project.id,
+        code: project.code,
+        name: project.name,
+        customer: project.customer,
+        targetBudget: totalTargetBudget,
+        status: project.status
+      },
+      metrics: {
+        totalParts,
+        plannedCount: plannedParts.length,
+        orderedCount: orderedParts.length,
+        receivedCount: receivedParts.length,
+        orderedPercentage: totalParts > 0 ? Math.round(((orderedParts.length + receivedParts.length) / totalParts) * 100) : 0,
+        receivedPercentage: totalParts > 0 ? Math.round((receivedParts.length / totalParts) * 100) : 0,
+        estimatedCost,
+        actualPurchasedCost,
+        costVariance,
+        variancePercentage: estimatedCost > 0 ? Math.round((costVariance / estimatedCost) * 100 * 10) / 10 : 0
+      },
+      parts: project.parts,
+      modules: project.modules
+    });
+  } catch (err: any) {
+    res.status(500).json({ error: 'Failed to generate cost analysis', details: err.message });
+  }
+});
+
 export default router;

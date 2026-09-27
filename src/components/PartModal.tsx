@@ -307,14 +307,14 @@ export const PartModal: React.FC<PartModalProps> = ({
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">
-                สังกัด Module <span className="text-rose-500">*</span>
+                สังกัด Module
               </label>
               <select
-                required
                 value={moduleId}
                 onChange={(e) => setModuleId(e.target.value)}
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-medium focus:outline-none focus:ring-2 focus:ring-red-500"
               >
+                <option value="">-- ไม่ระบุโมดูล (General / No Module) --</option>
                 {modules.map(m => (
                   <option key={m.id} value={m.id}>{m.code} - {m.name}</option>
                 ))}

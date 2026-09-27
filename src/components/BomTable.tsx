@@ -130,9 +130,10 @@ export const BomTable: React.FC<BomTableProps> = ({
     }
   };
 
-  const getModuleCode = (modId: string) => {
+  const getModuleCode = (modId?: string) => {
+    if (!modId) return '-';
     const mod = modules.find(m => m.id === modId);
-    return mod ? mod.code : 'UNASSIGNED';
+    return mod ? mod.code : '-';
   };
 
   return (

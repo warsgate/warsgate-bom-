@@ -66,7 +66,7 @@ export const AllModulesView: React.FC<AllModulesViewProps> = ({
 
   // Overall totals across filtered modules
   const filteredModuleIds = useMemo(() => new Set(filteredModules.map(m => m.id)), [filteredModules]);
-  const filteredParts = useMemo(() => parts.filter(p => filteredModuleIds.has(p.moduleId)), [parts, filteredModuleIds]);
+  const filteredParts = useMemo(() => parts.filter(p => p.moduleId ? filteredModuleIds.has(p.moduleId) : false), [parts, filteredModuleIds]);
 
   const grandTotalBudget = filteredModules.reduce((acc, m) => acc + (m.targetBudget || 0), 0);
   const grandTotalMcCost = filteredParts.filter(p => p.category === 'MC').reduce((acc, p) => acc + (p.totalAmount || (p.qty * p.unitPrice)), 0);

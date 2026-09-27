@@ -173,12 +173,13 @@ export function calculateProjectCostSummary(
       febItemsCount += 1;
     }
 
-    let summary = moduleSummariesMap.get(part.moduleId);
+    const modId = part.moduleId || 'unassigned';
+    let summary = moduleSummariesMap.get(modId);
     if (!summary) {
       summary = {
-        moduleId: part.moduleId || 'unassigned',
-        moduleCode: part.moduleId || 'UNASSIGNED',
-        moduleName: 'Unassigned Module',
+        moduleId: modId,
+        moduleCode: part.moduleId || 'GENERAL',
+        moduleName: 'General Parts (ไม่มีโมดูล)',
         mcStandardCost: 0,
         mcFebCost: 0,
         totalMcCost: 0,

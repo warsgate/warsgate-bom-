@@ -88,7 +88,7 @@ export interface BomPartItem {
   typeSpec: string;
   category: CategoryType;
   partType: PartCategoryType;
-  moduleId: string;
+  moduleId?: string;
   qty: number;
   unit: string;
   maker?: string;

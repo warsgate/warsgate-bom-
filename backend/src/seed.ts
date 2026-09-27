@@ -624,21 +624,6 @@ async function seedCompleteAuthenticData() {
       if (sheetName === 'HEADER' || !sheetMeta[sheetName]) continue;
 
       const meta = sheetMeta[sheetName];
-      const mod = await prisma.module.create({
-        data: {
-          id: `mod-107-${sheetName.toLowerCase().replace(/[^a-z0-9]/g, '')}`,
-          projectId: prj107.id,
-          code: meta.code,
-          name: meta.name,
-          dwgNo: meta.dwgNo,
-          description: `B0007 Sheet ${sheetName}: ${meta.name}`,
-          targetBudget: meta.budget,
-          responsibleEngineer: 'Jeerawat',
-          moduleType: meta.type,
-          status: 'Active',
-        }
-      });
-
       const sheetRows = xlsx.utils.sheet_to_json(wb.Sheets[sheetName], { header: 1 }) as any[][];
 
       for (let i = 12; i < sheetRows.length; i++) {
@@ -667,7 +652,7 @@ async function seedCompleteAuthenticData() {
           data: {
             id: `p-107-${sheetName.toLowerCase().replace(/[^a-z0-9]/g, '')}-${globalItemNo}`,
             projectId: prj107.id,
-            moduleId: mod.id,
+            moduleId: null,
             itemNo: globalItemNo++,
             dwgNo: meta.dwgNo,
             partName,

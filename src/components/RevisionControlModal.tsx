@@ -118,7 +118,93 @@ export const RevisionControlModal: React.FC<RevisionControlModalProps> = ({
     }
   }, [revisions]);
 
-  if (!isOpen) return null;
+  // Compute Diff between Base Revision and Target (Target can be 'CURRENT' or another Rev)
+  const diffResult = useMemo(() => {
+    if (revisions.length === 0) return null;
+
+    const baseRev = revisions.find(r => r.id === baseRevId) || revisions[0];
+    const safeCurrentParts = currentParts || [];
+    const currentCost = safeCurrentParts.reduce((s, p) => s + (p.totalAmount || ((p.qty || 1) * (p.unitPrice || 0)) || 0), 0);
+
+    const targetRev = targetRevId === 'CURRENT' 
+      ? {
+          id: 'CURRENT',
+          projectId,
+          revCode: 'Current BOM (ข้อมูลปัจจุบัน)',
+          createdAt: new Date().toISOString(),
+          author: 'Live Active System',
+          changeNotes: 'สถานะปัจจุบัน',
+          parts: safeCurrentParts,
+          modules: currentModules || [],
+          totalParts: safeCurrentParts.length,
+          totalCost: currentCost
+        }
+      : revisions.find(r => r.id === targetRevId);
+
+    if (!baseRev || !targetRev) {
+      return null;
+    }
+
+    const baseParts = baseRev.parts || [];
+    const targetParts = targetRev.parts || [];
+
+    const baseMap = new Map<string, BomPartItem>();
+    baseParts.forEach(p => baseMap.set(p.id, p));
+
+    const targetMap = new Map<string, BomPartItem>();
+    targetParts.forEach(p => targetMap.set(p.id, p));
+
+    // Added: in target but not in base
+    const added: BomPartItem[] = [];
+    // Removed: in base but not in target
+    const removed: BomPartItem[] = [];
+    // Modified: in both, but key fields changed
+    const modified: Array<{
+      part: BomPartItem;
+      changes: Array<{ field: string; oldVal: any; newVal: any }>;
+    }> = [];
+    // Unchanged
+    const unchanged: BomPartItem[] = [];
+
+    targetParts.forEach(tp => {
+      const bp = baseMap.get(tp.id);
+      if (!bp) {
+        added.push(tp);
+      } else {
+        const changes: Array<{ field: string; oldVal: any; newVal: any }> = [];
+        if (bp.partName !== tp.partName) changes.push({ field: 'ชื่อชิ้นส่วน (Part Name)', oldVal: bp.partName || '-', newVal: tp.partName || '-' });
+        if (bp.qty !== tp.qty) changes.push({ field: 'จำนวน (Qty)', oldVal: `${bp.qty || 0} ${bp.unit || ''}`, newVal: `${tp.qty || 0} ${tp.unit || ''}` });
+        if ((bp.unitPrice || 0) !== (tp.unitPrice || 0)) changes.push({ field: 'ราคาต่อหน่วย (Unit Price)', oldVal: formatCurrency(bp.unitPrice), newVal: formatCurrency(tp.unitPrice) });
+        if ((bp.typeSpec || '') !== (tp.typeSpec || '')) changes.push({ field: 'สเปก / รุ่น (Spec)', oldVal: bp.typeSpec || '-', newVal: tp.typeSpec || '-' });
+        if ((bp.maker || '') !== (tp.maker || '')) changes.push({ field: 'ผู้ผลิต (Maker)', oldVal: bp.maker || '-', newVal: tp.maker || '-' });
+        if ((bp.supplier || '') !== (tp.supplier || '')) changes.push({ field: 'ผู้ขาย (Supplier)', oldVal: bp.supplier || '-', newVal: tp.supplier || '-' });
+
+        if (changes.length > 0) {
+          modified.push({ part: tp, changes });
+        } else {
+          unchanged.push(tp);
+        }
+      }
+    });
+
+    baseParts.forEach(bp => {
+      if (!targetMap.has(bp.id)) {
+        removed.push(bp);
+      }
+    });
+
+    const costDiff = (targetRev.totalCost || 0) - (baseRev.totalCost || 0);
+
+    return {
+      baseRev,
+      targetRev,
+      added,
+      removed,
+      modified,
+      unchanged,
+      costDiff
+    };
+  }, [baseRevId, targetRevId, revisions, currentParts, currentModules, projectId]);
 
   // Handle Save New Revision Snapshot
   const handleSaveRevision = () => {
@@ -129,7 +215,8 @@ export const RevisionControlModal: React.FC<RevisionControlModalProps> = ({
     setIsSaving(true);
     setErrorMsg('');
     try {
-      const currentCost = currentParts.reduce((sum, p) => sum + (p.totalAmount || (p.qty * p.unitPrice)), 0);
+      const safeParts = currentParts || [];
+      const currentCost = safeParts.reduce((sum, p) => sum + (p.totalAmount || ((p.qty || 1) * (p.unitPrice || 0))), 0);
       const newRev: BomRevision = {
         id: 'rev_' + Date.now(),
         projectId,
@@ -138,15 +225,15 @@ export const RevisionControlModal: React.FC<RevisionControlModalProps> = ({
         author: newAuthor.trim() || 'Engineer',
         changeNotes: newNotes.trim() || 'Engineering Change Order',
         totalCost: currentCost,
-        totalParts: currentParts.length,
-        parts: JSON.parse(JSON.stringify(currentParts)),
-        modules: JSON.parse(JSON.stringify(currentModules)),
+        totalParts: safeParts.length,
+        parts: JSON.parse(JSON.stringify(safeParts)),
+        modules: JSON.parse(JSON.stringify(currentModules || [])),
       };
 
       const updated = [...revisions, newRev];
       localStorage.setItem(storageKey, JSON.stringify(updated));
       setRevisions(updated);
-      setSuccessMsg(`✅ บันทึก ${newRev.revCode} สำเร็จแล้ว (${currentParts.length} รายการ, ${formatCurrency(currentCost)})`);
+      setSuccessMsg(`✅ บันทึก ${newRev.revCode} สำเร็จแล้ว (${safeParts.length} รายการ, ${formatCurrency(currentCost)})`);
       setNewNotes('');
       setActiveTab('LIST');
     } catch (err: any) {
@@ -182,81 +269,7 @@ export const RevisionControlModal: React.FC<RevisionControlModalProps> = ({
     }
   };
 
-  // Compute Diff between Base Revision and Target (Target can be 'CURRENT' or another Rev)
-  const diffResult = useMemo(() => {
-    const baseRev = revisions.find(r => r.id === baseRevId);
-    const targetRev = targetRevId === 'CURRENT' 
-      ? {
-          revCode: 'Current BOM (ข้อมูลปัจจุบัน)',
-          parts: currentParts,
-          totalCost: currentParts.reduce((s, p) => s + (p.totalAmount || (p.qty * p.unitPrice)), 0)
-        }
-      : revisions.find(r => r.id === targetRevId);
-
-    if (!baseRev || !targetRev) {
-      return null;
-    }
-
-    const baseParts = baseRev.parts || [];
-    const targetParts = targetRev.parts || [];
-
-    const baseMap = new Map<string, BomPartItem>();
-    baseParts.forEach(p => baseMap.set(p.id, p));
-
-    const targetMap = new Map<string, BomPartItem>();
-    targetParts.forEach(p => targetMap.set(p.id, p));
-
-    // Added: in target but not in base
-    const added: BomPartItem[] = [];
-    // Removed: in base but not in target
-    const removed: BomPartItem[] = [];
-    // Modified: in both, but key fields changed
-    const modified: Array<{
-      part: BomPartItem;
-      changes: Array<{ field: string; oldVal: any; newVal: any }>;
-    }> = [];
-    // Unchanged
-    const unchanged: BomPartItem[] = [];
-
-    targetParts.forEach(tp => {
-      const bp = baseMap.get(tp.id);
-      if (!bp) {
-        added.push(tp);
-      } else {
-        const changes: Array<{ field: string; oldVal: any; newVal: any }> = [];
-        if (bp.partName !== tp.partName) changes.push({ field: 'ชื่อชิ้นส่วน (Part Name)', oldVal: bp.partName, newVal: tp.partName });
-        if (bp.qty !== tp.qty) changes.push({ field: 'จำนวน (Qty)', oldVal: `${bp.qty} ${bp.unit}`, newVal: `${tp.qty} ${tp.unit}` });
-        if (bp.unitPrice !== tp.unitPrice) changes.push({ field: 'ราคาต่อหน่วย (Unit Price)', oldVal: formatCurrency(bp.unitPrice), newVal: formatCurrency(tp.unitPrice) });
-        if (bp.typeSpec !== tp.typeSpec) changes.push({ field: 'สเปก / รุ่น (Spec)', oldVal: bp.typeSpec, newVal: tp.typeSpec });
-        if (bp.maker !== tp.maker) changes.push({ field: 'ผู้ผลิต (Maker)', oldVal: bp.maker, newVal: tp.maker });
-        if (bp.supplier !== tp.supplier) changes.push({ field: 'ผู้ขาย (Supplier)', oldVal: bp.supplier, newVal: tp.supplier });
-
-        if (changes.length > 0) {
-          modified.push({ part: tp, changes });
-        } else {
-          unchanged.push(tp);
-        }
-      }
-    });
-
-    baseParts.forEach(bp => {
-      if (!targetMap.has(bp.id)) {
-        removed.push(bp);
-      }
-    });
-
-    const costDiff = targetRev.totalCost - baseRev.totalCost;
-
-    return {
-      baseRev,
-      targetRev,
-      added,
-      removed,
-      modified,
-      unchanged,
-      costDiff
-    };
-  }, [baseRevId, targetRevId, revisions, currentParts]);
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-2 sm:p-4 bg-slate-900/80 backdrop-blur-sm overflow-y-auto">
@@ -518,7 +531,7 @@ export const RevisionControlModal: React.FC<RevisionControlModalProps> = ({
                             <span className="font-mono text-slate-500 text-[11px]">{p.typeSpec || '-'}</span>
                           </div>
                           <div className="font-mono font-bold text-emerald-700 dark:text-emerald-400">
-                            +{formatCurrency(p.totalAmount || (p.qty * p.unitPrice))}
+                            +{formatCurrency(p.totalAmount || ((p.qty || 1) * (p.unitPrice || 0)))}
                           </div>
                         </div>
                       ))}
@@ -570,7 +583,7 @@ export const RevisionControlModal: React.FC<RevisionControlModalProps> = ({
                             <span className="font-mono text-slate-500 text-[11px]">{p.typeSpec || '-'}</span>
                           </div>
                           <div className="font-mono font-bold text-rose-700 dark:text-rose-400">
-                            -{formatCurrency(p.totalAmount || (p.qty * p.unitPrice))}
+                            -{formatCurrency(p.totalAmount || ((p.qty || 1) * (p.unitPrice || 0)))}
                           </div>
                         </div>
                       ))}
@@ -584,6 +597,12 @@ export const RevisionControlModal: React.FC<RevisionControlModalProps> = ({
                   </div>
                 )}
 
+              </div>
+            )}
+
+            {!diffResult && (
+              <div className="p-12 text-center text-slate-400 text-xs font-bold bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800">
+                ยังไม่มีข้อมูลสำหรับเปรียบเทียบ กรุณากดเลือก Revision ทางด้านบน หรือสร้าง Revision แรก
               </div>
             )}
           </div>

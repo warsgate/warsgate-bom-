@@ -233,11 +233,12 @@ export function calculateProjectCostSummary(
   };
 }
 
-export function formatCurrency(amount: number): string {
+export function formatCurrency(amount?: number | null): string {
+  const val = typeof amount === 'number' && !isNaN(amount) ? amount : (amount ? Number(amount) || 0 : 0);
   return new Intl.NumberFormat('th-TH', {
     style: 'currency',
     currency: 'THB',
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
-  }).format(amount);
+  }).format(val);
 }

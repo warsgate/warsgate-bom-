@@ -831,6 +831,149 @@ async function seedCompleteAuthenticData() {
 
   console.log(`✅ PRJ-107 created with ${totalB0007Parts} authentic detailed parts from B0007 Excel`);
 
+  // Module Convert USB to LAN Printer for PRJ-107
+  const mod107_prn = await prisma.module.create({
+    data: {
+      id: 'mod-107-1',
+      projectId: prj107.id,
+      code: 'MOD-107-01',
+      name: 'Convert USB to LAN Printer',
+      dwgNo: 'LM1-MOD-01',
+      description: 'ชุดตัวแปลง USB เป็น LAN สำหรับเครื่องพิมพ์ (Convert USB to Land Printer)',
+      targetBudget: 101850,
+      responsibleEngineer: 'Jeerawat',
+      moduleType: 'EE_AND_MC',
+      status: 'Active'
+    }
+  });
+
+  const parts107_prn = [
+    {
+      itemNo: 1,
+      dwgNo: 'LM1-PRN-01',
+      partName: 'Convert USB to LAN (ตัวแปลงสัญญาณ USB เป็น LAN)',
+      typeSpec: 'USB to LAN Print Server / Network Converter',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 15,
+      unit: 'Set',
+      maker: 'Standard',
+      supplier: 'Warsgate Store / Vendor',
+      targetUnitPrice: 1500,
+      targetTotalAmount: 22500,
+      unitPrice: 1500,
+      totalAmount: 22500,
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'ตัวแปลงสัญญาณ USB เป็น LAN (15 Set)'
+    },
+    {
+      itemNo: 2,
+      dwgNo: 'LM1-PRN-02',
+      partName: 'AC Power Plug 220VAC (เต้ารับไฟฟ้าสำหรับตู้ควบคุม)',
+      typeSpec: '220VAC Control Cabinet Outlet',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 15,
+      unit: 'Set',
+      maker: 'Standard',
+      supplier: 'Warsgate Store / Vendor',
+      targetUnitPrice: 1990,
+      targetTotalAmount: 29850,
+      unitPrice: 1990,
+      totalAmount: 29850,
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'เต้ารับไฟฟ้าสำหรับตู้ควบคุม (15 Set)'
+    },
+    {
+      itemNo: 3,
+      dwgNo: 'LM1-PRN-03',
+      partName: 'Switching Hub 5 Port (สวิตช์เครือข่ายขนาด 5 ช่อง)',
+      typeSpec: '5-Port Fast/Gigabit Switch',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 15,
+      unit: 'Set',
+      maker: 'Standard / D-Link',
+      supplier: 'Warsgate Store / Vendor',
+      targetUnitPrice: 1500,
+      targetTotalAmount: 22500,
+      unitPrice: 1500,
+      totalAmount: 22500,
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'สวิตช์เครือข่ายขนาด 5 ช่อง (15 Set)'
+    },
+    {
+      itemNo: 4,
+      dwgNo: 'LM1-PRN-04',
+      partName: 'สาย LAN Cat6 ความยาว 100 เมตร (Cat6 Ethernet Cable 100M)',
+      typeSpec: 'Cat6 UTP Cable 100M Box',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 1,
+      unit: 'Box',
+      maker: 'LINK / AMP',
+      supplier: 'Warsgate Store / Vendor',
+      targetUnitPrice: 3500,
+      targetTotalAmount: 3500,
+      unitPrice: 3500,
+      totalAmount: 3500,
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'สาย LAN Cat6 100M (1 Box)'
+    },
+    {
+      itemNo: 5,
+      dwgNo: 'LM1-PRN-05',
+      partName: 'Switching Hub 16 Port (สวิตช์เครือข่ายหลักขนาด 16 ช่อง)',
+      typeSpec: '16-Port Main Network Switch',
+      category: 'EE',
+      partType: 'Standard Part',
+      qty: 1,
+      unit: 'Set',
+      maker: 'Cisco / D-Link',
+      supplier: 'Warsgate Store / Vendor',
+      targetUnitPrice: 7000,
+      targetTotalAmount: 7000,
+      unitPrice: 7000,
+      totalAmount: 7000,
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'สวิตช์เครือข่ายหลัก 16 ช่อง (1 Set)'
+    },
+    {
+      itemNo: 6,
+      dwgNo: 'LM1-PRN-06',
+      partName: 'Roller Paper Printer Spindle (แกนหมุนกระดาษเครื่องพิมพ์อัปเกรด)',
+      typeSpec: 'Upgraded Printer Paper Spindle',
+      category: 'MC',
+      partType: 'Machine Part',
+      qty: 15,
+      unit: 'Set',
+      maker: 'Warsgate Fabrication',
+      supplier: 'Warsgate Workshop',
+      targetUnitPrice: 1100,
+      targetTotalAmount: 16500,
+      unitPrice: 1100,
+      totalAmount: 16500,
+      status: 'Planned',
+      workflowStage: '2. BOM Part List',
+      remarks: 'แกนหมุนกระดาษเครื่องพิมพ์อัปเกรด (15 Set)'
+    }
+  ];
+
+  for (const p of parts107_prn) {
+    await prisma.part.create({
+      data: {
+        projectId: prj107.id,
+        moduleId: mod107_prn.id,
+        ...p
+      } as any
+    });
+  }
+
   // =========================================================================
   // 4. Master Tasks (9 stages each)
   // =========================================================================

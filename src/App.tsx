@@ -184,8 +184,14 @@ export function App() {
 
   const handleDeleteModule = async (id: string) => {
     if (!confirm('ต้องการลบ Module นี้หรือไม่?')) return;
-    await modulesApi.delete(id);
-    setAllModules(prev => prev.filter(m => m.id !== id));
+    try {
+      await modulesApi.delete(id);
+      setAllModules(prev => prev.filter(m => m.id !== id));
+      setAllParts(prev => prev.map(p => p.moduleId === id ? { ...p, moduleId: undefined } : p));
+    } catch (err: any) {
+      console.error('Failed to delete module:', err);
+      alert('ไม่สามารถลบ Module ได้: ' + (err?.message || 'Server error'));
+    }
   };
 
   // ─── Part CRUD ────────────────────────────────────────────
@@ -764,7 +770,7 @@ export function App() {
       <MasterTaskModal isOpen={isMasterTaskModalOpen} onClose={() => setIsMasterTaskModalOpen(false)} onSave={handleSaveMasterTask} onDelete={handleDeleteMasterTask} initialTask={editingMasterTask} projectId={activeProjectId} allTasks={projectMasterTasks} />
       <ActualCompletionModal isOpen={isActualModalOpen} onClose={() => setIsActualModalOpen(false)} onSave={handleSaveActualCompletion} onClear={handleClearActualCompletion} task={actualTask} clickedDateIso={clickedDateIso} />
       <PartModal isOpen={isPartModalOpen} onClose={() => setIsPartModalOpen(false)} onSave={handleSavePart} initialPart={editingPart} modules={projectModules} defaultModuleId={defaultPartModuleId} />
-      <ModuleModal isOpen={isModuleModalOpen} onClose={() => setIsModuleModalOpen(false)} onSave={handleSaveModule} initialModule={editingModule} />
+      <ModuleModal isOpen={isModuleModalOpen} onClose={() => setIsModuleModalOpen(false)} onSave={handleSaveModule} onDelete={handleDeleteModule} initialModule={editingModule} />
       <ExportImportModal isOpen={isExportImportOpen} onClose={() => setIsExportImportOpen(false)} parts={projectParts} modules={projectModules} onImportParts={handleImportParts} />
     </div>
   );

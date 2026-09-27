@@ -7,7 +7,8 @@ import {
   ChevronRight,
   Layers,
   Sliders,
-  Filter
+  Filter,
+  Trash2
 } from 'lucide-react';
 import { BomPartItem, ModuleItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -234,6 +235,13 @@ export const ModuleList: React.FC<ModuleListProps> = ({
                     title="แก้ไข Module"
                   >
                     <Edit3 className="w-3.5 h-3.5" />
+                  </button>
+                  <button
+                    onClick={() => onDeleteModule(activeModule.id)}
+                    className="p-1 text-slate-500 hover:text-red-600 dark:hover:text-red-400 bg-slate-100 dark:bg-slate-800 rounded-lg transition-colors"
+                    title="ลบ Module นี้"
+                  >
+                    <Trash2 className="w-3.5 h-3.5" />
                   </button>
                 </div>
               </div>

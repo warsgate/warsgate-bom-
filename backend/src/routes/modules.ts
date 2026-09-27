@@ -81,10 +81,20 @@ router.put('/:id', async (req: Request, res: Response) => {
 // DELETE module
 router.delete('/:id', async (req: Request, res: Response) => {
   try {
-    await prisma.module.delete({ where: { id: req.params.id } });
-    res.json({ success: true });
-  } catch (err) {
-    res.status(500).json({ error: 'Failed to delete module' });
+    const moduleId = req.params.id;
+
+    // 1. Safely unlink any parts referencing this module so they are preserved
+    await prisma.part.updateMany({
+      where: { moduleId },
+      data: { moduleId: null },
+    });
+
+    // 2. Delete the module
+    await prisma.module.delete({ where: { id: moduleId } });
+    res.json({ success: true, message: 'Module deleted successfully' });
+  } catch (err: any) {
+    console.error(`Failed to delete module ${req.params.id}:`, err);
+    res.status(500).json({ error: 'Failed to delete module', details: err?.message || String(err) });
   }
 });
 

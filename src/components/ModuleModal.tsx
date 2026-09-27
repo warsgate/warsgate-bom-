@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { X, Layers, Save, Wrench, Zap, Sliders } from 'lucide-react';
+import { X, Layers, Save, Wrench, Zap, Sliders, Trash2 } from 'lucide-react';
 import { ModuleItem, ModuleScopeType } from '../types/bom';
 
 interface ModuleModalProps {
   isOpen: boolean;
   onClose: () => void;
   onSave: (module: Partial<ModuleItem>) => void;
+  onDelete?: (id: string) => void;
   initialModule?: ModuleItem | null;
 }
 
@@ -13,6 +14,7 @@ export const ModuleModal: React.FC<ModuleModalProps> = ({
   isOpen,
   onClose,
   onSave,
+  onDelete,
   initialModule,
 }) => {
   const [code, setCode] = useState('');
@@ -227,22 +229,42 @@ export const ModuleModal: React.FC<ModuleModalProps> = ({
           </div>
 
           {/* Footer */}
-          <div className="flex items-center justify-end space-x-3 pt-4 border-t border-slate-200 dark:border-slate-800">
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
-            >
-              ยกเลิก
-            </button>
+          <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
+            <div>
+              {initialModule?.id && onDelete && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (confirm(`ยืนยันการลบ Module "${initialModule.name}" หรือไม่?\n(ชิ้นส่วนในโมดูลนี้จะไม่ถูกลบ จะกลายเป็นชิ้นส่วนทั่วไป)`)) {
+                      onDelete(initialModule.id);
+                      onClose();
+                    }
+                  }}
+                  className="px-3 py-2 rounded-xl text-xs font-bold text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/40 border border-red-200 dark:border-red-900/50 transition-colors flex items-center"
+                >
+                  <Trash2 className="w-3.5 h-3.5 mr-1.5" />
+                  ลบ Module นี้
+                </button>
+              )}
+            </div>
 
-            <button
-              type="submit"
-              className="px-5 py-2 rounded-xl text-xs font-black text-white bg-gradient-to-r from-red-600 via-rose-700 to-rose-900 hover:from-red-500 hover:to-rose-800 shadow-md shadow-red-600/20 transition-all flex items-center"
-            >
-              <Save className="w-4 h-4 mr-1.5" />
-              บันทึก Module
-            </button>
+            <div className="flex items-center space-x-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 rounded-xl text-xs font-bold text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors"
+              >
+                ยกเลิก
+              </button>
+
+              <button
+                type="submit"
+                className="px-5 py-2 rounded-xl text-xs font-black text-white bg-gradient-to-r from-red-600 via-rose-700 to-rose-900 hover:from-red-500 hover:to-rose-800 shadow-md shadow-red-600/20 transition-all flex items-center"
+              >
+                <Save className="w-4 h-4 mr-1.5" />
+                บันทึก Module
+              </button>
+            </div>
           </div>
 
         </form>

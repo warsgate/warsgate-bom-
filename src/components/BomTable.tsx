@@ -11,7 +11,11 @@ import {
   Truck,
   AlertTriangle,
   Check,
-  Clock
+  Clock,
+  QrCode,
+  FileCheck2,
+  History,
+  Camera
 } from 'lucide-react';
 import { BomPartItem, ModuleItem, PartStatus } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -35,6 +39,10 @@ interface BomTableProps {
       [key: string]: any; 
     }
   ) => void;
+  onOpenQrModal?: (part?: BomPartItem | null) => void;
+  onOpenPoRfqModal?: () => void;
+  onOpenRevisionModal?: () => void;
+  onOpenQrScanner?: () => void;
 }
 
 const getTodayIso = () => new Date().toISOString().split('T')[0];
@@ -48,6 +56,10 @@ export const BomTable: React.FC<BomTableProps> = ({
   searchQuery,
   setSearchQuery,
   onUpdatePartStatus,
+  onOpenQrModal,
+  onOpenPoRfqModal,
+  onOpenRevisionModal,
+  onOpenQrScanner,
 }) => {
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>('ALL');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('ALL');
@@ -188,8 +200,8 @@ export const BomTable: React.FC<BomTableProps> = ({
         </div>
 
         {/* Search & Actions */}
-        <div className="flex items-center space-x-2 w-full md:w-auto justify-end">
-          <div className="relative w-48">
+        <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto justify-end">
+          <div className="relative w-40 sm:w-48">
             <input
               type="text"
               value={searchQuery}
@@ -200,9 +212,42 @@ export const BomTable: React.FC<BomTableProps> = ({
             <Search className="w-3 h-3 text-slate-400 absolute left-2 top-2" />
           </div>
 
+          {onOpenQrModal && (
+            <button
+              onClick={() => onOpenQrModal(null)}
+              className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center whitespace-nowrap"
+              title="พิมพ์สติกเกอร์ QR Code ติดชิ้นส่วน (A4 Sheet)"
+            >
+              <QrCode className="w-3.5 h-3.5 mr-1 text-red-600" />
+              <span>ป้าย QR Code</span>
+            </button>
+          )}
+
+          {onOpenPoRfqModal && (
+            <button
+              onClick={onOpenPoRfqModal}
+              className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center whitespace-nowrap"
+              title="ออกใบสั่งซื้อ (PO) และใบขอราคา (RFQ) รวมตามผู้ขาย"
+            >
+              <FileCheck2 className="w-3.5 h-3.5 mr-1 text-indigo-600" />
+              <span>ออกใบ PO / RFQ</span>
+            </button>
+          )}
+
+          {onOpenRevisionModal && (
+            <button
+              onClick={onOpenRevisionModal}
+              className="px-2.5 py-1 bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center whitespace-nowrap"
+              title="ประวัติเวอร์ชัน BOM, Visual Diff & Rollback"
+            >
+              <History className="w-3.5 h-3.5 mr-1 text-purple-600" />
+              <span>Rev. BOM</span>
+            </button>
+          )}
+
           <button
             onClick={() => window.print()}
-            className="px-3 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-black transition-all shadow-sm flex items-center whitespace-nowrap print:hidden"
+            className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-black transition-all shadow-sm flex items-center whitespace-nowrap print:hidden"
             title="พิมพ์เพื่อขอราคา (ซ่อนราคาและแถบจัดการ)"
           >
             <Printer className="w-3.5 h-3.5 mr-1" />
@@ -396,6 +441,15 @@ export const BomTable: React.FC<BomTableProps> = ({
                       </td>
                       <td className="px-3 py-3 text-center print:hidden">
                         <div className="flex items-center justify-center space-x-1">
+                          {onOpenQrModal && (
+                            <button
+                              onClick={() => onOpenQrModal(part)}
+                              className="p-1 text-slate-500 hover:text-red-600 bg-slate-100 dark:bg-slate-800 rounded transition-colors"
+                              title="ดูและพิมพ์ป้ายสติกเกอร์ QR Tag ชิ้นส่วนนี้"
+                            >
+                              <QrCode className="w-3.5 h-3.5" />
+                            </button>
+                          )}
                           <button
                             onClick={() => onEditPart(part)}
                             className="p-1 text-slate-500 hover:text-slate-900 dark:hover:text-white bg-slate-100 dark:bg-slate-800 rounded transition-colors"

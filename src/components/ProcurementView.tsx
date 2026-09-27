@@ -16,7 +16,9 @@ import {
   Calendar,
   AlertTriangle,
   Edit3,
-  X
+  X,
+  FileCheck2,
+  Camera
 } from 'lucide-react';
 import { BomPartItem, ModuleItem, PartStatus } from '../types/bom';
 import { calculateProcurementSummary, formatCurrency } from '../utils/costCalculator';
@@ -39,6 +41,8 @@ interface ProcurementViewProps {
     }
   ) => void;
   onEditPart: (part: BomPartItem) => void;
+  onOpenPoRfqModal?: () => void;
+  onOpenQrScanner?: () => void;
 }
 
 const getTodayIso = () => new Date().toISOString().split('T')[0];
@@ -54,6 +58,8 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
   modules,
   onUpdatePartStatus,
   onEditPart,
+  onOpenPoRfqModal,
+  onOpenQrScanner,
 }) => {
   const [selectedStatusFilter, setSelectedStatusFilter] = useState<string>(() => {
     const params = new URLSearchParams(window.location.search);
@@ -434,6 +440,28 @@ export const ProcurementView: React.FC<ProcurementViewProps> = ({
               <Send className="w-3.5 h-3.5" />
               <span>ส่งแจ้งเตือน LINE</span>
             </button>
+
+            {onOpenPoRfqModal && (
+              <button
+                onClick={onOpenPoRfqModal}
+                className="px-3 py-1.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-black text-xs flex items-center space-x-1.5 shadow-sm shrink-0 transition-all"
+                title="ออกใบสั่งซื้อ (PO) และใบขอราคา (RFQ) รวมตามผู้จำหน่าย"
+              >
+                <FileCheck2 className="w-3.5 h-3.5" />
+                <span>ออกใบ PO / RFQ</span>
+              </button>
+            )}
+
+            {onOpenQrScanner && (
+              <button
+                onClick={onOpenQrScanner}
+                className="px-3 py-1.5 bg-slate-800 hover:bg-slate-700 text-white rounded-lg font-black text-xs flex items-center space-x-1.5 shadow-sm shrink-0 transition-all"
+                title="สแกน QR Code ตรวจรับของเข้าสโตร์"
+              >
+                <Camera className="w-3.5 h-3.5 text-emerald-400" />
+                <span>สแกนรับของ</span>
+              </button>
+            )}
 
             <div className="w-full md:w-56 relative">
               <input

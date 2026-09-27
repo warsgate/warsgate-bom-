@@ -28,6 +28,10 @@ import { UserManagement } from './components/UserManagement';
 import { LineMessagingCenter } from './components/LineMessagingCenter';
 import { ProductionWorkflowView } from './components/ProductionWorkflowView';
 import { SwitchUserModal } from './components/SwitchUserModal';
+import { QrTagModal } from './components/QrTagModal';
+import { MobileQrScannerModal } from './components/MobileQrScannerModal';
+import { PoRfqGeneratorModal } from './components/PoRfqGeneratorModal';
+import { RevisionControlModal } from './components/RevisionControlModal';
 
 export function App() {
   const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
@@ -88,6 +92,13 @@ export function App() {
   const [actualTask, setActualTask] = useState<MasterPlanTaskItem | null>(null);
   const [clickedDateIso, setClickedDateIso] = useState<string>('');
   const [isExportImportOpen, setIsExportImportOpen] = useState(false);
+
+  // Roadmap 1, 2, 3 Modals
+  const [isQrTagModalOpen, setIsQrTagModalOpen] = useState(false);
+  const [qrTagSinglePart, setQrTagSinglePart] = useState<BomPartItem | null>(null);
+  const [isQrScannerOpen, setIsQrScannerOpen] = useState(false);
+  const [isPoRfqModalOpen, setIsPoRfqModalOpen] = useState(false);
+  const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
 
   // Sync dark mode
   useEffect(() => {
@@ -244,6 +255,40 @@ export function App() {
     await partsApi.bulkImport(formatted);
     const updated = await partsApi.getAll(activeProjectId);
     setAllParts(prev => [...prev.filter(p => p.projectId !== activeProjectId), ...updated]);
+  };
+
+  // ─── Features 1, 2, 3 Handlers ───────────────────────────
+  const handleOpenQrModal = (part?: BomPartItem | null) => {
+    setQrTagSinglePart(part || null);
+    setIsQrTagModalOpen(true);
+  };
+
+  const handleReceivePartViaQr = async (partId: string, storeLocation: string, receiveDate: string) => {
+    await handleUpdatePartStatus(partId, 'Received', {
+      storeLocation,
+      receiveDate,
+      workflowStage: '4. Assembly',
+    });
+  };
+
+  const handleSyncPoToParts = async (partIds: string[], poNumber: string, orderDate: string) => {
+    for (const pid of partIds) {
+      await handleUpdatePartStatus(pid, 'Ordered', {
+        poNumber,
+        orderDate,
+        workflowStage: '3. Procurement',
+      });
+    }
+  };
+
+  const handleRestoreRevision = async (revParts: BomPartItem[], revModules: ModuleItem[]) => {
+    if (revParts.length === 0) return;
+    const formatted = revParts.map(p => ({
+      ...p,
+      projectId: activeProjectId,
+    }));
+    await partsApi.bulkImport(formatted);
+    await loadAll(false);
   };
 
   // ─── Master Task CRUD ─────────────────────────────────────
@@ -613,6 +658,7 @@ export function App() {
           onOpenMobileSidebar={() => setIsMobileSidebarOpen(true)}
           onOpenAddPart={() => { setEditingPart(null); setIsPartModalOpen(true); }}
           onOpenExportImport={() => setIsExportImportOpen(true)}
+          onOpenQrScanner={() => setIsQrScannerOpen(true)}
           isDarkMode={isDarkMode}
           setIsDarkMode={setIsDarkMode}
           userRole={user?.role === 'LEVEL_2' ? 'OWNER' : 'ENGINEER'}
@@ -690,6 +736,10 @@ export function App() {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               onUpdatePartStatus={handleUpdatePartStatus}
+              onOpenQrModal={handleOpenQrModal}
+              onOpenPoRfqModal={() => setIsPoRfqModalOpen(true)}
+              onOpenRevisionModal={() => setIsRevisionModalOpen(true)}
+              onOpenQrScanner={() => setIsQrScannerOpen(true)}
             />
           )}
 
@@ -699,6 +749,8 @@ export function App() {
               modules={projectModules}
               onUpdatePartStatus={handleUpdatePartStatus}
               onEditPart={(p) => { setEditingPart(p); setIsPartModalOpen(true); }}
+              onOpenPoRfqModal={() => setIsPoRfqModalOpen(true)}
+              onOpenQrScanner={() => setIsQrScannerOpen(true)}
             />
           )}
 
@@ -737,7 +789,7 @@ export function App() {
               modules={projectModules}
               parts={projectParts}
               onUpdatePartStage={handleUpdatePartStage}
-              onEditPart={(p) => { setEditingPart(p); setIsPartModalOpen(true); }}
+              onEditPart={(p: BomPartItem) => { setEditingPart(p); setIsPartModalOpen(true); }}
             />
           )}
 
@@ -772,6 +824,45 @@ export function App() {
       <PartModal isOpen={isPartModalOpen} onClose={() => setIsPartModalOpen(false)} onSave={handleSavePart} initialPart={editingPart} modules={projectModules} defaultModuleId={defaultPartModuleId} />
       <ModuleModal isOpen={isModuleModalOpen} onClose={() => setIsModuleModalOpen(false)} onSave={handleSaveModule} onDelete={handleDeleteModule} initialModule={editingModule} />
       <ExportImportModal isOpen={isExportImportOpen} onClose={() => setIsExportImportOpen(false)} parts={projectParts} modules={projectModules} onImportParts={handleImportParts} />
+
+      {/* Feature 1: QR Sticker Tag & Mobile QR Scanner */}
+      <QrTagModal
+        isOpen={isQrTagModalOpen}
+        onClose={() => { setIsQrTagModalOpen(false); setQrTagSinglePart(null); }}
+        project={activeProject}
+        modules={projectModules}
+        parts={projectParts}
+        singlePart={qrTagSinglePart}
+      />
+      <MobileQrScannerModal
+        isOpen={isQrScannerOpen}
+        onClose={() => setIsQrScannerOpen(false)}
+        parts={allParts}
+        projects={projects}
+        modules={allModules}
+        onReceivePart={handleReceivePartViaQr}
+      />
+
+      {/* Feature 2: Smart PO & RFQ Generator */}
+      <PoRfqGeneratorModal
+        isOpen={isPoRfqModalOpen}
+        onClose={() => setIsPoRfqModalOpen(false)}
+        project={activeProject}
+        modules={projectModules}
+        parts={projectParts}
+        onSyncPoToParts={handleSyncPoToParts}
+      />
+
+      {/* Feature 3: BOM Revision Control & Diff Viewer */}
+      <RevisionControlModal
+        isOpen={isRevisionModalOpen}
+        onClose={() => setIsRevisionModalOpen(false)}
+        project={activeProject}
+        currentParts={projectParts}
+        currentModules={projectModules}
+        currentUser={user}
+        onRestoreRevision={handleRestoreRevision}
+      />
     </div>
   );
 }

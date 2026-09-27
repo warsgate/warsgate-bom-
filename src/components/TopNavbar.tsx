@@ -28,7 +28,8 @@ import {
   History,
   Users,
   Check,
-  Sparkles
+  Sparkles,
+  Camera
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -50,6 +51,7 @@ interface TopNavbarProps {
   onOpenMobileSidebar: () => void;
   onOpenAddPart?: () => void;
   onOpenExportImport?: () => void;
+  onOpenQrScanner?: () => void;
   isDarkMode: boolean;
   setIsDarkMode: (val: boolean) => void;
   userRole?: 'OWNER' | 'ENGINEER';
@@ -74,6 +76,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenMobileSidebar,
   onOpenAddPart,
   onOpenExportImport,
+  onOpenQrScanner,
   isDarkMode,
   setIsDarkMode,
   userRole = 'ENGINEER',
@@ -373,6 +376,18 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
             >
               <Plus className="w-3.5 h-3.5" />
               <span className="hidden md:inline">เพิ่ม Part</span>
+            </button>
+          )}
+
+          {/* Quick Action Button: Mobile QR Scanner */}
+          {onOpenQrScanner && (
+            <button
+              onClick={onOpenQrScanner}
+              className="flex items-center space-x-1 px-2.5 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold shadow-sm shadow-emerald-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all"
+              title="สแกน QR Code ตรวจรับของเข้าสโตร์ (Scan to Receive)"
+            >
+              <Camera className="w-3.5 h-3.5" />
+              <span className="hidden sm:inline">สแกนรับของ</span>
             </button>
           )}
 

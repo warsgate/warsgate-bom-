@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { X, FolderKanban, Save } from 'lucide-react';
+import { X, FolderKanban, Save, Building2, Sparkles, CheckCircle2, ChevronDown } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
+import { integrationApi, AccountingContact } from '../api/client';
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -25,6 +26,27 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [poDate, setPoDate] = useState('');
   const [contactPerson, setContactPerson] = useState('');
 
+  // Warsgate Accounting Integration
+  const [accountingContacts, setAccountingContacts] = useState<AccountingContact[]>([]);
+  const [selectedContactId, setSelectedContactId] = useState<string>('');
+  const [loadingContacts, setLoadingContacts] = useState(false);
+
+  useEffect(() => {
+    if (isOpen) {
+      setLoadingContacts(true);
+      integrationApi.getAccountingContacts()
+        .then(res => {
+          if (res?.customers && Array.isArray(res.customers)) {
+            setAccountingContacts(res.customers);
+          }
+        })
+        .catch(err => {
+          console.warn('Could not load accounting contacts:', err);
+        })
+        .finally(() => setLoadingContacts(false));
+    }
+  }, [isOpen]);
+
   useEffect(() => {
     if (initialProject) {
       setCode(initialProject.code || '');
@@ -36,6 +58,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setStatus(initialProject.status || 'Active');
       setPoDate(initialProject.poDate || '');
       setContactPerson(initialProject.contactPerson || '');
+      setSelectedContactId('');
     } else {
       setCode(`PRJ-${Math.floor(Math.random() * 899 + 100)}`);
       setName('');
@@ -46,8 +69,34 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setStatus('Active');
       setPoDate('');
       setContactPerson('');
+      setSelectedContactId('');
     }
   }, [initialProject, isOpen]);
+
+  const handleSelectAccountingCustomer = (contactId: string) => {
+    setSelectedContactId(contactId);
+    const found = accountingContacts.find(c => c.id === contactId);
+    if (!found) return;
+
+    setCustomer(found.companyName);
+
+    // Map customer ID
+    if (found.companyName.includes('พีเอ็นพี')) {
+      setCustomerId('527');
+    } else if (found.companyName.includes('ไทย เซกิซุย')) {
+      setCustomerId('107');
+    } else if (found.companyName.includes('คูโรดา')) {
+      setCustomerId('025');
+    }
+
+    const contactStr = [
+      found.name,
+      found.phone ? `โทร: ${found.phone}` : '',
+      found.email ? `อีเมล: ${found.email}` : ''
+    ].filter(Boolean).join(' | ');
+
+    setContactPerson(contactStr);
+  };
 
   if (!isOpen) return null;
 
@@ -97,6 +146,51 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
         {/* Form */}
         <form onSubmit={handleSubmit} className="p-5 space-y-4">
           
+          {/* Warsgate Accounting Quick Customer Select */}
+          <div className="p-3 bg-gradient-to-r from-red-50 to-orange-50 dark:from-red-950/40 dark:to-orange-950/20 border border-red-200 dark:border-red-800/60 rounded-xl space-y-2">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-1.5 text-xs font-bold text-red-900 dark:text-red-300">
+                <Building2 className="w-4 h-4 text-red-600 dark:text-red-400" />
+                <span>ดึงข้อมูลลูกค้าจากโปรแกรมบัญชี วอร์สเกต</span>
+              </div>
+              <span className="text-[10px] bg-red-100 dark:bg-red-900/60 text-red-700 dark:text-red-300 px-2 py-0.5 rounded-full font-bold">
+                {loadingContacts ? 'กำลังโหลด...' : `${accountingContacts.length} ลูกค้า`}
+              </span>
+            </div>
+
+            <select
+              value={selectedContactId}
+              onChange={(e) => handleSelectAccountingCustomer(e.target.value)}
+              className="w-full bg-white dark:bg-slate-900 border border-red-300 dark:border-red-700 rounded-lg px-3 py-1.5 text-xs text-slate-800 dark:text-slate-200 font-bold focus:ring-2 focus:ring-red-500 focus:outline-none"
+            >
+              <option value="">-- คลิกเลือกลูกค้าเพื่อกรอกอัตโนมัติ (Auto-fill) --</option>
+              {accountingContacts.map(c => (
+                <option key={c.id} value={c.id}>
+                  🏢 {c.companyName} {c.name ? `— ผู้ติดต่อ: ${c.name}` : ''}
+                </option>
+              ))}
+            </select>
+
+            {selectedContactId && (() => {
+              const c = accountingContacts.find(x => x.id === selectedContactId);
+              if (!c) return null;
+              return (
+                <div className="text-[11px] text-slate-600 dark:text-slate-300 bg-white/80 dark:bg-slate-900/80 p-2.5 rounded-lg border border-red-100 dark:border-red-900/40 space-y-1">
+                  <div className="flex items-center justify-between font-bold text-slate-800 dark:text-slate-100">
+                    <span className="text-red-700 dark:text-red-400 flex items-center">
+                      <CheckCircle2 className="w-3.5 h-3.5 mr-1 text-emerald-500 inline" />
+                      เชื่อมโยงโปรแกรมบัญชีสำเร็จ
+                    </span>
+                    <span>เครดิต: {c.creditDays ? `${c.creditDays} วัน` : '30 วัน'}</span>
+                  </div>
+                  <div><strong>เลขผู้เสียภาษี:</strong> {c.taxId || '-'} {c.branchCode ? `(สาขา: ${c.branchCode})` : ''}</div>
+                  <div className="truncate"><strong>ที่อยู่:</strong> {c.address || '-'}</div>
+                  {c.phone && <div><strong>โทร:</strong> {c.phone}</div>}
+                </div>
+              );
+            })()}
+          </div>
+
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1">

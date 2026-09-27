@@ -1,4 +1,6 @@
 import { Router, Request, Response } from 'express';
+import * as fs from 'fs';
+import * as path from 'path';
 import prisma from '../prisma';
 
 const router = Router();
@@ -253,6 +255,51 @@ router.get('/cost-analysis/:id', async (req: Request, res: Response) => {
     });
   } catch (err: any) {
     res.status(500).json({ error: 'Failed to generate cost analysis', details: err.message });
+  }
+});
+
+// GET all Contacts (Customers & Suppliers) from Warsgate Accounting
+router.get('/accounting-contacts', async (_req: Request, res: Response) => {
+  try {
+    const desktopPath = '/Users/warsgate/Desktop/โปรแกรม บัญชี/backups/warsgate_backup_latest.json';
+    const bundledPath = path.join(__dirname, '../../data/warsgate_accounting_contacts.json');
+
+    let contacts: any[] = [];
+
+    if (fs.existsSync(desktopPath)) {
+      try {
+        const raw = fs.readFileSync(desktopPath, 'utf8');
+        const parsed = JSON.parse(raw);
+        contacts = parsed.contacts || [];
+      } catch (e) {
+        console.warn('Could not read accounting file directly, trying bundled path', e);
+      }
+    }
+
+    if (contacts.length === 0 && fs.existsSync(bundledPath)) {
+      try {
+        const raw = fs.readFileSync(bundledPath, 'utf8');
+        contacts = JSON.parse(raw);
+      } catch (e) {
+        console.warn('Could not read bundled contacts', e);
+      }
+    }
+
+    // Separate into customers and suppliers
+    const customers = contacts.filter((c: any) => c.type === 'CUSTOMER');
+    const suppliers = contacts.filter((c: any) => c.type === 'SUPPLIER');
+
+    res.json({
+      success: true,
+      source: fs.existsSync(desktopPath) ? 'Warsgate Accounting App (Live Local)' : 'Warsgate Accounting Bundled Data',
+      totalCount: contacts.length,
+      customers,
+      suppliers,
+      all: contacts,
+    });
+  } catch (err: any) {
+    console.error('Error fetching accounting contacts:', err);
+    res.status(500).json({ error: 'Failed to fetch accounting contacts', details: err.message });
   }
 });
 

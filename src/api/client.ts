@@ -157,3 +157,37 @@ export const lineApi = {
   triggerProcurementAlert: (projectId?: string) => 
     request<any>('/line/trigger-procurement-alert', { method: 'POST', body: JSON.stringify({ projectId }) }),
 };
+
+// ─── Warsgate Accounting Integration ──────────────────────────
+export interface AccountingContact {
+  id: string;
+  name: string;
+  companyName: string;
+  taxId: string;
+  isBranch: boolean;
+  branchCode: string;
+  address: string;
+  phone: string;
+  email: string;
+  type: 'CUSTOMER' | 'SUPPLIER';
+  creditDays?: number;
+  totalTransactions?: number;
+  balanceDue?: number;
+}
+
+export const integrationApi = {
+  getAccountingContacts: () =>
+    request<{
+      success: boolean;
+      source: string;
+      totalCount: number;
+      customers: AccountingContact[];
+      suppliers: AccountingContact[];
+      all: AccountingContact[];
+    }>('/integration/accounting-contacts'),
+  getProjectsWithBom: () =>
+    request<any[]>('/integration/projects-with-bom'),
+  getProjectCostAnalysis: (id: string) =>
+    request<any>(`/integration/cost-analysis/${id}`),
+};
+

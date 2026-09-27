@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { X, FolderKanban, Save, Building2, Sparkles, CheckCircle2, ChevronDown } from 'lucide-react';
+import { X, FolderKanban, Save, Building2, Sparkles, CheckCircle2, ChevronDown, Check } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { integrationApi, AccountingContact } from '../api/client';
+import { DEFAULT_ACCOUNTING_CUSTOMERS } from '../data/warsgateAccountingContacts';
 
 interface ProjectModalProps {
   isOpen: boolean;
@@ -26,8 +27,8 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
   const [poDate, setPoDate] = useState('');
   const [contactPerson, setContactPerson] = useState('');
 
-  // Warsgate Accounting Integration
-  const [accountingContacts, setAccountingContacts] = useState<AccountingContact[]>([]);
+  // Warsgate Accounting Integration (Initializes with default authentic contacts)
+  const [accountingContacts, setAccountingContacts] = useState<AccountingContact[]>(DEFAULT_ACCOUNTING_CUSTOMERS);
   const [selectedContactId, setSelectedContactId] = useState<string>('');
   const [loadingContacts, setLoadingContacts] = useState(false);
 
@@ -36,12 +37,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
       setLoadingContacts(true);
       integrationApi.getAccountingContacts()
         .then(res => {
-          if (res?.customers && Array.isArray(res.customers)) {
+          if (res?.customers && Array.isArray(res.customers) && res.customers.length > 0) {
             setAccountingContacts(res.customers);
           }
         })
         .catch(err => {
-          console.warn('Could not load accounting contacts:', err);
+          console.warn('Could not load live accounting contacts, using bundled contacts:', err);
         })
         .finally(() => setLoadingContacts(false));
     }
@@ -171,6 +172,33 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               ))}
             </select>
 
+            {/* Quick Pick Pills for instant selection */}
+            <div className="flex flex-wrap items-center gap-1.5 pt-0.5">
+              <span className="text-[10px] text-slate-500 dark:text-slate-400 font-bold mr-0.5">คลิกเลือกทันที:</span>
+              {accountingContacts.map((c) => {
+                const isSelected = selectedContactId === c.id || customer === c.companyName;
+                const shortName = c.companyName.includes('พีเอ็นพี') ? 'บ. พีเอ็นพี (527)' :
+                  c.companyName.includes('คูโรดา') ? 'บ. คูโรดา (025)' :
+                  c.companyName.includes('ไทย เซกิซุย') ? 'บ. ไทย เซกิซุย (107)' :
+                  c.companyName.slice(0, 18);
+                return (
+                  <button
+                    key={c.id}
+                    type="button"
+                    onClick={() => handleSelectAccountingCustomer(c.id)}
+                    className={`px-2 py-0.5 rounded-md text-[11px] font-bold transition-all flex items-center space-x-1 ${
+                      isSelected
+                        ? 'bg-red-600 text-white shadow-sm ring-1 ring-red-600'
+                        : 'bg-white dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-red-200 dark:border-red-900/40 hover:bg-red-50 dark:hover:bg-red-950/40 hover:text-red-600 dark:hover:text-red-400'
+                    }`}
+                  >
+                    {isSelected && <Check className="w-3 h-3 mr-0.5 text-white" />}
+                    <span>{shortName}</span>
+                  </button>
+                );
+              })}
+            </div>
+
             {selectedContactId && (() => {
               const c = accountingContacts.find(x => x.id === selectedContactId);
               if (!c) return null;
@@ -213,11 +241,25 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({
               <input
                 type="text"
                 required
+                list="accounting-customer-list"
                 value={customer}
-                onChange={(e) => setCustomer(e.target.value)}
+                onChange={(e) => {
+                  setCustomer(e.target.value);
+                  const matched = accountingContacts.find(c => c.companyName === e.target.value);
+                  if (matched) {
+                    handleSelectAccountingCustomer(matched.id);
+                  }
+                }}
                 placeholder="e.g. Maxwell / Keyence"
                 className="w-full bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-xl px-3 py-2 text-xs text-slate-900 dark:text-white font-bold focus:outline-none focus:ring-2 focus:ring-red-500"
               />
+              <datalist id="accounting-customer-list">
+                {accountingContacts.map(c => (
+                  <option key={c.id} value={c.companyName}>
+                    {c.companyName} {c.name ? `(${c.name})` : ''}
+                  </option>
+                ))}
+              </datalist>
             </div>
           </div>
 

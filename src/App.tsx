@@ -32,6 +32,7 @@ import { QrTagModal } from './components/QrTagModal';
 import { MobileQrScannerModal } from './components/MobileQrScannerModal';
 import { PoRfqGeneratorModal } from './components/PoRfqGeneratorModal';
 import { RevisionControlModal } from './components/RevisionControlModal';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export function App() {
   const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
@@ -854,15 +855,17 @@ export function App() {
       />
 
       {/* Feature 3: BOM Revision Control & Diff Viewer */}
-      <RevisionControlModal
-        isOpen={isRevisionModalOpen}
-        onClose={() => setIsRevisionModalOpen(false)}
-        project={activeProject}
-        currentParts={projectParts}
-        currentModules={projectModules}
-        currentUser={user}
-        onRestoreRevision={handleRestoreRevision}
-      />
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดหน้าต่าง Rev. BOM ได้">
+        <RevisionControlModal
+          isOpen={isRevisionModalOpen}
+          onClose={() => setIsRevisionModalOpen(false)}
+          project={activeProject}
+          currentParts={projectParts}
+          currentModules={projectModules}
+          currentUser={user}
+          onRestoreRevision={handleRestoreRevision}
+        />
+      </ErrorBoundary>
     </div>
   );
 }

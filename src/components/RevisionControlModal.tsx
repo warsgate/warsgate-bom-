@@ -78,36 +78,54 @@ export const RevisionControlModal: React.FC<RevisionControlModalProps> = ({
     if (!isOpen) return;
     try {
       const saved = localStorage.getItem(storageKey);
+      let parsed: BomRevision[] = [];
       if (saved) {
-        const parsed: BomRevision[] = JSON.parse(saved);
+        try {
+          const data = JSON.parse(saved);
+          if (Array.isArray(data)) {
+            parsed = data;
+          }
+        } catch {
+          parsed = [];
+        }
+      }
+
+      const safeParts = currentParts || [];
+      const safeModules = currentModules || [];
+
+      if (parsed.length > 0) {
         setRevisions(parsed);
-        if (parsed.length > 0 && !baseRevId) {
+        if (!baseRevId || !parsed.some(r => r.id === baseRevId)) {
           setBaseRevId(parsed[parsed.length - 1].id);
         }
       } else {
         // Auto-seed Rev.0 if none exists yet
-        const currentCost = currentParts.reduce((sum, p) => sum + (p.totalAmount || (p.qty * p.unitPrice)), 0);
+        const currentCost = safeParts.reduce((sum, p) => sum + (p.totalAmount || ((p.qty || 1) * (p.unitPrice || 0))), 0);
         const initialRev: BomRevision = {
           id: 'rev_initial_' + Date.now(),
           projectId,
           revCode: 'Rev.0',
           createdAt: new Date().toISOString(),
-          author: 'System (Initial Baseline)',
+          author: currentUser?.name || 'System (Initial Baseline)',
           changeNotes: 'Initial Baseline Release of BOM',
           totalCost: currentCost,
-          totalParts: currentParts.length,
-          parts: JSON.parse(JSON.stringify(currentParts)),
-          modules: JSON.parse(JSON.stringify(currentModules)),
+          totalParts: safeParts.length,
+          parts: JSON.parse(JSON.stringify(safeParts)),
+          modules: JSON.parse(JSON.stringify(safeModules)),
         };
         const initialList = [initialRev];
-        localStorage.setItem(storageKey, JSON.stringify(initialList));
+        try {
+          localStorage.setItem(storageKey, JSON.stringify(initialList));
+        } catch {
+          // localStorage might be full or blocked
+        }
         setRevisions(initialList);
         setBaseRevId(initialRev.id);
       }
     } catch (e) {
       console.error('Failed to load BOM revisions:', e);
     }
-  }, [isOpen, projectId]);
+  }, [isOpen, projectId, storageKey, currentParts, currentModules, currentUser]);
 
   // Determine next suggested Rev code
   useEffect(() => {

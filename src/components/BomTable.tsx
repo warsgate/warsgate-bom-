@@ -15,7 +15,10 @@ import {
   QrCode,
   FileCheck2,
   History,
-  Camera
+  Camera,
+  Filter,
+  Layers,
+  X
 } from 'lucide-react';
 import { BomPartItem, ModuleItem, PartStatus } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -151,115 +154,179 @@ export const BomTable: React.FC<BomTableProps> = ({
   return (
     <div className="space-y-3">
       
-      {/* Compact Controls & Filter Bar */}
-      <div className="print:hidden p-3 rounded-xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm flex flex-col md:flex-row justify-between items-start md:items-center gap-2 text-xs">
+      {/* Modern 2-Tier Controls & Filter Bar */}
+      <div className="print:hidden rounded-2xl border border-slate-200/80 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm overflow-hidden divide-y divide-slate-100 dark:divide-slate-800">
         
-        {/* Filters */}
-        <div className="flex flex-wrap items-center gap-2 w-full md:w-auto">
-          {/* Module Filter */}
-          <div className="flex items-center space-x-1">
-            <span className="font-bold text-slate-700 dark:text-slate-300">Module:</span>
-            <select
-              value={selectedModuleFilter}
-              onChange={(e) => setSelectedModuleFilter(e.target.value)}
-              className="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2 py-1 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
-            >
-              <option value="ALL">ทุก Module ({parts.length})</option>
-              {modules.map(m => (
-                <option key={m.id} value={m.id}>{m.code} - {m.name}</option>
-              ))}
-            </select>
+        {/* Tier 1: Title, KPI & Main Actions */}
+        <div className="p-3 sm:px-4 flex flex-wrap items-center justify-between gap-2.5">
+          
+          {/* Left: View title & Live Stats */}
+          <div className="flex items-center space-x-3">
+            <div className="flex items-center space-x-2">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+              <span className="font-black text-sm text-slate-900 dark:text-white tracking-tight">
+                รายการชิ้นส่วน BOM
+              </span>
+            </div>
+            <div className="h-4 w-px bg-slate-200 dark:bg-slate-700 hidden sm:block"></div>
+            <div className="hidden sm:flex items-center space-x-2 text-xs text-slate-500 dark:text-slate-400">
+              <span className="font-bold text-slate-800 dark:text-slate-200">{filteredParts.length}</span>
+              <span>จาก {parts.length} รายการ</span>
+              <span>•</span>
+              <span className="font-black font-mono text-emerald-600 dark:text-emerald-400">
+                {formatCurrency(filteredParts.reduce((acc, p) => acc + (p.totalAmount || (p.qty * p.unitPrice)), 0))}
+              </span>
+            </div>
           </div>
 
-          {/* Category MC/EE */}
-          <div className="flex items-center space-x-1">
-            <span className="font-bold text-slate-700 dark:text-slate-300">ประเภท:</span>
-            <select
-              value={selectedCategoryFilter}
-              onChange={(e) => setSelectedCategoryFilter(e.target.value)}
-              className="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2 py-1 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
+          {/* Right: Grouped Action Buttons */}
+          <div className="flex flex-wrap items-center gap-2">
+            
+            {/* Smart Tools Segmented Pill */}
+            <div className="flex items-center p-0.5 bg-slate-100 dark:bg-slate-800/90 rounded-xl border border-slate-200/80 dark:border-slate-700/80">
+              {onOpenQrModal && (
+                <button
+                  onClick={() => onOpenQrModal(null)}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-red-600 dark:hover:text-red-400 transition-all shadow-none hover:shadow-sm"
+                  title="พิมพ์สติกเกอร์ QR Code ติดชิ้นส่วน (A4 Sheet)"
+                >
+                  <QrCode className="w-3.5 h-3.5 text-red-600 dark:text-red-400" />
+                  <span>ป้าย QR Code</span>
+                </button>
+              )}
+
+              {onOpenPoRfqModal && (
+                <button
+                  onClick={onOpenPoRfqModal}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-none hover:shadow-sm"
+                  title="ออกใบสั่งซื้อ (PO) และใบขอราคา (RFQ) รวมตามผู้ขาย"
+                >
+                  <FileCheck2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                  <span>ออกใบ PO / RFQ</span>
+                </button>
+              )}
+
+              {onOpenRevisionModal && (
+                <button
+                  onClick={onOpenRevisionModal}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-purple-600 dark:hover:text-purple-400 transition-all shadow-none hover:shadow-sm"
+                  title="ประวัติเวอร์ชัน BOM, Visual Diff & Rollback"
+                >
+                  <History className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
+                  <span>Rev. BOM</span>
+                </button>
+              )}
+            </div>
+
+            {/* Utility Actions */}
+            <button
+              onClick={() => window.print()}
+              className="flex items-center space-x-1.5 px-3 py-1.5 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-xl text-xs font-bold transition-all border border-slate-200/80 dark:border-slate-700 shadow-sm print:hidden"
+              title="พิมพ์เพื่อขอราคา (ซ่อนราคาและแถบจัดการ)"
             >
-              <option value="ALL">MC + EE ทั้งหมด</option>
-              <option value="MC">MC (Mechanical)</option>
-              <option value="EE">EE (Electrical)</option>
-            </select>
+              <Printer className="w-3.5 h-3.5 text-slate-500" />
+              <span className="hidden sm:inline">พิมพ์ขอราคา</span>
+            </button>
+
+            <button
+              onClick={onAddPart}
+              className="flex items-center space-x-1.5 px-3.5 py-1.5 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-800 text-white rounded-xl text-xs font-black shadow-md shadow-red-600/20 hover:scale-[1.02] active:scale-[0.98] transition-all print:hidden"
+            >
+              <Plus className="w-4 h-4" />
+              <span>+ เพิ่ม Part</span>
+            </button>
           </div>
 
-          {/* Standard vs Feb */}
-          <div className="flex items-center space-x-1">
-            <select
-              value={selectedPartTypeFilter}
-              onChange={(e) => setSelectedPartTypeFilter(e.target.value)}
-              className="bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg px-2 py-1 text-xs font-bold text-slate-900 dark:text-white focus:outline-none"
-            >
-              <option value="ALL">Standard & Feb ทั้งหมด</option>
-              <option value="Standard Part">Standard Part</option>
-              <option value="Feb Part">Feb Part</option>
-            </select>
-          </div>
         </div>
 
-        {/* Search & Actions */}
-        <div className="flex flex-wrap items-center gap-1.5 w-full md:w-auto justify-end">
-          <div className="relative w-40 sm:w-48">
+        {/* Tier 2: Smart Filter Pills & Global Search */}
+        <div className="p-2.5 sm:px-4 bg-slate-50/70 dark:bg-slate-950/40 flex flex-wrap items-center justify-between gap-2.5 text-xs">
+          
+          {/* Left: Filter Pills */}
+          <div className="flex flex-wrap items-center gap-2">
+            <div className="flex items-center space-x-1 text-slate-400 font-bold text-[11px] uppercase tracking-wider mr-1">
+              <Filter className="w-3.5 h-3.5" />
+              <span>กรอง:</span>
+            </div>
+
+            {/* Module Filter Pill */}
+            <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl px-2.5 py-1 shadow-sm">
+              <Layers className="w-3.5 h-3.5 text-slate-400 mr-1.5 shrink-0" />
+              <span className="font-bold text-slate-500 dark:text-slate-400 mr-1">Module:</span>
+              <select
+                value={selectedModuleFilter}
+                onChange={(e) => setSelectedModuleFilter(e.target.value)}
+                className="bg-transparent font-bold text-slate-900 dark:text-white focus:outline-none cursor-pointer text-xs"
+              >
+                <option value="ALL">ทุก Module ({parts.length})</option>
+                {modules.map(m => (
+                  <option key={m.id} value={m.id}>{m.code} - {m.name}</option>
+                ))}
+              </select>
+            </div>
+
+            {/* Category Filter Pill */}
+            <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl px-2.5 py-1 shadow-sm">
+              <span className="font-bold text-slate-500 dark:text-slate-400 mr-1">ประเภท:</span>
+              <select
+                value={selectedCategoryFilter}
+                onChange={(e) => setSelectedCategoryFilter(e.target.value)}
+                className="bg-transparent font-bold text-slate-900 dark:text-white focus:outline-none cursor-pointer text-xs"
+              >
+                <option value="ALL">MC + EE ทั้งหมด</option>
+                <option value="MC">MC (Mechanical)</option>
+                <option value="EE">EE (Electrical)</option>
+              </select>
+            </div>
+
+            {/* Part Type Filter Pill */}
+            <div className="flex items-center bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl px-2.5 py-1 shadow-sm">
+              <select
+                value={selectedPartTypeFilter}
+                onChange={(e) => setSelectedPartTypeFilter(e.target.value)}
+                className="bg-transparent font-bold text-slate-900 dark:text-white focus:outline-none cursor-pointer text-xs"
+              >
+                <option value="ALL">Standard & Feb ทั้งหมด</option>
+                <option value="Standard Part">Standard Part</option>
+                <option value="Feb Part">Feb Part</option>
+              </select>
+            </div>
+
+            {/* Reset Filter Button */}
+            {(selectedModuleFilter !== 'ALL' || selectedCategoryFilter !== 'ALL' || selectedPartTypeFilter !== 'ALL') && (
+              <button
+                onClick={() => {
+                  setSelectedModuleFilter('ALL');
+                  setSelectedCategoryFilter('ALL');
+                  setSelectedPartTypeFilter('ALL');
+                }}
+                className="text-[11px] font-bold text-red-600 hover:text-red-700 dark:text-red-400 underline ml-1 cursor-pointer"
+              >
+                ล้างตัวกรอง
+              </button>
+            )}
+          </div>
+
+          {/* Right: Search Input */}
+          <div className="relative w-full sm:w-64">
+            <Search className="w-3.5 h-3.5 text-slate-400 absolute left-3 top-1/2 -translate-y-1/2" />
             <input
               type="text"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="ค้นหา..."
-              className="w-full pl-7 pr-2 py-1 text-xs bg-slate-50 dark:bg-slate-950 border border-slate-300 dark:border-slate-800 rounded-lg text-slate-900 dark:text-slate-200 focus:outline-none focus:ring-1 focus:ring-red-500 font-bold"
+              placeholder="ค้นหาชื่อ Part, DWG, สเปก..."
+              className="w-full pl-8 pr-7 py-1 text-xs bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700/80 rounded-xl text-slate-900 dark:text-slate-100 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-red-500/20 focus:border-red-500 font-bold transition-all shadow-sm"
             />
-            <Search className="w-3 h-3 text-slate-400 absolute left-2 top-2" />
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-200"
+              >
+                <X className="w-3 h-3" />
+              </button>
+            )}
           </div>
 
-          {onOpenQrModal && (
-            <button
-              onClick={() => onOpenQrModal(null)}
-              className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-200 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center whitespace-nowrap"
-              title="พิมพ์สติกเกอร์ QR Code ติดชิ้นส่วน (A4 Sheet)"
-            >
-              <QrCode className="w-3.5 h-3.5 mr-1 text-red-600" />
-              <span>ป้าย QR Code</span>
-            </button>
-          )}
-
-          {onOpenPoRfqModal && (
-            <button
-              onClick={onOpenPoRfqModal}
-              className="px-2.5 py-1 bg-indigo-50 dark:bg-indigo-950/40 hover:bg-indigo-100 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800/60 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center whitespace-nowrap"
-              title="ออกใบสั่งซื้อ (PO) และใบขอราคา (RFQ) รวมตามผู้ขาย"
-            >
-              <FileCheck2 className="w-3.5 h-3.5 mr-1 text-indigo-600" />
-              <span>ออกใบ PO / RFQ</span>
-            </button>
-          )}
-
-          {onOpenRevisionModal && (
-            <button
-              onClick={onOpenRevisionModal}
-              className="px-2.5 py-1 bg-purple-50 dark:bg-purple-950/40 hover:bg-purple-100 text-purple-700 dark:text-purple-300 border border-purple-200 dark:border-purple-800/60 rounded-lg text-xs font-bold transition-all shadow-sm flex items-center whitespace-nowrap"
-              title="ประวัติเวอร์ชัน BOM, Visual Diff & Rollback"
-            >
-              <History className="w-3.5 h-3.5 mr-1 text-purple-600" />
-              <span>Rev. BOM</span>
-            </button>
-          )}
-
-          <button
-            onClick={() => window.print()}
-            className="px-2.5 py-1 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-700 dark:text-slate-300 rounded-lg text-xs font-black transition-all shadow-sm flex items-center whitespace-nowrap print:hidden"
-            title="พิมพ์เพื่อขอราคา (ซ่อนราคาและแถบจัดการ)"
-          >
-            <Printer className="w-3.5 h-3.5 mr-1" />
-            <span className="hidden sm:inline">พิมพ์ขอราคา</span>
-          </button>
-          <button
-            onClick={onAddPart}
-            className="px-3 py-1 bg-gradient-to-r from-red-600 to-rose-700 hover:from-red-500 hover:to-rose-800 text-white rounded-lg text-xs font-black transition-all shadow-sm flex items-center whitespace-nowrap print:hidden"
-          >
-            <Plus className="w-3.5 h-3.5 mr-1" />
-            + Part
-          </button>
         </div>
 
       </div>

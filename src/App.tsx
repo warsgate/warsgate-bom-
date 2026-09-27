@@ -32,6 +32,8 @@ import { QrTagModal } from './components/QrTagModal';
 import { MobileQrScannerModal } from './components/MobileQrScannerModal';
 import { PoRfqGeneratorModal } from './components/PoRfqGeneratorModal';
 import { RevisionControlModal } from './components/RevisionControlModal';
+import { MachiningPipelineModal } from './components/MachiningPipelineModal';
+import { AiBomAssistantModal } from './components/AiBomAssistantModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 export function App() {
@@ -94,12 +96,14 @@ export function App() {
   const [clickedDateIso, setClickedDateIso] = useState<string>('');
   const [isExportImportOpen, setIsExportImportOpen] = useState(false);
 
-  // Roadmap 1, 2, 3 Modals
+  // Roadmap 1, 2, 3, 4, 5 Modals
   const [isQrTagModalOpen, setIsQrTagModalOpen] = useState(false);
   const [qrTagSinglePart, setQrTagSinglePart] = useState<BomPartItem | null>(null);
   const [isQrScannerOpen, setIsQrScannerOpen] = useState(false);
   const [isPoRfqModalOpen, setIsPoRfqModalOpen] = useState(false);
   const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
+  const [isMachiningModalOpen, setIsMachiningModalOpen] = useState(false);
+  const [isAiAssistantModalOpen, setIsAiAssistantModalOpen] = useState(false);
 
   // Sync dark mode
   useEffect(() => {
@@ -234,6 +238,16 @@ export function App() {
       setAllParts(prev => prev.map(p => p.id === updated.id ? updated : p));
     } catch (err) {
       console.error('Failed to update part status:', err);
+    }
+  };
+
+  const handleUpdatePartFields = async (id: string, fields: Partial<BomPartItem>) => {
+    setAllParts(prev => prev.map(p => p.id === id ? { ...p, ...fields } : p));
+    try {
+      const updated = await partsApi.update(id, fields);
+      setAllParts(prev => prev.map(p => p.id === updated.id ? updated : p));
+    } catch (err) {
+      console.error('Failed to update part fields:', err);
     }
   };
 
@@ -665,6 +679,8 @@ export function App() {
           userRole={user?.role === 'LEVEL_2' ? 'OWNER' : 'ENGINEER'}
           user={user}
           onOpenSwitchUser={() => setIsSwitchUserModalOpen(true)}
+          onOpenMachiningModal={() => setIsMachiningModalOpen(true)}
+          onOpenAiAssistantModal={() => setIsAiAssistantModalOpen(true)}
         />
 
         <main className={`flex-1 p-3 sm:p-5 w-full mx-auto transition-all duration-300 ${
@@ -741,6 +757,8 @@ export function App() {
               onOpenPoRfqModal={() => setIsPoRfqModalOpen(true)}
               onOpenRevisionModal={() => setIsRevisionModalOpen(true)}
               onOpenQrScanner={() => setIsQrScannerOpen(true)}
+              onOpenMachiningModal={() => setIsMachiningModalOpen(true)}
+              onOpenAiAssistantModal={() => setIsAiAssistantModalOpen(true)}
             />
           )}
 
@@ -864,6 +882,31 @@ export function App() {
           currentModules={projectModules}
           currentUser={user}
           onRestoreRevision={handleRestoreRevision}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 4: Machining Pipeline Kanban & Drawing Quick Viewer */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดกระดานงานสั่งกลึงได้">
+        <MachiningPipelineModal
+          isOpen={isMachiningModalOpen}
+          onClose={() => setIsMachiningModalOpen(false)}
+          project={activeProject}
+          modules={projectModules}
+          parts={projectParts}
+          onUpdatePart={handleUpdatePartFields}
+          onEditPart={(p) => { setEditingPart(p); setIsPartModalOpen(true); }}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 5: AI Engineering Assistant & BOM Checklist Validation */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดผู้ช่วย AI ตรวจ BOM ได้">
+        <AiBomAssistantModal
+          isOpen={isAiAssistantModalOpen}
+          onClose={() => setIsAiAssistantModalOpen(false)}
+          project={activeProject}
+          modules={projectModules}
+          parts={projectParts}
+          onEditPart={(p) => { setEditingPart(p); setIsPartModalOpen(true); }}
         />
       </ErrorBoundary>
     </div>

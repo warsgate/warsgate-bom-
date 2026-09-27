@@ -29,7 +29,9 @@ import {
   Users,
   Check,
   Sparkles,
-  Camera
+  Camera,
+  Wrench,
+  Bot
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -57,6 +59,8 @@ interface TopNavbarProps {
   userRole?: 'OWNER' | 'ENGINEER';
   user?: any;
   onOpenSwitchUser?: () => void;
+  onOpenMachiningModal?: () => void;
+  onOpenAiAssistantModal?: () => void;
 }
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({
@@ -82,6 +86,8 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   userRole = 'ENGINEER',
   user,
   onOpenSwitchUser,
+  onOpenMachiningModal,
+  onOpenAiAssistantModal,
 }) => {
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -118,6 +124,8 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
 
   // Secondary "More" navigation items
   const moreNavItems = [
+    { id: 'machining', label: 'กระดานงานสั่งกลึง (Machining)', subLabel: 'Feb Pipeline Kanban & Drawing', icon: Wrench, action: onOpenMachiningModal },
+    { id: 'ai-assistant', label: 'ผู้ช่วย AI ตรวจ BOM', subLabel: 'Automated Checklist & Validation', icon: Sparkles, action: onOpenAiAssistantModal },
     { id: 'modules', label: 'MC & EE Relationship', subLabel: 'ความสัมพันธ์กลไกและไฟฟ้า', icon: Layers },
     { id: 'quotations', label: 'ใบเสนอราคา & เอกสาร', subLabel: 'Vendor Quotations', icon: FileText },
     { id: 'line-notify', label: 'แจ้งเตือน LINE Bot', subLabel: 'Real-time Alerts & Scheduler', icon: MessageSquare },
@@ -316,7 +324,11 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
                       <button
                         key={item.id}
                         onClick={() => {
-                          onTabChange(item.id);
+                          if (item.action) {
+                            item.action();
+                          } else {
+                            onTabChange(item.id);
+                          }
                           setIsMoreMenuOpen(false);
                         }}
                         className={`w-full px-3 py-2 text-left flex items-center space-x-2.5 transition-colors ${

@@ -18,7 +18,10 @@ import {
   Camera,
   Filter,
   Layers,
-  X
+  X,
+  Wrench,
+  Bot,
+  Sparkles
 } from 'lucide-react';
 import { BomPartItem, ModuleItem, PartStatus } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -46,6 +49,8 @@ interface BomTableProps {
   onOpenPoRfqModal?: () => void;
   onOpenRevisionModal?: () => void;
   onOpenQrScanner?: () => void;
+  onOpenMachiningModal?: () => void;
+  onOpenAiAssistantModal?: () => void;
 }
 
 const getTodayIso = () => new Date().toISOString().split('T')[0];
@@ -63,6 +68,8 @@ export const BomTable: React.FC<BomTableProps> = ({
   onOpenPoRfqModal,
   onOpenRevisionModal,
   onOpenQrScanner,
+  onOpenMachiningModal,
+  onOpenAiAssistantModal,
 }) => {
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>('ALL');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('ALL');
@@ -214,6 +221,29 @@ export const BomTable: React.FC<BomTableProps> = ({
                 >
                   <History className="w-3.5 h-3.5 text-purple-600 dark:text-purple-400" />
                   <span>Rev. BOM</span>
+                </button>
+              )}
+
+              {onOpenMachiningModal && (
+                <button
+                  onClick={onOpenMachiningModal}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-amber-600 dark:hover:text-amber-400 transition-all shadow-none hover:shadow-sm"
+                  title="กระดานติดตามงานสั่งกลึง (Machining Kanban), Drawing Viewer & Work Order"
+                >
+                  <Wrench className="w-3.5 h-3.5 text-amber-600 dark:text-amber-400" />
+                  <span>งานสั่งกลึง</span>
+                </button>
+              )}
+
+              {onOpenAiAssistantModal && (
+                <button
+                  onClick={onOpenAiAssistantModal}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-black text-indigo-700 dark:text-indigo-300 hover:bg-white dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-none hover:shadow-sm group relative"
+                  title="ผู้ช่วย AI ตรวจสอบ BOM, ตรวจของคู่ตัว, แจ้งเตือนระยะเวลานำส่ง และแนะนำลดต้นทุน"
+                >
+                  <Bot className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse" />
+                  <span>AI ตรวจ BOM</span>
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping absolute -top-0.5 -right-0.5"></span>
                 </button>
               )}
             </div>

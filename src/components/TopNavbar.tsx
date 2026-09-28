@@ -31,7 +31,8 @@ import {
   Sparkles,
   Camera,
   Wrench,
-  Bot
+  Bot,
+  Building2
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -114,6 +115,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   // Primary top navigation items
   const mainNavItems = [
     { id: 'master-plan', label: 'Master Plan', icon: Calendar, badge: 'Gantt' },
+    { id: 'factory-timeline', label: 'ภาพรวมโรงงาน', icon: Building2, badge: projects.length > 0 ? `${projects.length}` : undefined },
     { id: 'bom', label: 'BOM List', icon: TableIcon, badge: totalItems > 0 ? totalItems : undefined },
     { id: 'production-workflow', label: 'Workflow', icon: Cpu, badge: '9 ขั้นตอน' },
     { id: 'procurement', label: 'จัดซื้อ (PO)', icon: ShoppingCart },

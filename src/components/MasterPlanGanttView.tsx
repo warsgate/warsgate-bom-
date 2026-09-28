@@ -9,7 +9,8 @@ import {
   Sparkles,
   Clock,
   CheckCircle2,
-  MousePointer
+  MousePointer,
+  Building2
 } from 'lucide-react';
 import { BomPartItem, MasterPlanTaskItem, ModuleItem, ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -29,6 +30,7 @@ interface MasterPlanGanttViewProps {
   onToggleCellActualDate?: (task: MasterPlanTaskItem, dateIso: string) => void;
   onUpdateCellRange?: (task: MasterPlanTaskItem, isoDates: string[], isAdding: boolean) => void;
   onSaveDailyNote?: (taskId: string, dateIso: string, note: string) => void;
+  onSwitchToFactoryTimeline?: () => void;
 }
 
 // Helper to get global start and end dates
@@ -134,6 +136,7 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
   onToggleCellActualDate,
   onUpdateCellRange,
   onSaveDailyNote,
+  onSwitchToFactoryTimeline,
 }) => {
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>('ALL');
   const [timelineMode, setTimelineMode] = useState<'days' | 'weeks'>('days'); // 'days' | 'weeks'
@@ -362,6 +365,17 @@ export const MasterPlanGanttView: React.FC<MasterPlanGanttViewProps> = ({
               <span>รายสัปดาห์</span>
             </button>
           </div>
+
+          {onSwitchToFactoryTimeline && (
+            <button
+              onClick={onSwitchToFactoryTimeline}
+              className="px-3 py-1.5 rounded-xl border border-indigo-200 dark:border-indigo-800 bg-indigo-50/80 dark:bg-indigo-950/40 text-indigo-700 dark:text-indigo-300 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 text-xs font-black flex items-center space-x-1.5 transition-all shadow-sm print:hidden"
+              title="ดูภาพรวมตารางการผลิตและกำลังคนของทุกโครงการพร้อมกัน"
+            >
+              <Building2 className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+              <span>ภาพรวมโรงงาน (ทุกโปรเจ็ค)</span>
+            </button>
+          )}
 
           <button
             onClick={onOpenAddTask}

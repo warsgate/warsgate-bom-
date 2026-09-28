@@ -10,7 +10,14 @@ import {
   Loader2, 
   AlertCircle, 
   CheckCircle2,
-  KeyRound
+  KeyRound,
+  Building2,
+  Calendar,
+  Table as TableIcon,
+  ShoppingCart,
+  LayoutDashboard,
+  Check,
+  Sparkles
 } from 'lucide-react';
 import { useAuth, User as AuthUser } from '../contexts/AuthContext';
 
@@ -19,9 +26,16 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
 interface SwitchUserModalProps {
   isOpen: boolean;
   onClose: () => void;
+  currentLandingTab?: string;
+  onSelectLandingTab?: (tab: string) => void;
 }
 
-export const SwitchUserModal: React.FC<SwitchUserModalProps> = ({ isOpen, onClose }) => {
+export const SwitchUserModal: React.FC<SwitchUserModalProps> = ({ 
+  isOpen, 
+  onClose,
+  currentLandingTab,
+  onSelectLandingTab
+}) => {
   const { user, login, logout } = useAuth();
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -131,6 +145,87 @@ export const SwitchUserModal: React.FC<SwitchUserModalProps> = ({ isOpen, onClos
             >
               <LogOut className="w-3.5 h-3.5" />
               <span>Log out</span>
+            </button>
+          </div>
+        </div>
+
+        {/* Default Landing Tab Preference */}
+        <div className="p-4 px-5 border-b border-slate-100 dark:border-slate-800 bg-white dark:bg-slate-900 space-y-2">
+          <div className="flex items-center justify-between text-xs">
+            <div className="font-bold text-slate-700 dark:text-slate-200 flex items-center gap-1.5">
+              <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+              <span>หน้าเริ่มต้นเมื่อเข้าสู่ระบบ (Default View):</span>
+            </div>
+            <span className="text-[10px] text-slate-400">จดจำตามบทบาท</span>
+          </div>
+
+          <div className="grid grid-cols-2 gap-1.5 text-xs">
+            <button
+              type="button"
+              onClick={() => onSelectLandingTab?.('factory-timeline')}
+              className={`p-2 rounded-xl text-left flex items-center space-x-2 border transition-all ${
+                currentLandingTab === 'factory-timeline'
+                  ? 'bg-indigo-50 dark:bg-indigo-950/60 border-indigo-400 text-indigo-900 dark:text-indigo-200 font-black shadow-sm'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-medium'
+              }`}
+            >
+              <Building2 className={`w-3.5 h-3.5 shrink-0 ${currentLandingTab === 'factory-timeline' ? 'text-indigo-600' : 'text-slate-400'}`} />
+              <div className="truncate">
+                <div className="truncate">ภาพรวมโรงงาน</div>
+                <div className="text-[9px] text-slate-400">All Projects Timeline</div>
+              </div>
+              {currentLandingTab === 'factory-timeline' && <Check className="w-3 h-3 text-indigo-600 ml-auto shrink-0" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onSelectLandingTab?.('master-plan')}
+              className={`p-2 rounded-xl text-left flex items-center space-x-2 border transition-all ${
+                currentLandingTab === 'master-plan'
+                  ? 'bg-blue-50 dark:bg-blue-950/60 border-blue-400 text-blue-900 dark:text-blue-200 font-black shadow-sm'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-medium'
+              }`}
+            >
+              <Calendar className={`w-3.5 h-3.5 shrink-0 ${currentLandingTab === 'master-plan' ? 'text-blue-600' : 'text-slate-400'}`} />
+              <div className="truncate">
+                <div className="truncate">Master Plan</div>
+                <div className="text-[9px] text-slate-400">Gantt Chart เครื่องนี้</div>
+              </div>
+              {currentLandingTab === 'master-plan' && <Check className="w-3 h-3 text-blue-600 ml-auto shrink-0" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onSelectLandingTab?.('bom')}
+              className={`p-2 rounded-xl text-left flex items-center space-x-2 border transition-all ${
+                currentLandingTab === 'bom'
+                  ? 'bg-red-50 dark:bg-red-950/60 border-red-400 text-red-900 dark:text-red-200 font-black shadow-sm'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-medium'
+              }`}
+            >
+              <TableIcon className={`w-3.5 h-3.5 shrink-0 ${currentLandingTab === 'bom' ? 'text-red-600' : 'text-slate-400'}`} />
+              <div className="truncate">
+                <div className="truncate">BOM Part List</div>
+                <div className="text-[9px] text-slate-400">ตารางชิ้นส่วนอะไหล่</div>
+              </div>
+              {currentLandingTab === 'bom' && <Check className="w-3 h-3 text-red-600 ml-auto shrink-0" />}
+            </button>
+
+            <button
+              type="button"
+              onClick={() => onSelectLandingTab?.('procurement')}
+              className={`p-2 rounded-xl text-left flex items-center space-x-2 border transition-all ${
+                currentLandingTab === 'procurement'
+                  ? 'bg-amber-50 dark:bg-amber-950/60 border-amber-400 text-amber-900 dark:text-amber-200 font-black shadow-sm'
+                  : 'border-slate-200 dark:border-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800/60 font-medium'
+              }`}
+            >
+              <ShoppingCart className={`w-3.5 h-3.5 shrink-0 ${currentLandingTab === 'procurement' ? 'text-amber-600' : 'text-slate-400'}`} />
+              <div className="truncate">
+                <div className="truncate">จัดซื้อ (PO)</div>
+                <div className="text-[9px] text-slate-400">ติดตามของและสั่งซื้อ</div>
+              </div>
+              {currentLandingTab === 'procurement' && <Check className="w-3 h-3 text-amber-600 ml-auto shrink-0" />}
             </button>
           </div>
         </div>

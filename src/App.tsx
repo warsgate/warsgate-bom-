@@ -34,12 +34,38 @@ import { PoRfqGeneratorModal } from './components/PoRfqGeneratorModal';
 import { RevisionControlModal } from './components/RevisionControlModal';
 import { MachiningPipelineModal } from './components/MachiningPipelineModal';
 import { AiBomAssistantModal } from './components/AiBomAssistantModal';
+import { MultiProjectTimelineView } from './components/MultiProjectTimelineView';
 import { ErrorBoundary } from './components/ErrorBoundary';
+
+export type AppTab = 
+  | 'dashboard' 
+  | 'master-plan' 
+  | 'factory-timeline'
+  | 'all-modules' 
+  | 'modules' 
+  | 'bom' 
+  | 'procurement' 
+  | 'report' 
+  | 'master-library' 
+  | 'quotations' 
+  | 'history' 
+  | 'workspaces' 
+  | 'users' 
+  | 'line-notify' 
+  | 'production-workflow';
 
 export function App() {
   const { isAuthenticated, isLoading: authLoading, user, logout } = useAuth();
   
-  const [activeTab, setActiveTab] = useState<'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify' | 'production-workflow'>('master-plan');
+  const [activeTab, setActiveTab] = useState<AppTab>(() => {
+    try {
+      const saved = localStorage.getItem('preferred_landing_tab');
+      if (saved && ['dashboard', 'master-plan', 'factory-timeline', 'all-modules', 'modules', 'bom', 'procurement', 'report', 'master-library', 'quotations', 'history', 'workspaces', 'users', 'line-notify', 'production-workflow'].includes(saved)) {
+        return saved as AppTab;
+      }
+    } catch {}
+    return 'factory-timeline';
+  });
   const [searchQuery, setSearchQuery] = useState('');
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
@@ -149,23 +175,30 @@ export function App() {
   // Ensure LEVEL_1 user cannot access dashboard or history
   useEffect(() => {
     if (user?.role === 'LEVEL_1' && (activeTab === 'dashboard' || activeTab === 'history' || activeTab === 'workspaces' || activeTab === 'users')) {
-      setActiveTab('master-plan');
+      setActiveTab('bom');
     }
   }, [user, activeTab]);
 
-  // Read URL search params on mount (e.g. ?tab=procurement&filter=pending)
+  // Read URL search params on mount or apply preferred landing tab
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const tabParam = params.get('tab');
     const projectParam = params.get('projectId');
     
-    if (tabParam && ['dashboard', 'master-plan', 'all-modules', 'modules', 'bom', 'procurement', 'report', 'master-library', 'quotations', 'history', 'workspaces', 'users', 'line-notify', 'production-workflow'].includes(tabParam)) {
+    if (tabParam && ['dashboard', 'master-plan', 'factory-timeline', 'all-modules', 'modules', 'bom', 'procurement', 'report', 'master-library', 'quotations', 'history', 'workspaces', 'users', 'line-notify', 'production-workflow'].includes(tabParam)) {
       setActiveTab(tabParam as any);
+    } else if (user) {
+      const userPref = localStorage.getItem(`preferred_landing_tab_${user.id}`) || localStorage.getItem('preferred_landing_tab');
+      if (userPref && ['dashboard', 'master-plan', 'factory-timeline', 'all-modules', 'modules', 'bom', 'procurement', 'report', 'master-library', 'quotations', 'production-workflow'].includes(userPref)) {
+        if (!(user.role === 'LEVEL_1' && (userPref === 'dashboard' || userPref === 'users' || userPref === 'history' || userPref === 'workspaces'))) {
+          setActiveTab(userPref as any);
+        }
+      }
     }
     if (projectParam) {
       setActiveProjectId(projectParam);
     }
-  }, []);
+  }, [user]);
 
   const activeProject = projects.find(p => p.id === activeProjectId) || projects[0];
 
@@ -270,6 +303,14 @@ export function App() {
     await partsApi.bulkImport(formatted);
     const updated = await partsApi.getAll(activeProjectId);
     setAllParts(prev => [...prev.filter(p => p.projectId !== activeProjectId), ...updated]);
+  };
+
+  const handleSelectLandingTab = (tab: string) => {
+    if (user) {
+      localStorage.setItem(`preferred_landing_tab_${user.id}`, tab);
+    }
+    localStorage.setItem('preferred_landing_tab', tab);
+    setActiveTab(tab as any);
   };
 
   // ─── Features 1, 2, 3 Handlers ───────────────────────────
@@ -717,6 +758,25 @@ export function App() {
               onToggleCellActualDate={handleToggleCellActualDate}
               onUpdateCellRange={handleUpdateCellRange}
               onSaveDailyNote={handleSaveDailyNote}
+              onSwitchToFactoryTimeline={() => setActiveTab('factory-timeline')}
+            />
+          )}
+
+          {activeTab === 'factory-timeline' && (
+            <MultiProjectTimelineView
+              projects={projects}
+              allParts={allParts}
+              allModules={allModules}
+              allMasterTasks={allMasterTasks}
+              activeProjectId={activeProjectId}
+              onSelectProject={(projId, targetTab) => {
+                setActiveProjectId(projId);
+                if (targetTab) setActiveTab(targetTab as any);
+              }}
+              onOpenProjectModal={(p) => {
+                setEditingProject(p || null);
+                setIsProjectModalOpen(true);
+              }}
             />
           )}
 
@@ -836,7 +896,12 @@ export function App() {
       </div>
 
       {/* Modals */}
-      <SwitchUserModal isOpen={isSwitchUserModalOpen} onClose={() => setIsSwitchUserModalOpen(false)} />
+      <SwitchUserModal 
+        isOpen={isSwitchUserModalOpen} 
+        onClose={() => setIsSwitchUserModalOpen(false)} 
+        currentLandingTab={activeTab}
+        onSelectLandingTab={handleSelectLandingTab}
+      />
       <ProjectModal isOpen={isProjectModalOpen} onClose={() => setIsProjectModalOpen(false)} onSave={handleSaveProject} initialProject={editingProject} />
       <MasterTaskModal isOpen={isMasterTaskModalOpen} onClose={() => setIsMasterTaskModalOpen(false)} onSave={handleSaveMasterTask} onDelete={handleDeleteMasterTask} initialTask={editingMasterTask} projectId={activeProjectId} allTasks={projectMasterTasks} />
       <ActualCompletionModal isOpen={isActualModalOpen} onClose={() => setIsActualModalOpen(false)} onSave={handleSaveActualCompletion} onClear={handleClearActualCompletion} task={actualTask} clickedDateIso={clickedDateIso} />

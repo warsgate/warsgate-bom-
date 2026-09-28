@@ -25,15 +25,15 @@ import {
   MessageSquare,
   Sparkles,
   ChevronDown,
-  Database,
   Cpu,
-  PanelLeftClose
+  PanelLeftClose,
+  Building2
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 
 interface SidebarProps {
-  activeTab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify' | 'production-workflow';
-  onTabChange: (tab: 'dashboard' | 'master-plan' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify' | 'production-workflow') => void;
+  activeTab: 'dashboard' | 'master-plan' | 'factory-timeline' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify' | 'production-workflow';
+  onTabChange: (tab: 'dashboard' | 'master-plan' | 'factory-timeline' | 'all-modules' | 'modules' | 'bom' | 'procurement' | 'report' | 'master-library' | 'quotations' | 'history' | 'workspaces' | 'users' | 'line-notify' | 'production-workflow') => void;
   projects: ProjectItem[];
   activeProjectId: string;
   setActiveProjectId: (id: string) => void;
@@ -136,6 +136,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           subLabel: 'แผนงานกำหนดการ',
           icon: Calendar,
           badge: 'Gantt',
+        },
+        {
+          id: 'factory-timeline',
+          label: 'ภาพรวมทุกโปรเจ็ค',
+          subLabel: 'Factory Capacity Timeline',
+          icon: Building2,
+          badge: projects.length > 0 ? `${projects.length}` : undefined,
+          isHighlight: true,
         },
         {
           id: 'all-modules',

@@ -34,7 +34,10 @@ import {
   Bot,
   Building2,
   PackageCheck,
-  Share2
+  Share2,
+  ClipboardCheck,
+  AlertTriangle,
+  QrCode
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -66,6 +69,10 @@ interface TopNavbarProps {
   onOpenAiAssistantModal?: () => void;
   onOpenAssemblyKitting?: () => void;
   onOpenVendorPortal?: () => void;
+  onOpenCadExtractor?: () => void;
+  onOpenLeadTimeRisk?: () => void;
+  onOpenFatSat?: () => void;
+  onOpenMachineNameplate?: () => void;
 }
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({
@@ -95,6 +102,10 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenAiAssistantModal,
   onOpenAssemblyKitting,
   onOpenVendorPortal,
+  onOpenCadExtractor,
+  onOpenLeadTimeRisk,
+  onOpenFatSat,
+  onOpenMachineNameplate,
 }) => {
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -134,6 +145,10 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   const moreNavItems = [
     { id: 'kitting', label: 'จัดชุดอะไหล่ประกอบ (Kitting)', subLabel: 'Shopfloor Pick List & Tablet Mode', icon: PackageCheck, action: onOpenAssemblyKitting },
     { id: 'vendor-portal', label: 'พอร์ทัลร้านกลึง (Vendor Portal)', subLabel: 'Magic Link ให้ซัพพลายเออร์', icon: Share2, action: onOpenVendorPortal },
+    { id: 'cad-extractor', label: 'AI ดึงแบบ CAD (BOM Extractor)', subLabel: 'แปลงตารางแบบ Drawing เป็น BOM', icon: Bot, action: onOpenCadExtractor },
+    { id: 'leadtime-risk', label: 'วิเคราะห์วิกฤต Lead Time', subLabel: 'ตรวจจับพาร์ทที่เสี่ยงทำเครื่องดีเลย์', icon: AlertTriangle, action: onOpenLeadTimeRisk },
+    { id: 'fat-sat', label: 'ใบตรวจรับเครื่องจักร FAT/SAT', subLabel: 'ดิจิทัลเช็คลิสต์ + ลูกค้าเซ็นแท็บเล็ต', icon: ClipboardCheck, action: onOpenFatSat },
+    { id: 'nameplate', label: 'ป้ายเนมเพลทเครื่องจักร (Nameplate)', subLabel: 'ป้ายโลหะ + Customer Live Tracker', icon: QrCode, action: onOpenMachineNameplate },
     { id: 'machining', label: 'กระดานงานสั่งกลึง (Machining)', subLabel: 'Feb Pipeline Kanban & Drawing', icon: Wrench, action: onOpenMachiningModal },
     { id: 'ai-assistant', label: 'ผู้ช่วย AI ตรวจ BOM', subLabel: 'Automated Checklist & Validation', icon: Sparkles, action: onOpenAiAssistantModal },
     { id: 'modules', label: 'MC & EE Relationship', subLabel: 'ความสัมพันธ์กลไกและไฟฟ้า', icon: Layers },

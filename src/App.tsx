@@ -37,6 +37,10 @@ import { AiBomAssistantModal } from './components/AiBomAssistantModal';
 import { MultiProjectTimelineView } from './components/MultiProjectTimelineView';
 import { AssemblyKittingModal } from './components/AssemblyKittingModal';
 import { VendorPortalModal } from './components/VendorPortalModal';
+import { CadBomExtractorModal } from './components/CadBomExtractorModal';
+import { LeadTimeRiskModal } from './components/LeadTimeRiskModal';
+import { FatSatInspectionModal } from './components/FatSatInspectionModal';
+import { MachineNameplateModal } from './components/MachineNameplateModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 export type AppTab = 
@@ -134,6 +138,10 @@ export function App() {
   const [isAiAssistantModalOpen, setIsAiAssistantModalOpen] = useState(false);
   const [isAssemblyKittingOpen, setIsAssemblyKittingOpen] = useState(false);
   const [isVendorPortalOpen, setIsVendorPortalOpen] = useState(false);
+  const [isCadExtractorOpen, setIsCadExtractorOpen] = useState(false);
+  const [isLeadTimeRiskOpen, setIsLeadTimeRiskOpen] = useState(false);
+  const [isFatSatOpen, setIsFatSatOpen] = useState(false);
+  const [isMachineNameplateOpen, setIsMachineNameplateOpen] = useState(false);
 
   // Sync dark mode
   useEffect(() => {
@@ -733,6 +741,10 @@ export function App() {
           onOpenAiAssistantModal={() => setIsAiAssistantModalOpen(true)}
           onOpenAssemblyKitting={() => setIsAssemblyKittingOpen(true)}
           onOpenVendorPortal={() => setIsVendorPortalOpen(true)}
+          onOpenCadExtractor={() => setIsCadExtractorOpen(true)}
+          onOpenLeadTimeRisk={() => setIsLeadTimeRiskOpen(true)}
+          onOpenFatSat={() => setIsFatSatOpen(true)}
+          onOpenMachineNameplate={() => setIsMachineNameplateOpen(true)}
         />
 
         <main className={`flex-1 p-3 sm:p-5 w-full mx-auto transition-all duration-300 ${
@@ -832,6 +844,10 @@ export function App() {
               onOpenAiAssistantModal={() => setIsAiAssistantModalOpen(true)}
               onOpenAssemblyKitting={() => setIsAssemblyKittingOpen(true)}
               onOpenVendorPortal={() => setIsVendorPortalOpen(true)}
+              onOpenCadExtractor={() => setIsCadExtractorOpen(true)}
+              onOpenLeadTimeRisk={() => setIsLeadTimeRiskOpen(true)}
+              onOpenFatSat={() => setIsFatSatOpen(true)}
+              onOpenMachineNameplate={() => setIsMachineNameplateOpen(true)}
             />
           )}
 
@@ -1018,6 +1034,49 @@ export function App() {
           project={activeProject}
           parts={projectParts}
           onUpdatePart={handleUpdatePartFields}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 8: AI CAD / Drawing BOM Extractor */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดหน้าต่างแปลงแบบ CAD ได้">
+        <CadBomExtractorModal
+          isOpen={isCadExtractorOpen}
+          onClose={() => setIsCadExtractorOpen(false)}
+          project={activeProject}
+          modules={projectModules}
+          onImportParts={handleImportParts}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 9: Lead-Time Risk & Critical Path Warning */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดระบบวิเคราะห์วิกฤต Lead Time ได้">
+        <LeadTimeRiskModal
+          isOpen={isLeadTimeRiskOpen}
+          onClose={() => setIsLeadTimeRiskOpen(false)}
+          project={activeProject}
+          modules={projectModules}
+          parts={projectParts}
+          masterTasks={projectMasterTasks}
+          onEditPart={(p) => { setEditingPart(p); setIsPartModalOpen(true); }}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 10: Digital FAT / SAT Acceptance Inspection & Sign-off */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดระบบตรวจรับเครื่องจักร FAT/SAT ได้">
+        <FatSatInspectionModal
+          isOpen={isFatSatOpen}
+          onClose={() => setIsFatSatOpen(false)}
+          project={activeProject}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 11: Machine Metal Nameplate QR & Customer Live Tracker */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดหน้าต่างป้ายเครื่องจักรได้">
+        <MachineNameplateModal
+          isOpen={isMachineNameplateOpen}
+          onClose={() => setIsMachineNameplateOpen(false)}
+          project={activeProject}
+          modules={projectModules}
         />
       </ErrorBoundary>
     </div>

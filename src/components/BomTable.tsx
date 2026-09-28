@@ -23,7 +23,8 @@ import {
   Sparkles,
   PackageCheck,
   Share2,
-  X
+  X,
+  ClipboardCheck
 } from 'lucide-react';
 import { BomPartItem, ModuleItem, PartStatus } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -55,6 +56,10 @@ interface BomTableProps {
   onOpenAiAssistantModal?: () => void;
   onOpenAssemblyKitting?: () => void;
   onOpenVendorPortal?: () => void;
+  onOpenCadExtractor?: () => void;
+  onOpenLeadTimeRisk?: () => void;
+  onOpenFatSat?: () => void;
+  onOpenMachineNameplate?: () => void;
 }
 
 const getTodayIso = () => new Date().toISOString().split('T')[0];
@@ -76,6 +81,10 @@ export const BomTable: React.FC<BomTableProps> = ({
   onOpenAiAssistantModal,
   onOpenAssemblyKitting,
   onOpenVendorPortal,
+  onOpenCadExtractor,
+  onOpenLeadTimeRisk,
+  onOpenFatSat,
+  onOpenMachineNameplate,
 }) => {
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>('ALL');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('ALL');
@@ -272,6 +281,50 @@ export const BomTable: React.FC<BomTableProps> = ({
                 >
                   <Share2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
                   <span>พอร์ทัลร้านกลึง</span>
+                </button>
+              )}
+
+              {onOpenCadExtractor && (
+                <button
+                  onClick={onOpenCadExtractor}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-indigo-600 dark:hover:text-indigo-400 transition-all shadow-none hover:shadow-sm"
+                  title="นำเข้าตาราง BOM จากแบบ Drawing CAD (SolidWorks, AutoCAD, Inventor)"
+                >
+                  <Bot className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400" />
+                  <span>AI ดึงแบบ CAD</span>
+                </button>
+              )}
+
+              {onOpenLeadTimeRisk && (
+                <button
+                  onClick={onOpenLeadTimeRisk}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-rose-600 dark:hover:text-rose-400 transition-all shadow-none hover:shadow-sm"
+                  title="วิเคราะห์วิกฤต Lead Time: เช็คอะไหล่ที่เสี่ยงส่งไม่ทันวันเริ่มประกอบ"
+                >
+                  <AlertTriangle className="w-3.5 h-3.5 text-rose-600 dark:text-rose-400" />
+                  <span>วิกฤต Lead Time</span>
+                </button>
+              )}
+
+              {onOpenFatSat && (
+                <button
+                  onClick={onOpenFatSat}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-none hover:shadow-sm"
+                  title="ใบตรวจรับเครื่องจักร FAT/SAT: เช็คลิสต์ระบบลม, ไฟฟ้า, กลไก พร้อมลายเซ็นดิจิทัล"
+                >
+                  <ClipboardCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>ตรวจรับ FAT/SAT</span>
+                </button>
+              )}
+
+              {onOpenMachineNameplate && (
+                <button
+                  onClick={onOpenMachineNameplate}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-cyan-600 dark:hover:text-cyan-400 transition-all shadow-none hover:shadow-sm"
+                  title="ป้ายเนมเพลทโลหะติดเครื่องจักร + QR Code สำหรับลูกค้าสแกนดูความคืบหน้าและคู่มือ"
+                >
+                  <QrCode className="w-3.5 h-3.5 text-cyan-600 dark:text-cyan-400" />
+                  <span>ป้ายเนมเพลท</span>
                 </button>
               )}
             </div>

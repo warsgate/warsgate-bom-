@@ -51,6 +51,11 @@ import integrationRouter from './routes/integration';
 import backupRouter from './routes/backup';
 import { startLineScheduler } from './services/lineScheduler';
 
+app.use((req, _res, next) => {
+  console.log(`[${req.method}] ${req.originalUrl}`);
+  next();
+});
+
 // ─── API Routes ───────────────────────────────────────────────
 app.use('/api/auth', authRouter);
 app.use('/api/audit-logs', auditLogsRouter);
@@ -62,11 +67,17 @@ app.use('/api/master-parts', masterPartsRouter);
 app.use('/api/quotations', quotationsRouter);
 app.use('/api/line', lineRouter);
 app.use('/api/integration', integrationRouter);
+
+// Mount backup router on multiple aliases to prevent 404
 app.use('/api/backup', backupRouter);
+app.use('/api/backups', backupRouter);
+app.use('/backup', backupRouter);
+app.use('/backups', backupRouter);
 
 // ─── 404 Handler ─────────────────────────────────────────────
-app.use((_req, res) => {
-  res.status(404).json({ error: 'Route not found' });
+app.use((req, res) => {
+  console.warn(`⚠️ [404 Not Found] ${req.method} ${req.originalUrl}`);
+  res.status(404).json({ error: `Route not found: ${req.method} ${req.originalUrl}` });
 });
 
 import { PrismaClient } from '@prisma/client';

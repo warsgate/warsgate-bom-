@@ -7,47 +7,98 @@ import { execSync } from 'child_process';
 const router = Router();
 const prisma = new PrismaClient();
 
-// Get the root backups directory
-const rootDir = path.resolve(__dirname, '../../../');
-const backupDir = path.join(rootDir, 'backups');
+// Helper to locate directories reliably across environments (Local ts-node, local node dist, Render Linux container)
+function getBackupDirectory(): string {
+  // Check if root /backups exists
+  const candidates = [
+    path.resolve(process.cwd(), '../backups'),
+    path.resolve(process.cwd(), 'backups'),
+    path.resolve(__dirname, '../../../backups'),
+    path.resolve(__dirname, '../../backups'),
+  ];
 
-function ensureBackupDir() {
-  if (!fs.existsSync(backupDir)) {
-    fs.mkdirSync(backupDir, { recursive: true });
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
   }
+
+  // If none exist yet, try candidate 0 (parent backups if in backend dir) or candidate 1
+  const defaultDir = fs.existsSync(path.resolve(process.cwd(), '../package.json'))
+    ? path.resolve(process.cwd(), '../backups')
+    : path.resolve(process.cwd(), 'backups');
+
+  if (!fs.existsSync(defaultDir)) {
+    fs.mkdirSync(defaultDir, { recursive: true });
+  }
+  return defaultDir;
 }
 
-// ─── POST /api/backup: Trigger a full backup ──────────────────
-router.post('/', async (_req: Request, res: Response) => {
+function getDatabaseSourcePath(): string {
+  // Check common locations
+  const candidates = [
+    path.resolve(process.cwd(), 'prisma/dev.db'),
+    path.resolve(process.cwd(), 'dev.db'),
+    path.resolve(__dirname, '../prisma/dev.db'),
+    path.resolve(__dirname, '../../prisma/dev.db'),
+    path.resolve(__dirname, '../../../backend/prisma/dev.db'),
+  ];
+
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+
+  return path.resolve(process.cwd(), 'prisma/dev.db');
+}
+
+// ─── Core Backup Generator Handler ───────────────────────────
+async function executeBackup(_req: Request, res: Response) {
   try {
-    ensureBackupDir();
+    const backupDir = getBackupDirectory();
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
 
     const now = new Date();
     const pad = (n: number) => n.toString().padStart(2, '0');
     const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
 
-    // 1. Safe SQLite binary copy (.db)
-    const dbSource = path.join(rootDir, 'backend/prisma/dev.db');
+    // 1. SQLite binary copy (.db)
+    const dbSource = getDatabaseSourcePath();
     const dbFileName = `dev_backup_${timestamp}.db`;
     const dbDest = path.join(backupDir, dbFileName);
 
-    try {
-      execSync(`sqlite3 "${dbSource}" ".backup '${dbDest}'"`);
-    } catch {
-      // Fallback
-      fs.copyFileSync(dbSource, dbDest);
+    let binaryBackupSuccess = false;
+    if (fs.existsSync(dbSource)) {
+      try {
+        execSync(`sqlite3 "${dbSource}" ".backup '${dbDest}'"`);
+        binaryBackupSuccess = true;
+      } catch {
+        try {
+          fs.copyFileSync(dbSource, dbDest);
+          binaryBackupSuccess = true;
+        } catch (copyErr) {
+          console.warn('Failed fs copy fallback for SQLite DB:', copyErr);
+        }
+      }
     }
 
     // 2. SQL Dump (.sql)
     const sqlFileName = `dev_backup_${timestamp}.sql`;
     const sqlDest = path.join(backupDir, sqlFileName);
-    try {
-      execSync(`sqlite3 "${dbSource}" .dump > "${sqlDest}"`);
-    } catch (err) {
-      console.warn('Could not generate SQL dump:', err);
+    let sqlDumpSuccess = false;
+    if (fs.existsSync(dbSource)) {
+      try {
+        execSync(`sqlite3 "${dbSource}" .dump > "${sqlDest}"`);
+        sqlDumpSuccess = true;
+      } catch (err) {
+        console.warn('Could not generate SQL dump via sqlite3:', err);
+      }
     }
 
-    // 3. JSON Dump (.json)
+    // 3. Structured JSON Dump (.json)
     const [
       projects,
       modules,
@@ -84,6 +135,9 @@ router.post('/', async (_req: Request, res: Response) => {
         timestamp: now.toISOString(),
         backupVersion: '1.0',
         system: 'WARSGATE BOM System',
+        databaseSource: dbSource,
+        hasBinaryDb: binaryBackupSuccess,
+        hasSqlDump: sqlDumpSuccess,
         counts: {
           projects: projects.length,
           modules: modules.length,
@@ -119,8 +173,8 @@ router.post('/', async (_req: Request, res: Response) => {
       timestamp,
       backupDir,
       files: {
-        db: dbFileName,
-        sql: sqlFileName,
+        db: binaryBackupSuccess ? dbFileName : null,
+        sql: sqlDumpSuccess ? sqlFileName : null,
         json: jsonFileName,
       },
       counts: jsonExport.metadata.counts,
@@ -132,12 +186,15 @@ router.post('/', async (_req: Request, res: Response) => {
       error: 'เกิดข้อผิดพลาดในการสำรองฐานข้อมูล: ' + (error?.message || error),
     });
   }
-});
+}
 
-// ─── GET /api/backup/list: List all available backups ──────────
-router.get('/list', (_req: Request, res: Response) => {
+// ─── List Backups Handler ────────────────────────────────────
+function listBackupsHandler(_req: Request, res: Response) {
   try {
-    ensureBackupDir();
+    const backupDir = getBackupDirectory();
+    if (!fs.existsSync(backupDir)) {
+      fs.mkdirSync(backupDir, { recursive: true });
+    }
 
     const files = fs.readdirSync(backupDir);
     const backups = files
@@ -162,13 +219,17 @@ router.get('/list', (_req: Request, res: Response) => {
       backups,
     });
   } catch (error: any) {
-    return res.status(500).json({ error: error?.message || 'Failed to list backups' });
+    return res.status(500).json({
+      success: false,
+      error: error?.message || 'Failed to list backups',
+    });
   }
-});
+}
 
-// ─── GET /api/backup/download/:filename: Download a backup file ─
-router.get('/download/:filename', (req: Request, res: Response) => {
+// ─── Download Backup File Handler ─────────────────────────────
+function downloadBackupHandler(req: Request, res: Response) {
   try {
+    const backupDir = getBackupDirectory();
     const filename = req.params.filename;
 
     // Security check: prevent directory traversal
@@ -183,6 +244,18 @@ router.get('/download/:filename', (req: Request, res: Response) => {
   } catch (error: any) {
     return res.status(500).json({ error: error?.message || 'Download failed' });
   }
-});
+}
+
+// ─── Route Mappings ───────────────────────────────────────────
+// Trigger backup
+router.post('/', executeBackup);
+router.post('/create', executeBackup);
+
+// List backups (supports both GET / and GET /list)
+router.get('/', listBackupsHandler);
+router.get('/list', listBackupsHandler);
+
+// Download file
+router.get('/download/:filename', downloadBackupHandler);
 
 export default router;

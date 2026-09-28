@@ -14,18 +14,27 @@ import {
   RefreshCw,
   FolderOpen,
   ShieldCheck,
-  Server
+  Server,
+  ArrowDownToLine
 } from 'lucide-react';
 import { backupApi, BackupResult, BackupFileItem } from '../api/client';
 
 interface DatabaseBackupModalProps {
   isOpen: boolean;
   onClose: () => void;
+  projects?: any[];
+  modules?: any[];
+  parts?: any[];
+  masterTasks?: any[];
 }
 
 export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
   isOpen,
   onClose,
+  projects = [],
+  modules = [],
+  parts = [],
+  masterTasks = [],
 }) => {
   const [loading, setLoading] = useState(false);
   const [fetchingList, setFetchingList] = useState(false);
@@ -72,10 +81,54 @@ export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
         setErrorMessage(result.message || 'ไม่สามารถสำรองข้อมูลได้');
       }
     } catch (err: any) {
-      setErrorMessage(err.message || 'เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+      const msg = err.message || '';
+      if (msg.includes('Route not found')) {
+        setErrorMessage(
+          'เซิร์ฟเวอร์ตอบกลับว่า "Route not found" (หากใช้งานผ่าน Cloud/Render อาจกำลังอยู่ในช่วง Deploy โค้ดใหม่ กรุณารอสักครู่ 2-3 นาที หรือใช้ปุ่ม "ดาวน์โหลด JSON จากเครื่องทันที" ด้านล่าง)'
+        );
+      } else {
+        setErrorMessage(msg || 'เกิดข้อผิดพลาดในการเชื่อมต่อกับเซิร์ฟเวอร์');
+      }
     } finally {
       setLoading(false);
     }
+  };
+
+  // Instant browser-side export (Zero dependency on backend status)
+  const handleBrowserDirectDownload = () => {
+    const now = new Date();
+    const pad = (n: number) => n.toString().padStart(2, '0');
+    const timestamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+
+    const exportData = {
+      metadata: {
+        timestamp: now.toISOString(),
+        backupType: 'browser-memory-export',
+        system: 'WARSGATE BOM System',
+        counts: {
+          projects: projects.length,
+          modules: modules.length,
+          parts: parts.length,
+          masterTasks: masterTasks.length,
+        },
+      },
+      data: {
+        projects,
+        modules,
+        parts,
+        masterTasks,
+      },
+    };
+
+    const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `warsgate_bom_browser_backup_${timestamp}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
   const handleCopyPath = () => {
@@ -84,12 +137,6 @@ export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
       setCopiedPath(true);
       setTimeout(() => setCopiedPath(false), 2000);
     }
-  };
-
-  const formatFileSize = (bytes: number) => {
-    if (bytes < 1024) return `${bytes} B`;
-    if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
-    return `${(bytes / (1024 * 1024)).toFixed(2)} MB`;
   };
 
   const formatDatetime = (dateStr: string) => {
@@ -143,7 +190,7 @@ export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
         {/* Modal Body */}
         <div className="p-6 overflow-y-auto space-y-6 flex-1 custom-scrollbar">
           
-          {/* Action Card */}
+          {/* Action Card: Server Backup */}
           <div className="p-5 rounded-2xl bg-gradient-to-br from-indigo-50/80 via-blue-50/40 to-white dark:from-indigo-950/20 dark:via-blue-950/10 dark:to-slate-900 border border-indigo-100 dark:border-indigo-900/30 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="flex items-center space-x-4">
               <div className="w-12 h-12 rounded-2xl bg-indigo-600/10 dark:bg-indigo-500/20 text-indigo-600 dark:text-indigo-400 flex items-center justify-center shrink-0">
@@ -151,10 +198,10 @@ export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
               </div>
               <div>
                 <h3 className="text-sm font-bold text-slate-900 dark:text-white">
-                  กดปุ่มเพื่อสำรองฐานข้อมูลทันที
+                  สำรองฐานข้อมูลผ่านเซิร์ฟเวอร์
                 </h3>
                 <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">
-                  ระบบจะบันทึกข้อมูลทุกโปรเจกต์, BOM Part, Master Plan, และคลังอะไหล่ลงในเครื่อง
+                  บันทึกไฟล์ .db, .sql, .json ลงโฟลเดอร์ <code className="text-indigo-600 dark:text-indigo-400 font-mono font-bold">backups/</code> ในเครื่อง
                 </p>
               </div>
             </div>
@@ -182,13 +229,52 @@ export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
             </button>
           </div>
 
-          {/* Error Alert */}
+          {/* Error Alert with Emergency Download Option */}
           {errorMessage && (
-            <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/40 flex items-start space-x-3 text-rose-700 dark:text-rose-300">
-              <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-500" />
-              <div className="text-xs">{errorMessage}</div>
+            <div className="p-4 rounded-2xl bg-rose-50 dark:bg-rose-950/30 border border-rose-200 dark:border-rose-900/40 space-y-3 text-rose-700 dark:text-rose-300">
+              <div className="flex items-start space-x-3">
+                <AlertCircle className="w-5 h-5 shrink-0 mt-0.5 text-rose-500" />
+                <div className="text-xs">{errorMessage}</div>
+              </div>
+              
+              <div className="pt-2 border-t border-rose-200 dark:border-rose-900/40 flex items-center justify-between">
+                <span className="text-[11px] text-slate-600 dark:text-slate-400">
+                  ต้องการดาวน์โหลดสำเนาข้อมูลฉุกเฉินทันที?
+                </span>
+                <button
+                  onClick={handleBrowserDirectDownload}
+                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
+                >
+                  <ArrowDownToLine className="w-3.5 h-3.5" />
+                  <span>ดาวน์โหลด JSON จากเบราว์เซอร์ทันที</span>
+                </button>
+              </div>
             </div>
           )}
+
+          {/* Quick Browser Direct Download Card */}
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="p-2 rounded-xl bg-emerald-100 dark:bg-emerald-950 text-emerald-600 dark:text-emerald-400">
+                <FileText className="w-5 h-5" />
+              </div>
+              <div>
+                <p className="text-xs font-bold text-slate-800 dark:text-slate-200">
+                  ดาวน์โหลดข้อมูล JSON ทันที (Direct Download)
+                </p>
+                <p className="text-[11px] text-slate-400">
+                  ดาวน์โหลดข้อมูล {projects.length} โปรเจกต์, {parts.length} พาร์ท ลงเครื่องผ่านเบราว์เซอร์โดยตรง
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={handleBrowserDirectDownload}
+              className="px-3.5 py-2 rounded-xl bg-slate-200 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-bold text-xs flex items-center space-x-1.5 transition-colors"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>บันทึก JSON ทันที</span>
+            </button>
+          </div>
 
           {/* Backup Location on Machine */}
           {backupDir && (
@@ -254,30 +340,36 @@ export const DatabaseBackupModal: React.FC<DatabaseBackupModalProps> = ({
               {/* Direct Download Buttons */}
               <div className="pt-2 flex flex-wrap items-center gap-2">
                 <span className="text-xs font-bold text-slate-700 dark:text-slate-300">ดาวน์โหลด:</span>
-                <a
-                  href={backupApi.getDownloadUrl(backupResult.files.db)}
-                  download={backupResult.files.db}
-                  className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
-                >
-                  <Download className="w-3.5 h-3.5" />
-                  <span>SQLite (.db)</span>
-                </a>
-                <a
-                  href={backupApi.getDownloadUrl(backupResult.files.sql)}
-                  download={backupResult.files.sql}
-                  className="px-3 py-1.5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
-                >
-                  <FileCode className="w-3.5 h-3.5" />
-                  <span>SQL Dump (.sql)</span>
-                </a>
-                <a
-                  href={backupApi.getDownloadUrl(backupResult.files.json)}
-                  download={backupResult.files.json}
-                  className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
-                >
-                  <FileText className="w-3.5 h-3.5" />
-                  <span>JSON Export (.json)</span>
-                </a>
+                {backupResult.files.db && (
+                  <a
+                    href={backupApi.getDownloadUrl(backupResult.files.db)}
+                    download={backupResult.files.db}
+                    className="px-3 py-1.5 rounded-xl bg-blue-600 hover:bg-blue-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
+                  >
+                    <Download className="w-3.5 h-3.5" />
+                    <span>SQLite (.db)</span>
+                  </a>
+                )}
+                {backupResult.files.sql && (
+                  <a
+                    href={backupApi.getDownloadUrl(backupResult.files.sql)}
+                    download={backupResult.files.sql}
+                    className="px-3 py-1.5 rounded-xl bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
+                  >
+                    <FileCode className="w-3.5 h-3.5" />
+                    <span>SQL Dump (.sql)</span>
+                  </a>
+                )}
+                {backupResult.files.json && (
+                  <a
+                    href={backupApi.getDownloadUrl(backupResult.files.json)}
+                    download={backupResult.files.json}
+                    className="px-3 py-1.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center space-x-1.5 shadow-sm transition-all"
+                  >
+                    <FileText className="w-3.5 h-3.5" />
+                    <span>JSON Export (.json)</span>
+                  </a>
+                )}
               </div>
             </div>
           )}

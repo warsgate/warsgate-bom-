@@ -1089,6 +1089,10 @@ export function App() {
         <DatabaseBackupModal
           isOpen={isBackupModalOpen}
           onClose={() => setIsBackupModalOpen(false)}
+          projects={projects}
+          modules={allModules}
+          parts={allParts}
+          masterTasks={allMasterTasks}
         />
       </ErrorBoundary>
     </div>

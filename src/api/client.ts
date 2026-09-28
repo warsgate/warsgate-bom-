@@ -191,3 +191,41 @@ export const integrationApi = {
     request<any>(`/integration/cost-analysis/${id}`),
 };
 
+// ─── Database Backup API ──────────────────────────────────────
+export interface BackupFileItem {
+  filename: string;
+  sizeBytes: number;
+  sizeFormatted: string;
+  createdAt: string;
+  type: 'db' | 'sql' | 'json';
+}
+
+export interface BackupResult {
+  success: boolean;
+  message: string;
+  timestamp: string;
+  backupDir: string;
+  files: {
+    db: string;
+    sql: string;
+    json: string;
+  };
+  counts: Record<string, number>;
+}
+
+export interface BackupListResult {
+  success: boolean;
+  backupDir: string;
+  backups: BackupFileItem[];
+}
+
+export const backupApi = {
+  triggerBackup: () =>
+    request<BackupResult>('/backup', { method: 'POST' }),
+  listBackups: () =>
+    request<BackupListResult>('/backup/list'),
+  getDownloadUrl: (filename: string) =>
+    `${BASE_URL}/backup/download/${encodeURIComponent(filename)}`,
+};
+
+

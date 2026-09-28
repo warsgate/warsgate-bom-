@@ -37,7 +37,8 @@ import {
   Share2,
   ClipboardCheck,
   AlertTriangle,
-  QrCode
+  QrCode,
+  Database
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -73,6 +74,7 @@ interface TopNavbarProps {
   onOpenLeadTimeRisk?: () => void;
   onOpenFatSat?: () => void;
   onOpenMachineNameplate?: () => void;
+  onOpenBackupModal?: () => void;
 }
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({
@@ -106,6 +108,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenLeadTimeRisk,
   onOpenFatSat,
   onOpenMachineNameplate,
+  onOpenBackupModal,
 }) => {
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -154,6 +157,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
     { id: 'modules', label: 'MC & EE Relationship', subLabel: 'ความสัมพันธ์กลไกและไฟฟ้า', icon: Layers },
     { id: 'quotations', label: 'ใบเสนอราคา & เอกสาร', subLabel: 'Vendor Quotations', icon: FileText },
     { id: 'line-notify', label: 'แจ้งเตือน LINE Bot', subLabel: 'Real-time Alerts & Scheduler', icon: MessageSquare },
+    { id: 'backup-db', label: 'สำรองฐานข้อมูล (Backup DB)', subLabel: 'สำรองไฟล์ SQLite, SQL, JSON ลงเครื่อง', icon: Database, action: onOpenBackupModal },
     { id: 'dashboard', label: 'Dashboard ภาพรวม', subLabel: 'Executive KPIs & Charts', icon: LayoutDashboard, isProtected: true },
     { id: 'workspaces', label: 'จัดการ Workspace', subLabel: 'สร้าง/แก้ไขโปรเจ็ค', icon: FolderKanban, isProtected: true },
     { id: 'users', label: 'จัดการสิทธิ์ผู้ใช้งาน', subLabel: 'User Roles & Access', icon: Users, isProtected: true },
@@ -436,6 +440,17 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
               title="นำเข้า/ส่งออก Excel (Export / Import)"
             >
               <FileSpreadsheet className="w-4 h-4 text-emerald-600 dark:text-emerald-400" />
+            </button>
+          )}
+
+          {/* Quick Action Button: Database Backup */}
+          {onOpenBackupModal && (
+            <button
+              onClick={onOpenBackupModal}
+              className="hidden md:flex p-1.5 rounded-xl bg-blue-50 dark:bg-blue-950/40 hover:bg-blue-100 dark:hover:bg-blue-900/60 border border-blue-200 dark:border-blue-800/80 text-blue-600 dark:text-blue-400 transition-colors"
+              title="สำรองฐานข้อมูลลงเครื่อง (Database Backup & Download)"
+            >
+              <Database className="w-4 h-4" />
             </button>
           )}
 

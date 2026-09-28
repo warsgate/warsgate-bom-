@@ -41,6 +41,7 @@ import { CadBomExtractorModal } from './components/CadBomExtractorModal';
 import { LeadTimeRiskModal } from './components/LeadTimeRiskModal';
 import { FatSatInspectionModal } from './components/FatSatInspectionModal';
 import { MachineNameplateModal } from './components/MachineNameplateModal';
+import { DatabaseBackupModal } from './components/DatabaseBackupModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 export type AppTab = 
@@ -142,6 +143,7 @@ export function App() {
   const [isLeadTimeRiskOpen, setIsLeadTimeRiskOpen] = useState(false);
   const [isFatSatOpen, setIsFatSatOpen] = useState(false);
   const [isMachineNameplateOpen, setIsMachineNameplateOpen] = useState(false);
+  const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
 
   // Sync dark mode
   useEffect(() => {
@@ -696,6 +698,7 @@ export function App() {
         onOpenAddPart={() => { setEditingPart(null); setIsPartModalOpen(true); }}
         onOpenAddModule={() => { setEditingModule(null); setIsModuleModalOpen(true); }}
         onOpenExportImport={() => setIsExportImportOpen(true)}
+        onOpenBackupModal={() => setIsBackupModalOpen(true)}
         onResetData={handleResetData}
         totalItems={projectParts.length}
         totalModules={projectModules.length}
@@ -745,6 +748,7 @@ export function App() {
           onOpenLeadTimeRisk={() => setIsLeadTimeRiskOpen(true)}
           onOpenFatSat={() => setIsFatSatOpen(true)}
           onOpenMachineNameplate={() => setIsMachineNameplateOpen(true)}
+          onOpenBackupModal={() => setIsBackupModalOpen(true)}
         />
 
         <main className={`flex-1 p-3 sm:p-5 w-full mx-auto transition-all duration-300 ${
@@ -1077,6 +1081,14 @@ export function App() {
           onClose={() => setIsMachineNameplateOpen(false)}
           project={activeProject}
           modules={projectModules}
+        />
+      </ErrorBoundary>
+
+      {/* Database Backup & Download Modal */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดหน้าต่างสำรองฐานข้อมูลได้">
+        <DatabaseBackupModal
+          isOpen={isBackupModalOpen}
+          onClose={() => setIsBackupModalOpen(false)}
         />
       </ErrorBoundary>
     </div>

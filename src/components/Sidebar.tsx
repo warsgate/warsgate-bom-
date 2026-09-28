@@ -27,7 +27,8 @@ import {
   ChevronDown,
   Cpu,
   PanelLeftClose,
-  Building2
+  Building2,
+  Database
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 
@@ -41,6 +42,7 @@ interface SidebarProps {
   onOpenAddPart: () => void;
   onOpenAddModule: () => void;
   onOpenExportImport: () => void;
+  onOpenBackupModal?: () => void;
   onResetData: () => void;
   totalItems: number;
   totalModules: number;
@@ -82,6 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onOpenAddPart,
   onOpenAddModule,
   onOpenExportImport,
+  onOpenBackupModal,
   onResetData,
   totalItems,
   totalModules,
@@ -522,6 +525,20 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <span>Reset Data</span>
             </button>
           </div>
+
+          {onOpenBackupModal && (
+            <button
+              onClick={() => {
+                onOpenBackupModal();
+                if (onCloseMobile) onCloseMobile();
+              }}
+              className="w-full mt-2 py-1.5 px-3 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-950/40 dark:to-indigo-950/40 hover:from-blue-100 hover:to-indigo-100 dark:hover:from-blue-900/50 dark:hover:to-indigo-900/50 text-blue-700 dark:text-blue-300 text-[11px] font-bold rounded-xl border border-blue-200 dark:border-blue-800/80 transition-all flex items-center justify-center space-x-1.5 shadow-sm group"
+              title="สำรองฐานข้อมูลระบบลงเครื่อง (SQLite / SQL / JSON)"
+            >
+              <Database className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400 group-hover:scale-110 transition-transform" />
+              <span>สำรองฐานข้อมูล (Backup DB)</span>
+            </button>
+          )}
         </div>
       </nav>
 

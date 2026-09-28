@@ -868,11 +868,21 @@ export function App() {
           )}
 
           {activeTab === 'report' && (
-            <CostSummaryReport summary={costSummary} modules={projectModules} />
+            <CostSummaryReport
+              summary={costSummary}
+              modules={projectModules}
+              project={activeProject}
+              parts={projectParts}
+            />
           )}
 
           {activeTab === 'master-library' && (
-            <MasterPartLibrary />
+            <MasterPartLibrary
+              projects={projects}
+              activeProjectId={activeProjectId}
+              modules={allModules}
+              onAddPartToBom={handleSavePart}
+            />
           )}
 
           {activeTab === 'production-workflow' && (

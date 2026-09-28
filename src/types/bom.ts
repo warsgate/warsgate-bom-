@@ -75,6 +75,8 @@ export interface MasterPartItem {
   storeLocation: string;
   description: string;
   purchaseLink?: string;
+  stockQty?: number;
+  minStockQty?: number;
   createdAt?: string;
   updatedAt?: string;
 }

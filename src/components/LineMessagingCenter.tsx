@@ -741,7 +741,7 @@ export const LineMessagingCenter: React.FC<LineMessagingCenterProps> = ({
 
     try {
       setIsLoading(true);
-      const res = await lineApi.triggerProcurementAlert();
+      const res = await lineApi.triggerProcurementAlert(activeProjectId);
       if (res.success) {
         showToast('success', 'ยิงแจ้งเตือนเข้า LINE สำเร็จ (200 OK)', `ตรวจพบและส่งการ์ดแจ้งเตือนสำหรับทุก Workspace ที่มีรายการค้างสั่งซื้อเรียบร้อยแล้ว`, 200);
       } else {

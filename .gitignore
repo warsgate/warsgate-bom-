@@ -19,8 +19,10 @@ meta-coral-*.json
 project-*.json
 *.numbers
 
-# Prisma
+# Prisma & DB Backups
 backend/prisma/migrations/
 *.db
 backend/prisma/*.prisma.pg
 backend/prisma/*.sqlite.prisma
+backups/*
+!backups/README.md

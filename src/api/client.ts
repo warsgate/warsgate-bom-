@@ -219,6 +219,14 @@ export interface BackupListResult {
   backups: BackupFileItem[];
 }
 
+export interface RestoreResult {
+  success: boolean;
+  message: string;
+  presnapshot?: string;
+  counts?: Record<string, number>;
+  error?: string;
+}
+
 export const backupApi = {
   triggerBackup: () =>
     request<BackupResult>('/backup', { method: 'POST' }),
@@ -226,6 +234,32 @@ export const backupApi = {
     request<BackupListResult>('/backup/list'),
   getDownloadUrl: (filename: string) =>
     `${BASE_URL}/backup/download/${encodeURIComponent(filename)}`,
+  restoreFile: (filename: string) =>
+    request<RestoreResult>(`/backup/restore/${encodeURIComponent(filename)}`, { method: 'POST' }),
+  restoreJson: (data: any) =>
+    request<RestoreResult>('/backup/restore-json', {
+      method: 'POST',
+      body: JSON.stringify(data),
+    }),
+  uploadRestore: async (file: File): Promise<RestoreResult> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const token = localStorage.getItem('token');
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${BASE_URL}/backup/upload-restore`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(err.error || `Upload restore failed: ${res.status}`);
+    }
+    return res.json();
+  },
 };
+
 
 

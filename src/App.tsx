@@ -1093,6 +1093,7 @@ export function App() {
           modules={allModules}
           parts={allParts}
           masterTasks={allMasterTasks}
+          onRestoreSuccess={() => loadAll(true)}
         />
       </ErrorBoundary>
     </div>

@@ -18,10 +18,12 @@ import {
   Camera,
   Filter,
   Layers,
-  X,
   Wrench,
   Bot,
-  Sparkles
+  Sparkles,
+  PackageCheck,
+  Share2,
+  X
 } from 'lucide-react';
 import { BomPartItem, ModuleItem, PartStatus } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -51,6 +53,8 @@ interface BomTableProps {
   onOpenQrScanner?: () => void;
   onOpenMachiningModal?: () => void;
   onOpenAiAssistantModal?: () => void;
+  onOpenAssemblyKitting?: () => void;
+  onOpenVendorPortal?: () => void;
 }
 
 const getTodayIso = () => new Date().toISOString().split('T')[0];
@@ -70,6 +74,8 @@ export const BomTable: React.FC<BomTableProps> = ({
   onOpenQrScanner,
   onOpenMachiningModal,
   onOpenAiAssistantModal,
+  onOpenAssemblyKitting,
+  onOpenVendorPortal,
 }) => {
   const [selectedModuleFilter, setSelectedModuleFilter] = useState<string>('ALL');
   const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('ALL');
@@ -244,6 +250,28 @@ export const BomTable: React.FC<BomTableProps> = ({
                   <Bot className="w-3.5 h-3.5 text-indigo-600 dark:text-indigo-400 animate-pulse" />
                   <span>AI ตรวจ BOM</span>
                   <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-ping absolute -top-0.5 -right-0.5"></span>
+                </button>
+              )}
+
+              {onOpenAssemblyKitting && (
+                <button
+                  onClick={onOpenAssemblyKitting}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-emerald-600 dark:hover:text-emerald-400 transition-all shadow-none hover:shadow-sm"
+                  title="โหมดจัดชุดอะไหล่ประกอบ (Assembly Kitting & Pick List) บน Tablet"
+                >
+                  <PackageCheck className="w-3.5 h-3.5 text-emerald-600 dark:text-emerald-400" />
+                  <span>จัดชุดประกอบ</span>
+                </button>
+              )}
+
+              {onOpenVendorPortal && (
+                <button
+                  onClick={onOpenVendorPortal}
+                  className="flex items-center space-x-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-white dark:hover:bg-slate-700 hover:text-blue-600 dark:hover:text-blue-400 transition-all shadow-none hover:shadow-sm"
+                  title="พอร์ทัลร้านกลึง: ส่ง Magic Link ให้ร้านกลึงเปิดดูแบบและอัปเดตราคา/สถานะเอง"
+                >
+                  <Share2 className="w-3.5 h-3.5 text-blue-600 dark:text-blue-400" />
+                  <span>พอร์ทัลร้านกลึง</span>
                 </button>
               )}
             </div>

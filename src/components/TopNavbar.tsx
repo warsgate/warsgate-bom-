@@ -32,7 +32,9 @@ import {
   Camera,
   Wrench,
   Bot,
-  Building2
+  Building2,
+  PackageCheck,
+  Share2
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -62,6 +64,8 @@ interface TopNavbarProps {
   onOpenSwitchUser?: () => void;
   onOpenMachiningModal?: () => void;
   onOpenAiAssistantModal?: () => void;
+  onOpenAssemblyKitting?: () => void;
+  onOpenVendorPortal?: () => void;
 }
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({
@@ -89,6 +93,8 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenSwitchUser,
   onOpenMachiningModal,
   onOpenAiAssistantModal,
+  onOpenAssemblyKitting,
+  onOpenVendorPortal,
 }) => {
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -126,6 +132,8 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
 
   // Secondary "More" navigation items
   const moreNavItems = [
+    { id: 'kitting', label: 'จัดชุดอะไหล่ประกอบ (Kitting)', subLabel: 'Shopfloor Pick List & Tablet Mode', icon: PackageCheck, action: onOpenAssemblyKitting },
+    { id: 'vendor-portal', label: 'พอร์ทัลร้านกลึง (Vendor Portal)', subLabel: 'Magic Link ให้ซัพพลายเออร์', icon: Share2, action: onOpenVendorPortal },
     { id: 'machining', label: 'กระดานงานสั่งกลึง (Machining)', subLabel: 'Feb Pipeline Kanban & Drawing', icon: Wrench, action: onOpenMachiningModal },
     { id: 'ai-assistant', label: 'ผู้ช่วย AI ตรวจ BOM', subLabel: 'Automated Checklist & Validation', icon: Sparkles, action: onOpenAiAssistantModal },
     { id: 'modules', label: 'MC & EE Relationship', subLabel: 'ความสัมพันธ์กลไกและไฟฟ้า', icon: Layers },

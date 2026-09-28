@@ -35,6 +35,8 @@ import { RevisionControlModal } from './components/RevisionControlModal';
 import { MachiningPipelineModal } from './components/MachiningPipelineModal';
 import { AiBomAssistantModal } from './components/AiBomAssistantModal';
 import { MultiProjectTimelineView } from './components/MultiProjectTimelineView';
+import { AssemblyKittingModal } from './components/AssemblyKittingModal';
+import { VendorPortalModal } from './components/VendorPortalModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 export type AppTab = 
@@ -130,6 +132,8 @@ export function App() {
   const [isRevisionModalOpen, setIsRevisionModalOpen] = useState(false);
   const [isMachiningModalOpen, setIsMachiningModalOpen] = useState(false);
   const [isAiAssistantModalOpen, setIsAiAssistantModalOpen] = useState(false);
+  const [isAssemblyKittingOpen, setIsAssemblyKittingOpen] = useState(false);
+  const [isVendorPortalOpen, setIsVendorPortalOpen] = useState(false);
 
   // Sync dark mode
   useEffect(() => {
@@ -184,6 +188,11 @@ export function App() {
     const params = new URLSearchParams(window.location.search);
     const tabParam = params.get('tab');
     const projectParam = params.get('projectId');
+    const vendorParam = params.get('vendor');
+
+    if (vendorParam) {
+      setIsVendorPortalOpen(true);
+    }
     
     if (tabParam && ['dashboard', 'master-plan', 'factory-timeline', 'all-modules', 'modules', 'bom', 'procurement', 'report', 'master-library', 'quotations', 'history', 'workspaces', 'users', 'line-notify', 'production-workflow'].includes(tabParam)) {
       setActiveTab(tabParam as any);
@@ -722,6 +731,8 @@ export function App() {
           onOpenSwitchUser={() => setIsSwitchUserModalOpen(true)}
           onOpenMachiningModal={() => setIsMachiningModalOpen(true)}
           onOpenAiAssistantModal={() => setIsAiAssistantModalOpen(true)}
+          onOpenAssemblyKitting={() => setIsAssemblyKittingOpen(true)}
+          onOpenVendorPortal={() => setIsVendorPortalOpen(true)}
         />
 
         <main className={`flex-1 p-3 sm:p-5 w-full mx-auto transition-all duration-300 ${
@@ -819,6 +830,8 @@ export function App() {
               onOpenQrScanner={() => setIsQrScannerOpen(true)}
               onOpenMachiningModal={() => setIsMachiningModalOpen(true)}
               onOpenAiAssistantModal={() => setIsAiAssistantModalOpen(true)}
+              onOpenAssemblyKitting={() => setIsAssemblyKittingOpen(true)}
+              onOpenVendorPortal={() => setIsVendorPortalOpen(true)}
             />
           )}
 
@@ -972,6 +985,29 @@ export function App() {
           modules={projectModules}
           parts={projectParts}
           onEditPart={(p) => { setEditingPart(p); setIsPartModalOpen(true); }}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 6: Shopfloor Assembly Kitting & Tablet Pick List */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดหน้าต่างจัดชุดอะไหล่ประกอบได้">
+        <AssemblyKittingModal
+          isOpen={isAssemblyKittingOpen}
+          onClose={() => setIsAssemblyKittingOpen(false)}
+          project={activeProject}
+          modules={projectModules}
+          parts={projectParts}
+          onUpdatePart={handleUpdatePartFields}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 7: Vendor RFQ & Live Update Magic Portal */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดระบบ Vendor Magic Portal ได้">
+        <VendorPortalModal
+          isOpen={isVendorPortalOpen}
+          onClose={() => setIsVendorPortalOpen(false)}
+          project={activeProject}
+          parts={projectParts}
+          onUpdatePart={handleUpdatePartFields}
         />
       </ErrorBoundary>
     </div>

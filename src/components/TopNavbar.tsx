@@ -38,7 +38,8 @@ import {
   ClipboardCheck,
   AlertTriangle,
   QrCode,
-  Database
+  Database,
+  ClipboardList
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -75,6 +76,7 @@ interface TopNavbarProps {
   onOpenFatSat?: () => void;
   onOpenMachineNameplate?: () => void;
   onOpenBackupModal?: () => void;
+  onOpenJobTraveler?: () => void;
 }
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({
@@ -109,6 +111,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenFatSat,
   onOpenMachineNameplate,
   onOpenBackupModal,
+  onOpenJobTraveler,
 }) => {
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -146,6 +149,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
 
   // Secondary "More" navigation items
   const moreNavItems = [
+    { id: 'job-traveler', label: 'ใบสั่งผลิตช่าง (Job Traveler)', subLabel: 'Production Routing & A4 Work Order Sheet', icon: ClipboardList, action: onOpenJobTraveler },
     { id: 'kitting', label: 'จัดชุดอะไหล่ประกอบ (Kitting)', subLabel: 'Shopfloor Pick List & Tablet Mode', icon: PackageCheck, action: onOpenAssemblyKitting },
     { id: 'vendor-portal', label: 'พอร์ทัลร้านกลึง (Vendor Portal)', subLabel: 'Magic Link ให้ซัพพลายเออร์', icon: Share2, action: onOpenVendorPortal },
     { id: 'cad-extractor', label: 'AI ดึงแบบ CAD (BOM Extractor)', subLabel: 'แปลงตารางแบบ Drawing เป็น BOM', icon: Bot, action: onOpenCadExtractor },

@@ -42,6 +42,7 @@ import { LeadTimeRiskModal } from './components/LeadTimeRiskModal';
 import { FatSatInspectionModal } from './components/FatSatInspectionModal';
 import { MachineNameplateModal } from './components/MachineNameplateModal';
 import { DatabaseBackupModal } from './components/DatabaseBackupModal';
+import { ShopFloorJobTravelerModal } from './components/ShopFloorJobTravelerModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 export type AppTab = 
@@ -144,6 +145,7 @@ export function App() {
   const [isFatSatOpen, setIsFatSatOpen] = useState(false);
   const [isMachineNameplateOpen, setIsMachineNameplateOpen] = useState(false);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
+  const [isJobTravelerOpen, setIsJobTravelerOpen] = useState(false);
 
   // Sync dark mode
   useEffect(() => {
@@ -247,6 +249,15 @@ export function App() {
     } else {
       const created = await modulesApi.create({ ...data, projectId: activeProjectId, status: 'Active' });
       setAllModules(prev => [...prev, created]);
+    }
+  };
+
+  const handleUpdateModule = async (moduleId: string, data: Partial<ModuleItem>) => {
+    try {
+      const updated = await modulesApi.update(moduleId, data);
+      setAllModules(prev => prev.map(m => m.id === updated.id ? updated : m));
+    } catch (err) {
+      console.warn('Failed to update module:', err);
     }
   };
 
@@ -749,6 +760,7 @@ export function App() {
           onOpenFatSat={() => setIsFatSatOpen(true)}
           onOpenMachineNameplate={() => setIsMachineNameplateOpen(true)}
           onOpenBackupModal={() => setIsBackupModalOpen(true)}
+          onOpenJobTraveler={() => setIsJobTravelerOpen(true)}
         />
 
         <main className={`flex-1 p-3 sm:p-5 w-full mx-auto transition-all duration-300 ${
@@ -1094,6 +1106,18 @@ export function App() {
           parts={allParts}
           masterTasks={allMasterTasks}
           onRestoreSuccess={() => loadAll(true)}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 12: Shop Floor Job Traveler & Production Routing Sheet */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดหน้าต่างใบสั่งผลิตช่าง Job Traveler ได้">
+        <ShopFloorJobTravelerModal
+          isOpen={isJobTravelerOpen}
+          onClose={() => setIsJobTravelerOpen(false)}
+          project={activeProject}
+          modules={projectModules}
+          parts={projectParts}
+          onUpdateModule={handleUpdateModule}
         />
       </ErrorBoundary>
     </div>

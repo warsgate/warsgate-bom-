@@ -43,6 +43,7 @@ import { FatSatInspectionModal } from './components/FatSatInspectionModal';
 import { MachineNameplateModal } from './components/MachineNameplateModal';
 import { DatabaseBackupModal } from './components/DatabaseBackupModal';
 import { ShopFloorJobTravelerModal } from './components/ShopFloorJobTravelerModal';
+import { BulkPurchaseConsolidationModal } from './components/BulkPurchaseConsolidationModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 export type AppTab = 
@@ -146,6 +147,7 @@ export function App() {
   const [isMachineNameplateOpen, setIsMachineNameplateOpen] = useState(false);
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isJobTravelerOpen, setIsJobTravelerOpen] = useState(false);
+  const [isBulkConsolidationOpen, setIsBulkConsolidationOpen] = useState(false);
 
   // Sync dark mode
   useEffect(() => {
@@ -761,6 +763,7 @@ export function App() {
           onOpenMachineNameplate={() => setIsMachineNameplateOpen(true)}
           onOpenBackupModal={() => setIsBackupModalOpen(true)}
           onOpenJobTraveler={() => setIsJobTravelerOpen(true)}
+          onOpenBulkConsolidation={() => setIsBulkConsolidationOpen(true)}
         />
 
         <main className={`flex-1 p-3 sm:p-5 w-full mx-auto transition-all duration-300 ${
@@ -1118,6 +1121,18 @@ export function App() {
           modules={projectModules}
           parts={projectParts}
           onUpdateModule={handleUpdateModule}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 13: Bulk Purchase Consolidation & Deduplication Modal */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดระบบรวมยอดสั่งซื้อ Bulk Purchase ได้">
+        <BulkPurchaseConsolidationModal
+          isOpen={isBulkConsolidationOpen}
+          onClose={() => setIsBulkConsolidationOpen(false)}
+          projects={projects}
+          activeProjectId={activeProjectId}
+          allModules={allModules}
+          allParts={allParts}
         />
       </ErrorBoundary>
     </div>

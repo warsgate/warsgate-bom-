@@ -39,7 +39,8 @@ import {
   AlertTriangle,
   QrCode,
   Database,
-  ClipboardList
+  ClipboardList,
+  Boxes
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -77,6 +78,7 @@ interface TopNavbarProps {
   onOpenMachineNameplate?: () => void;
   onOpenBackupModal?: () => void;
   onOpenJobTraveler?: () => void;
+  onOpenBulkConsolidation?: () => void;
 }
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({
@@ -112,6 +114,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenMachineNameplate,
   onOpenBackupModal,
   onOpenJobTraveler,
+  onOpenBulkConsolidation,
 }) => {
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -150,6 +153,7 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   // Secondary "More" navigation items
   const moreNavItems = [
     { id: 'job-traveler', label: 'ใบสั่งผลิตช่าง (Job Traveler)', subLabel: 'Production Routing & A4 Work Order Sheet', icon: ClipboardList, action: onOpenJobTraveler },
+    { id: 'bulk-consolidation', label: 'รวมยอดสั่งซื้อ (Bulk Purchase)', subLabel: 'Cross-Module Deduplication & Volume Discount', icon: Boxes, action: onOpenBulkConsolidation },
     { id: 'kitting', label: 'จัดชุดอะไหล่ประกอบ (Kitting)', subLabel: 'Shopfloor Pick List & Tablet Mode', icon: PackageCheck, action: onOpenAssemblyKitting },
     { id: 'vendor-portal', label: 'พอร์ทัลร้านกลึง (Vendor Portal)', subLabel: 'Magic Link ให้ซัพพลายเออร์', icon: Share2, action: onOpenVendorPortal },
     { id: 'cad-extractor', label: 'AI ดึงแบบ CAD (BOM Extractor)', subLabel: 'แปลงตารางแบบ Drawing เป็น BOM', icon: Bot, action: onOpenCadExtractor },

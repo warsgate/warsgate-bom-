@@ -40,7 +40,9 @@ import {
   QrCode,
   Database,
   ClipboardList,
-  Boxes
+  Boxes,
+  Percent,
+  Paperclip
 } from 'lucide-react';
 import { ProjectItem } from '../types/bom';
 import { formatCurrency } from '../utils/costCalculator';
@@ -79,6 +81,8 @@ interface TopNavbarProps {
   onOpenBackupModal?: () => void;
   onOpenJobTraveler?: () => void;
   onOpenBulkConsolidation?: () => void;
+  onOpenCostVariance?: () => void;
+  onOpenDrawingHub?: () => void;
 }
 
 export const TopNavbar: React.FC<TopNavbarProps> = ({
@@ -115,6 +119,8 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   onOpenBackupModal,
   onOpenJobTraveler,
   onOpenBulkConsolidation,
+  onOpenCostVariance,
+  onOpenDrawingHub,
 }) => {
   const [isProjectDropdownOpen, setIsProjectDropdownOpen] = useState(false);
   const [isMoreMenuOpen, setIsMoreMenuOpen] = useState(false);
@@ -154,6 +160,8 @@ export const TopNavbar: React.FC<TopNavbarProps> = ({
   const moreNavItems = [
     { id: 'job-traveler', label: 'ใบสั่งผลิตช่าง (Job Traveler)', subLabel: 'Production Routing & A4 Work Order Sheet', icon: ClipboardList, action: onOpenJobTraveler },
     { id: 'bulk-consolidation', label: 'รวมยอดสั่งซื้อ (Bulk Purchase)', subLabel: 'Cross-Module Deduplication & Volume Discount', icon: Boxes, action: onOpenBulkConsolidation },
+    { id: 'cost-variance', label: 'วิเคราะห์กำไร & งบ (Cost Variance)', subLabel: 'Committed Cost vs Budget & Margin Simulator', icon: Percent, action: onOpenCostVariance },
+    { id: 'drawing-hub', label: 'คลังแบบ Drawing & เอกสาร (Drawing Hub)', subLabel: 'แนบแบบ 2D PDF & รูปถ่ายหน้างาน', icon: Paperclip, action: onOpenDrawingHub },
     { id: 'kitting', label: 'จัดชุดอะไหล่ประกอบ (Kitting)', subLabel: 'Shopfloor Pick List & Tablet Mode', icon: PackageCheck, action: onOpenAssemblyKitting },
     { id: 'vendor-portal', label: 'พอร์ทัลร้านกลึง (Vendor Portal)', subLabel: 'Magic Link ให้ซัพพลายเออร์', icon: Share2, action: onOpenVendorPortal },
     { id: 'cad-extractor', label: 'AI ดึงแบบ CAD (BOM Extractor)', subLabel: 'แปลงตารางแบบ Drawing เป็น BOM', icon: Bot, action: onOpenCadExtractor },

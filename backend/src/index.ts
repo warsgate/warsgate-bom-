@@ -49,7 +49,17 @@ import auditLogsRouter from './routes/auditLogs';
 import lineRouter from './routes/line';
 import integrationRouter from './routes/integration';
 import backupRouter from './routes/backup';
+import attachmentsRouter from './routes/attachments';
 import { startLineScheduler } from './services/lineScheduler';
+import path from 'path';
+import fs from 'fs';
+
+// Serve uploaded drawings & photos statically
+const uploadsPath = path.resolve(__dirname, '../../uploads');
+if (!fs.existsSync(uploadsPath)) {
+  fs.mkdirSync(uploadsPath, { recursive: true });
+}
+app.use('/uploads', express.static(uploadsPath));
 
 app.use((req, _res, next) => {
   console.log(`[${req.method}] ${req.originalUrl}`);
@@ -67,6 +77,7 @@ app.use('/api/master-parts', masterPartsRouter);
 app.use('/api/quotations', quotationsRouter);
 app.use('/api/line', lineRouter);
 app.use('/api/integration', integrationRouter);
+app.use('/api/attachments', attachmentsRouter);
 
 // Mount backup router on multiple aliases to prevent 404
 app.use('/api/backup', backupRouter);
@@ -81,8 +92,6 @@ app.use((req, res) => {
 });
 
 import { PrismaClient } from '@prisma/client';
-import fs from 'fs';
-import path from 'path';
 import pdfParts from './pdf_parts.json';
 
 const prisma = new PrismaClient();

@@ -261,5 +261,45 @@ export const backupApi = {
   },
 };
 
+// ─── Attachments & Drawing Document API ───────────────────────
+export interface UploadAttachmentResult {
+  success: boolean;
+  filename: string;
+  originalName: string;
+  size: number;
+  mimeType: string;
+  fileUrl: string;
+}
+
+export const attachmentsApi = {
+  upload: async (file: File): Promise<UploadAttachmentResult> => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const token = localStorage.getItem('token');
+    const headers: Record<string, string> = {};
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const res = await fetch(`${BASE_URL}/attachments/upload`, {
+      method: 'POST',
+      headers,
+      body: formData,
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({ error: res.statusText }));
+      throw new Error(err.error || `Upload failed: ${res.status}`);
+    }
+    return res.json();
+  },
+  getFileUrl: (pathOrUrl: string) => {
+    if (!pathOrUrl) return '';
+    if (pathOrUrl.startsWith('http://') || pathOrUrl.startsWith('https://') || pathOrUrl.startsWith('data:')) {
+      return pathOrUrl;
+    }
+    const origin = BASE_URL.replace(/\/api\/?$/, '');
+    return `${origin}${pathOrUrl.startsWith('/') ? '' : '/'}${pathOrUrl}`;
+  },
+};
+
+
 
 

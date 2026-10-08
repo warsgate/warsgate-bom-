@@ -44,6 +44,8 @@ import { MachineNameplateModal } from './components/MachineNameplateModal';
 import { DatabaseBackupModal } from './components/DatabaseBackupModal';
 import { ShopFloorJobTravelerModal } from './components/ShopFloorJobTravelerModal';
 import { BulkPurchaseConsolidationModal } from './components/BulkPurchaseConsolidationModal';
+import { CostVarianceAnalyticsModal } from './components/CostVarianceAnalyticsModal';
+import { DrawingAttachmentModal } from './components/DrawingAttachmentModal';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 export type AppTab = 
@@ -148,6 +150,9 @@ export function App() {
   const [isBackupModalOpen, setIsBackupModalOpen] = useState(false);
   const [isJobTravelerOpen, setIsJobTravelerOpen] = useState(false);
   const [isBulkConsolidationOpen, setIsBulkConsolidationOpen] = useState(false);
+  const [isCostVarianceModalOpen, setIsCostVarianceModalOpen] = useState(false);
+  const [isDrawingModalOpen, setIsDrawingModalOpen] = useState(false);
+  const [activeDrawingPartId, setActiveDrawingPartId] = useState<string | undefined>(undefined);
 
   // Sync dark mode
   useEffect(() => {
@@ -764,6 +769,8 @@ export function App() {
           onOpenBackupModal={() => setIsBackupModalOpen(true)}
           onOpenJobTraveler={() => setIsJobTravelerOpen(true)}
           onOpenBulkConsolidation={() => setIsBulkConsolidationOpen(true)}
+          onOpenCostVariance={() => setIsCostVarianceModalOpen(true)}
+          onOpenDrawingHub={() => { setActiveDrawingPartId(undefined); setIsDrawingModalOpen(true); }}
         />
 
         <main className={`flex-1 p-3 sm:p-5 w-full mx-auto transition-all duration-300 ${
@@ -1133,6 +1140,31 @@ export function App() {
           activeProjectId={activeProjectId}
           allModules={allModules}
           allParts={allParts}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 14: Cost Variance & Margin Analytics Modal */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดระบบวิเคราะห์ต้นทุน & กำไรได้">
+        <CostVarianceAnalyticsModal
+          isOpen={isCostVarianceModalOpen}
+          onClose={() => setIsCostVarianceModalOpen(false)}
+          project={activeProject}
+          modules={projectModules}
+          parts={projectParts}
+          costSummary={costSummary}
+        />
+      </ErrorBoundary>
+
+      {/* Feature 15: Drawing PDF & Photo Document Attachment Hub */}
+      <ErrorBoundary fallbackTitle="ไม่สามารถเปิดหน้าต่างคลังแบบ Drawing ได้">
+        <DrawingAttachmentModal
+          isOpen={isDrawingModalOpen}
+          onClose={() => setIsDrawingModalOpen(false)}
+          project={activeProject}
+          modules={projectModules}
+          parts={projectParts}
+          initialPartId={activeDrawingPartId}
+          onUpdatePart={handleUpdatePartFields}
         />
       </ErrorBoundary>
     </div>
